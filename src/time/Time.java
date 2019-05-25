@@ -3,12 +3,15 @@ package time;
 public class Time {
 	
 	protected static long THOUSAND = 1000;
+	protected static long MILLION = THOUSAND * THOUSAND;
 
+	//TODO: Make documentation.
 	public static long getNano() {
 		return System.nanoTime();
 	}
-	
+
+	//TODO: Make documentation.
 	public static long getMili() {
-		return System.nanoTime() / THOUSAND;
+		return System.nanoTime() / MILLION;
 	}
 }

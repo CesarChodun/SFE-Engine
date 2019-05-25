@@ -1,5 +1,6 @@
 package time;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.PriorityQueue;
 
@@ -12,16 +13,17 @@ public class EventDispatcher {
 	
 	private long maxLatency = 100;
 	private long maxSpeeding = 5;
-	
+
+	//TODO: Make documentation.
 	public EventDispatcher() {}
-	
+
+	//TODO: Make documentation.
 	public EventDispatcher(long latency, long speeding) {
 		this.maxLatency = latency;
 		this.maxSpeeding = speeding;
 	}
 	
 	//TODO: Make documentation.
-	
 	public void tick() {
 		long time = Time.getMili();
 		
@@ -40,8 +42,10 @@ public class EventDispatcher {
 			sheduled.poll();
 		}
 		
+		ArrayList<RepeatableEvent> nextCycle = new ArrayList<RepeatableEvent>();
+		
 		RepeatableEvent re;
-		while((re = repeatable.peek()) != null) {
+		while((re = repeatable.peek()) != null) {			
 			if(re.getMiliDispatchTime() > time + maxSpeeding)
 				break; //To early for dispatch
 			
@@ -55,27 +59,35 @@ public class EventDispatcher {
 			repeatable.poll();
 			
 			if(re.nextOccurance())
-				repeatable.add(re);
+				nextCycle.add(re);
 		}
+		
+		for(RepeatableEvent ne : nextCycle)
+			repeatable.add(ne);
 	}
-	
-	void addSheduled(SheduledEvent event) {
+
+	//TODO: Make documentation.
+	public void addSheduled(SheduledEvent event) {
 		sheduled.add(event);
 	}
-	
-	void addRepeatable(RepeatableEvent revent) {
+
+	//TODO: Make documentation.
+	public void addRepeatable(RepeatableEvent revent) {
 		repeatable.add(revent);
 	}
-	
-	void addAllSheduled(Collection<SheduledEvent> event) {
+
+	//TODO: Make documentation.
+	public void addAllSheduled(Collection<SheduledEvent> event) {
 		sheduled.addAll(event);
 	}
-	
-	void addAllRepeatable(Collection<RepeatableEvent> revent) {
+
+	//TODO: Make documentation.
+	public void addAllRepeatable(Collection<RepeatableEvent> revent) {
 		repeatable.addAll(revent);
 	}
-	
-	void dumpRepeatable() {
+
+	//TODO: Make documentation.
+	public void dumpRepeatable() {
 		repeatable.clear();
 	}
 }

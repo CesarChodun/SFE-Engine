@@ -3,7 +3,8 @@ package time;
 import java.util.Comparator;
 
 public interface SheduledEvent extends Event{
-	
+
+	//TODO: Make documentation.
 	public class EventComparator implements Comparator<SheduledEvent>{
 
 		@Override
@@ -12,7 +13,8 @@ public interface SheduledEvent extends Event{
 		}
 		
 	}
-	
+
+	//TODO: Make documentation.
 	/**
 	 * 
 	 * @return dispatch time in milliseconds.
