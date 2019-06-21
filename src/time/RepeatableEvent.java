@@ -1,6 +1,6 @@
 package time;
 
-public interface RepeatableEvent extends SheduledEvent{
+public interface RepeatableEvent extends ScheduledEvent{
 
 	//TODO: Make documentation.
 	/**

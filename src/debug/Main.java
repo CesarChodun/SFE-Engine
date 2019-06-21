@@ -7,9 +7,9 @@ public class Main {
 	public static void main(String[] args) {		
 		EventDispatcher ed = new EventDispatcher(10, 10);
 		
-		SheduledEvent se = new SheduledEvent() {
+		ScheduledEvent se = new ScheduledEvent() {
 			
-			long dispatch = Time.getMili() + 2000;
+			long dispatch = Time.getMilli() + 2000;
 
 			@Override
 			public void run() {
@@ -17,7 +17,7 @@ public class Main {
 			}
 
 			@Override
-			public long getMiliDispatchTime() {
+			public long getMilliDispatchTime() {
 				return dispatch;
 			}
 
@@ -27,14 +27,14 @@ public class Main {
 			}
 			
 		};
-		ed.addSheduled(se);
+		ed.addScheduled(se);
 		
 		RepeatableEvent re = new RepeatableEvent() {
 
-			long dispatch = Time.getMili() + 1000;
+			long dispatch = Time.getMilli() + 1000;
 			
 			@Override
-			public long getMiliDispatchTime() {
+			public long getMilliDispatchTime() {
 				return dispatch;
 			}
 
@@ -50,7 +50,7 @@ public class Main {
 
 			@Override
 			public boolean nextOccurance() {
-				dispatch = Time.getMili() + 1000;
+				dispatch = Time.getMilli() + 1000;
 				return true;
 			}
 			
@@ -59,7 +59,7 @@ public class Main {
 		
 		while(true) {
 			System.out.println("tick");
-			ed.tick();
+			ed.update(Time.getMilli());
 			
 			try {
 				Thread.sleep(100);

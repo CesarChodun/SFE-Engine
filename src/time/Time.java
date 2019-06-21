@@ -11,7 +11,7 @@ public class Time {
 	}
 
 	//TODO: Make documentation.
-	public static long getMili() {
+	public static long getMilli() {
 		return System.nanoTime() / MILLION;
 	}
 }

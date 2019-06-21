@@ -2,14 +2,14 @@ package time;
 
 import java.util.Comparator;
 
-public interface SheduledEvent extends Event{
+public interface ScheduledEvent extends Event{
 
 	//TODO: Make documentation.
-	public class EventComparator implements Comparator<SheduledEvent>{
+	public class EventComparator implements Comparator<ScheduledEvent>{
 
 		@Override
-		public int compare(SheduledEvent o1, SheduledEvent o2) {
-			return Long.compare(o1.getMiliDispatchTime(), o2.getMiliDispatchTime());
+		public int compare(ScheduledEvent o1, ScheduledEvent o2) {
+			return Long.compare(o1.getMilliDispatchTime(), o2.getMilliDispatchTime());
 		}
 		
 	}
@@ -19,7 +19,7 @@ public interface SheduledEvent extends Event{
 	 * 
 	 * @return dispatch time in milliseconds.
 	 */
-	public long getMiliDispatchTime();
+	public long getMilliDispatchTime();
 	
 	
 	/**
