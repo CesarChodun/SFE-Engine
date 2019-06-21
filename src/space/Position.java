@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import org.joml.Vector3f;
 
+
 public class Position extends Vector3f{
 
 	public static class DistanceComparator implements Comparator<Position>{
