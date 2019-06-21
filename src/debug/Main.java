@@ -13,7 +13,7 @@ public class Main {
 
 			@Override
 			public void run() {
-				System.out.println("sheduled");
+				System.out.println("scheduled");
 			}
 
 			@Override

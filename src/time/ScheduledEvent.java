@@ -2,9 +2,19 @@ package time;
 
 import java.util.Comparator;
 
+/**
+ * Interface for managing events invoked at specific point in time.
+ * @author Cezary Chodun
+ *
+ */
 public interface ScheduledEvent extends Event{
 
-	//TODO: Make documentation.
+	/**
+	 * Events comparator(based on dispatch time).
+	 * <p>
+	 * <b>See</b> {@link java.util.Comparator}.
+	 * </p>
+	 */
 	public class EventComparator implements Comparator<ScheduledEvent>{
 
 		@Override
@@ -14,10 +24,10 @@ public interface ScheduledEvent extends Event{
 		
 	}
 
-	//TODO: Make documentation.
 	/**
-	 * 
-	 * @return dispatch time in milliseconds.
+	 * Returns the time in milliseconds when
+	 * the event should be dispatched.
+	 * @return dispatch time in milliseconds
 	 */
 	public long getMilliDispatchTime();
 	
@@ -26,8 +36,8 @@ public interface ScheduledEvent extends Event{
 	 * Tells whether the event should be dispatched
 	 * long after it's anticipated dispatch time.
 	 * 
-	 * @return 	True if the event should be dispatched anyway, 
-	 * 			and false otherwise.
+	 * @return 	true if the event should be dispatched anyway, 
+	 * 			and false otherwise
 	 */
 	public boolean forceDispatch();
 }
