@@ -21,8 +21,8 @@ public class Pair <F, S>{
 	
 	/**
 	 * Creates a pair of two objects.
-	 * @param first		- first pair object
-	 * @param second	- second pair object
+	 * @param first		first pair object
+	 * @param second	second pair object
 	 */
 	public Pair(F first, S second) {
 		this.first = first;
@@ -31,7 +31,7 @@ public class Pair <F, S>{
 	
 	/**
 	 * Duplicates objects contained in the 'pair'.
-	 * @param pair		- the pair to copy objects from 
+	 * @param pair		the pair to copy objects from 
 	 */
 	public Pair(Pair<F, S> pair) {
 		this.first = pair.first;
@@ -56,7 +56,7 @@ public class Pair <F, S>{
 
 	/**
 	 * Sets the first object in the pair.
-	 * @param object which will become the first member in the pair
+	 * @param first 	object which will become the first member in the pair
 	 */
 	public void setFirst(F first) {
 		this.first = first;
@@ -72,7 +72,7 @@ public class Pair <F, S>{
 	
 	/**
 	 * Sets the second object in the pair.
-	 * @param object which will become the second member in the pair
+	 * @param second	object which will become the second member in the pair
 	 */
 	public void setSecond(S second) {
 		this.second = second;

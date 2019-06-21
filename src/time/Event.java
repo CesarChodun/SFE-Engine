@@ -1,7 +1,7 @@
 package time;
 
 /**
- * Interface for basic event management.
+ * Interface for basic events.
  * @author Cezary Chodun
  *
  */

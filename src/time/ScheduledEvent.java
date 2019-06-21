@@ -3,7 +3,7 @@ package time;
 import java.util.Comparator;
 
 /**
- * Interface for managing events invoked at specific point in time.
+ * Interface for scheduled events.
  * @author Cezary Chodun
  *
  */

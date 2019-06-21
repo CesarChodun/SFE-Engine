@@ -1,7 +1,7 @@
 package time;
 
 /**
- * Interface for time event management.
+ * Interface for reoccurring events.
  * @author Cezary Chodun
  *
  */

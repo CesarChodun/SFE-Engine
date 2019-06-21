@@ -62,9 +62,9 @@ public class EventDispatcher {
 	 * latency({@link time.EventDispatcher#maxLatency}),
 	 * and speeding({@link time.EventDispatcher#maxSpeeding}). 
 	 * 
-	 * @param latency		- the maximum amount of milliseconds that an event 
+	 * @param latency		the maximum amount of milliseconds that an event 
 	 * 						can be late before it will be discarded
-	 * @param speeding		- the maximum amount of milliseconds that an event
+	 * @param speeding		the maximum amount of milliseconds that an event
 	 * 						can be invoked ahead of the schedule.
 	 */
 	public EventDispatcher(long latency, long speeding) {
@@ -76,7 +76,7 @@ public class EventDispatcher {
 	 * Dispatches events based on the given millisecond 
 	 * time(<b><code>milliTime</code></b>).
 	 * 
-	 * @param milliTime		- current time in milliseconds
+	 * @param milliTime		current time in milliseconds
 	 */
 	public void update(long milliTime) {	
 		ScheduledEvent e;
@@ -121,7 +121,7 @@ public class EventDispatcher {
 	/**
 	 * Adds a new {@link time.ScheduledEvent} to the 
 	 * {@link time.EventDispatcher#scheduled} list.
-	 * @param event		- The event to be added to the scheduled list.
+	 * @param event		The event to be added to the scheduled list.
 	 */
 	public void addScheduled(ScheduledEvent event) {
 		scheduled.add(event);
@@ -130,7 +130,7 @@ public class EventDispatcher {
 	/**
 	 * Adds a new {@link time.RepeatableEvent} to the 
 	 * {@link time.EventDispatcher#repeatable} list.
-	 * @param revent	- The event to be added to the repeatable list.
+	 * @param revent	The event to be added to the repeatable list.
 	 */
 	public void addRepeatable(RepeatableEvent revent) {
 		repeatable.add(revent);
@@ -138,7 +138,7 @@ public class EventDispatcher {
 
 	/**
 	 * Adds the list of {@link time.ScheduledEvent} to the scchedule.
-	 * @param event		- The list of events to be added to the scchedule.
+	 * @param event		The list of events to be added to the scchedule.
 	 */
 	public void addAllScheduled(Collection<ScheduledEvent> event) {
 		scheduled.addAll(event);
@@ -146,7 +146,7 @@ public class EventDispatcher {
 
 	/**
 	 * Adds the list of {@link time.RepeatableEvent} to the scchedule.
-	 * @param revent		- The list of events to be added to the scchedule.
+	 * @param revent	The list of events to be added to the scchedule.
 	 */
 	public void addAllRepeatable(Collection<RepeatableEvent> revent) {
 		repeatable.addAll(revent);
