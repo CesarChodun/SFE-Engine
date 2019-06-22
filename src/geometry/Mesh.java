@@ -7,15 +7,31 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
+/**
+ * Class for storing information about 3D mesh.
+ * 
+ * @author Cezary Chodun
+ *
+ */
 public class Mesh {
 
+	/**
+	 * Vertices buffer(for 3D mesh).
+	 */
+	protected FloatBuffer vertices;
 	
-	private FloatBuffer vertices;
-	
+	/**
+	 * Creates a new mesh with a given vertices buffer.
+	 * @param ver		vertices buffer
+	 */
 	public Mesh(FloatBuffer ver) {
 		this.vertices = ver;
 	}
 	
+	/**
+	 * Creates a new mesh with the given vertices.
+	 * @param vec		list of vertices
+	 */
 	public Mesh(List<Vector3f> vec) {
 		vertices = memAllocFloat(vec.size() * 3 * Float.BYTES);
 		
@@ -25,6 +41,10 @@ public class Mesh {
 		vertices.flip();
 	}
 
+	/**
+	 * 
+	 * @return		the vertices buffer
+	 */
 	public FloatBuffer getVertices() {
 		return vertices;
 	}
