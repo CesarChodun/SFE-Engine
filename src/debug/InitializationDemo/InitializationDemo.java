@@ -1,12 +1,17 @@
 package debug.InitializationDemo;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import core.Application;
 import core.HardwareManager;
 import core.resources.JSONParser;
 import core.result.VulkanException;
@@ -60,25 +65,24 @@ public class InitializationDemo {
 			e.printStackTrace();
 		}
 		
-//		JSONObject p = new JSONObject("");
-		Test test = new Test();
-		test.setID(1);
-		test.setConsoleLog(new Test());
-		test.setName("Kolejny");
+//		JSONObject obj = Application.createJSONAppInfo();
+//		try {
+//			System.out.print(obj.toString(2));
+//			
+//			FileWriter out = new FileWriter(new File("resources/InitializationDemo/config/appInfo.cfg"));
+//			obj.write(out, 2, 1);
+//			out.close();
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
-		JSONObject json = JSONParser.toJSON(test);
-		System.out.print(json.toString(2));
+		Application app = new Application(new File("resources/InitializationDemo"));
 		
-		JSONObject json2 = new JSONObject(s);
-		Test test2 = new Test();
-		Test child = new Test();
-		test2.setConsoleLog(child);
-		JSONParser.populateData(test2, json2);
-		
-		JSONObject json3 = JSONParser.toJSON(test2);
-		System.out.print(json3.toString(2));
-		
-		
+		Renderer render = new Renderer(app.);
 	}
 	
 }

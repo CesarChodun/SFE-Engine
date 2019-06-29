@@ -1,15 +1,15 @@
 package core;
 
+import static org.lwjgl.vulkan.VK10.*;
 import static core.result.VulkanResult.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.system.MemoryUtil.memAddress;
-import static org.lwjgl.system.MemoryUtil.memAllocInt;
+import static org.lwjgl.system.MemoryUtil.*;
 
 import java.nio.IntBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.vulkan.VK10;
+import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkLayerProperties;
 
 import core.result.VulkanException;
@@ -21,6 +21,7 @@ public class HardwareManager {
 	
 	private int validationLayersCount;
 	private VkLayerProperties.Buffer validationLayers;
+	private VkInstance instance;
 
 	/**
 	 * 
@@ -47,13 +48,13 @@ public class HardwareManager {
 	 */
 	private void listValidationLayers() throws VulkanException {
 		IntBuffer propsCount = memAllocInt(1);
-		int err = VK10.nvkEnumerateInstanceLayerProperties(memAddress(propsCount), NULL);
+		int err = vkEnumerateInstanceLayerProperties(propsCount, null);
 		validate(err, "Failed to obtain the number of vulkan validation layers!");
 		
 		validationLayersCount = propsCount.get(0);
 		
 		validationLayers = VkLayerProperties.calloc(validationLayersCount);
-		err = VK10.nvkEnumerateInstanceLayerProperties(memAddress(propsCount), memAddress(validationLayers));
+		err = vkEnumerateInstanceLayerProperties(propsCount, validationLayers);
 		validate(err, "Failed to enumerate vulkan validation layers!");
 		
 		// Logging information
@@ -70,5 +71,21 @@ public class HardwareManager {
 
 			logger.log(Level.CONFIG, sb.toString());
 		}
+		
+		memFree(propsCount);
+	}
+	
+	
+	
+	private void listDevices() throws VulkanException {
+		
+		IntBuffer deviceCount = memAllocInt(1);
+		int err = vkEnumeratePhysicalDevices(instance, deviceCount, null);
+		validate(err, "Failed to enumerate Vulkan devices!");
+		int devices = deviceCount.get(0);
+		
+		
+		
+		
 	}
 }
