@@ -1,17 +1,25 @@
 package core.rendering;
 
+import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 import static org.lwjgl.vulkan.VK10.vkCreateInstance;
+import static org.lwjgl.vulkan.VK10.vkEnumerateInstanceLayerProperties;
+import static org.lwjgl.vulkan.VK10.vkEnumeratePhysicalDevices;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Collection;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkApplicationInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
+import org.lwjgl.vulkan.VkLayerProperties;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 
+import core.employees.PhysicalDevice;
+import core.managers.Util;
 import core.result.VulkanException;
 import core.result.VulkanResult;
 
@@ -82,4 +90,62 @@ public class RenderUtil {
 		return out;
 	}
 	
+
+	/**
+	 * Lists available validation layers.
+	 * 
+	 * @return						available vulkan validation layers
+	 * @throws VulkanException		when failed to list validation layers.
+	 * @see {@link org.lwjgl.vulkan.VkLayerProperties}
+	 */
+	public static VkLayerProperties[] listAvailableValidationLayers() throws VulkanException {
+		VkLayerProperties.Buffer validationLayers;
+		
+		IntBuffer propsCount = memAllocInt(1);
+		int err = vkEnumerateInstanceLayerProperties(propsCount, null);
+		validate(err, "Failed to obtain the number of vulkan validation layers!");
+		int validationLayersCount = propsCount.get(0);
+		
+		validationLayers = VkLayerProperties.calloc(validationLayersCount);
+		err = vkEnumerateInstanceLayerProperties(propsCount, validationLayers);
+		validate(err, "Failed to enumerate vulkan validation layers!");
+		
+		memFree(propsCount);
+		
+		VkLayerProperties[] props = new VkLayerProperties[validationLayersCount];
+		for (int i = 0; i < validationLayersCount; i++)
+			props[i] = validationLayers.get(i);
+		
+		validationLayers.free();
+		return props;
+	}
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>Enumerate available physical devices.</p>
+	 * <p><b>Note:</b> This method should be invoked only once.</p>
+	 * 
+	 * @param instance				Vulkan instance.
+	 * @throws VulkanException 		when the device enumeration process failed.
+	 */
+	public static VkPhysicalDevice[] enumeratePhysicalDevices(VkInstance instance) throws VulkanException {
+		IntBuffer dev_count = memAllocInt(1);
+		int err = vkEnumeratePhysicalDevices(instance, dev_count, null);
+		validate(err, "Could not enumerate physical devices!");
+		
+		int devCount = dev_count.get(0);
+		PointerBuffer pDevices = memAllocPointer(devCount);
+		
+		err = vkEnumeratePhysicalDevices(instance, dev_count, pDevices);
+		validate(err, "Could not enumerate physical devices!");
+		
+		VkPhysicalDevice[] devices = new VkPhysicalDevice[devCount];
+		for(int i = 0; i < devCount; i++)
+			devices[i] = new VkPhysicalDevice(pDevices.get(i), instance);
+		
+		memFree(dev_count);
+		memFree(pDevices);
+		
+		return devices;
+	}
 }

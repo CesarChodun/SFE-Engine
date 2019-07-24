@@ -32,44 +32,47 @@ public class Application {
 		APP_MAJOR = "APPLICATION_VERSION_MAJOR", APP_MINOR = "APPLICATION_VERSION_MINOR", APP_PATCH = "APPLICATION_VERSION_PATCH";
 	protected static Logger appLogger = Logger.getLogger(Application.class.getName());
 	
-	private File applicationLocation;
-	private VkApplicationInfo applicationInfo; 
-	private Asset appAssets;
-	private Asset configAssets;
+	private static File applicationLocation;
+	private static VkApplicationInfo applicationInfo; 
+	private static Asset appAssets;
+	private static Asset configAssets;
 	
-	public Application(File applicationLocation) throws FileNotFoundException {
-		this.applicationLocation = applicationLocation;
+	public static void init(File appLocation) throws FileNotFoundException {
+		applicationLocation = appLocation;
 		
-		createAppInfo();	
 		appAssets = new Asset(applicationLocation);
 		configAssets = appAssets.getSubAsset(CONFIG_FOLDER_NAME);
+		if (configAssets == null)
+			throw new FileNotFoundException();
+
+		createAppInfo();	
 	}
 	
 	
 	
-	public File getApplicationLocation() {
+	public static File getApplicationLocation() {
 		return applicationLocation;
 	}
 
 
 
-	public void setApplicationLocation(File applicationLocation) {
-		this.applicationLocation = applicationLocation;
+	public static void setApplicationLocation(File appLocation) {
+		applicationLocation = appLocation;
 	}
 
 
 
-	public VkApplicationInfo getApplicationInfo() {
+	public static VkApplicationInfo getApplicationInfo() {
 		return applicationInfo;
 	}
 
 
 
-	public void setApplicationInfo(VkApplicationInfo applicationInfo) {
-		this.applicationInfo = applicationInfo;
+	public static void setApplicationInfo(VkApplicationInfo appInfo) {
+		applicationInfo = appInfo;
 	}
 
-	private void createAppInfo() throws FileNotFoundException {
+	private static void createAppInfo() throws FileNotFoundException {
 		// Creating applicationInfo
 		File appInfoFile = configAssets.get(APPLICATION_INFO_FILE);
 		if (!appInfoFile.exists())
@@ -85,13 +88,19 @@ public class Application {
 			}
 		
 		try {
-			this.applicationInfo = createAppInfo(appInfoFile);
+			applicationInfo = createAppInfo(appInfoFile);
 		} catch (JSONException | FileNotFoundException e) {
 			System.err.println("Failed to locate(or read) app info file!");
 			e.printStackTrace();
 		}
 	}
 	
+	public static Asset getConfigAssets() {
+		return configAssets;
+	}
+
+
+
 	private static VkApplicationInfo createAppInfo(File appInfoFile) throws JSONException, FileNotFoundException {
 		JSONObject obj = new JSONObject(new JSONTokener(new FileReader(appInfoFile)));
 		
