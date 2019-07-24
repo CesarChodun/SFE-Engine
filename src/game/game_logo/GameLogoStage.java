@@ -2,6 +2,7 @@ package game.game_logo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import core.Application;
 import core.HardwareManager;
@@ -10,7 +11,7 @@ import game.GameStage;
 
 public class GameLogoStage implements GameStage{
 	
-	public static void initializeHardware() throws FileNotFoundException, VulkanException {
+	public static void initializeHardware() throws VulkanException, IOException {
 		
 		// Game data initialization(in the current folder)
 		Application.init(new File(""));

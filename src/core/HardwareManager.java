@@ -7,6 +7,7 @@ import static core.rendering.RenderUtil.*;
 import static core.rendering.RenderAssetUtil.*;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +34,9 @@ public class HardwareManager {
 	 * 
 	 * 
 	 * @throws VulkanException
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
-	public static void init(VkApplicationInfo appInfo, Asset config) throws VulkanException, FileNotFoundException {
+	public static void init(VkApplicationInfo appInfo, Asset config) throws VulkanException, IOException {
 		instance = createInstanceFromAsset(appInfo, config);
 		physicalDevices = enumeratePhysicalDevices(instance);
 	}

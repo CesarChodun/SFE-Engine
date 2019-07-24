@@ -2,10 +2,7 @@ package core.rendering;
 
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-import static org.lwjgl.vulkan.VK10.vkCreateInstance;
-import static org.lwjgl.vulkan.VK10.vkEnumerateInstanceLayerProperties;
-import static org.lwjgl.vulkan.VK10.vkEnumeratePhysicalDevices;
+import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -13,13 +10,12 @@ import java.util.Collection;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkApplicationInfo;
+import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 
-import core.employees.PhysicalDevice;
-import core.managers.Util;
 import core.result.VulkanException;
 import core.result.VulkanResult;
 
@@ -71,7 +67,7 @@ public class RenderUtil {
 		
 		PointerBuffer inst = memAllocPointer(1);
 		int err = vkCreateInstance(instanceCreateInfo, null, inst);
-		VulkanResult.validate(err, "Failed to create Vulkan Instane");
+		VulkanResult.validate(err, "Failed to create Vulkan Instance");
 		
 		long instanceAdr = inst.get(0);
 		VkInstance out = new VkInstance(instanceAdr, instanceCreateInfo);
@@ -118,6 +114,33 @@ public class RenderUtil {
 		
 		validationLayers.free();
 		return props;
+	}
+	
+	/**
+	 * Lists available instance extensions.
+	 * 
+	 * @return						available instance extensions.
+	 * @throws VulkanException		when extension enumeration fails.
+	 * @see {@link org.lwjgl.vulkan.VkExtensionProperties}
+	 */
+	public static VkExtensionProperties[] listAvailableExtensions() throws VulkanException {
+		VkExtensionProperties.Buffer extensions;
+		
+		int[] pPropertyCount = new int[1];
+		int err = vkEnumerateInstanceExtensionProperties((CharSequence) null, pPropertyCount, null);
+		validate(err, "Failed to enumerate instance extension properties!");
+		
+		extensions = VkExtensionProperties.calloc(pPropertyCount[0]);
+		err = vkEnumerateInstanceExtensionProperties((CharSequence) null, pPropertyCount, extensions);
+		validate(err, "Failed to enumerate instance extension properties!");
+		
+		VkExtensionProperties[] out = new VkExtensionProperties[pPropertyCount[0]];
+		for (int i = 0; i < pPropertyCount[0]; i++)
+			out[i] = extensions.get(i);
+		
+		extensions.free();
+		
+		return out;
 	}
 	
 	/**

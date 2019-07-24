@@ -3,14 +3,19 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 
+import game.game_hardware_info.HardwareInfoStage;
 import game.game_logo.GameLogoStage;
 
 public class Main {
 
+	private static final boolean DEBUG = true;
+	
 	public static void main(String[] args) {
 		
 		List<GameStage> stages = new ArrayList<GameStage>();
 		stages.add(new GameLogoStage());
+		if (DEBUG)
+			stages.add(new HardwareInfoStage());
 //		...
 //		stages.add(new GameShutDownIcon()); //TODO
 		

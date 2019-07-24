@@ -74,18 +74,20 @@ public class Application {
 
 	private static void createAppInfo() throws FileNotFoundException {
 		// Creating applicationInfo
-		File appInfoFile = configAssets.get(APPLICATION_INFO_FILE);
-		if (!appInfoFile.exists())
+		if (!configAssets.exists(APPLICATION_INFO_FILE)) {
 			try {
 				appLogger.log(Level.WARNING, "Failed to locate app info file!");
 				
-				FileWriter out = new FileWriter(appInfoFile);
-				createJSONAppInfo().write(out);
+				configAssets.newFile(APPLICATION_INFO_FILE);
+				FileWriter out = new FileWriter(configAssets.get(APPLICATION_INFO_FILE));
+				createJSONAppInfo().write(out, 4, 1);
 				out.close();
 			} catch (JSONException | IOException e) {
 				System.err.println("Failed to locate and create the app info file!");
 				e.printStackTrace();
 			}
+		}
+		File appInfoFile = configAssets.get(APPLICATION_INFO_FILE);
 		
 		try {
 			applicationInfo = createAppInfo(appInfoFile);
