@@ -2,7 +2,11 @@ package core.resources;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class Asset {
 
@@ -21,6 +25,16 @@ public class Asset {
 		
 		if(!out.exists())
 			throw new FileNotFoundException("Failed to locate file: " + location.getAbsolutePath() + "/" + path);
+		return out;
+	}
+	
+	public JSONObject getJSON(String path) throws IOException {
+		File file = get(path);
+		
+		FileReader fileReader = new FileReader(file);
+		JSONObject out = new JSONObject(new JSONTokener(fileReader));
+		fileReader.close();
+		
 		return out;
 	}
 	
