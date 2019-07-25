@@ -3,7 +3,9 @@ package game;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.Application;
 import game.game_hardware_info.HardwareInfoStage;
+import game.game_loggs.LogStage;
 import game.game_logo.GameLogoStage;
 
 public class Main {
@@ -13,6 +15,8 @@ public class Main {
 	public static void main(String[] args) {
 		
 		List<GameStage> stages = new ArrayList<GameStage>();
+		if (DEBUG)
+			stages.add(new LogStage());
 		stages.add(new GameLogoStage());
 		if (DEBUG)
 			stages.add(new HardwareInfoStage());
@@ -51,6 +55,7 @@ public class Main {
 	
 	private static void unscheduledShutdown(Exception e) {
 		//TODO: Print the logs and etc.
+		e.printStackTrace();
 	}
 
 	private static void scheduledShutdown() {

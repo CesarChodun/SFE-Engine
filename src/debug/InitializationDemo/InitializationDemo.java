@@ -1,6 +1,7 @@
 package debug.InitializationDemo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -80,9 +81,13 @@ public class InitializationDemo {
 //			e.printStackTrace();
 //		}
 		
-		Application app = new Application(new File("resources/InitializationDemo"));
+		try {
+			Application app = new Application(new File("resources/InitializationDemo"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		Renderer render = new Renderer(app.);
 	}
 	
 }
