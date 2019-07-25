@@ -4,9 +4,12 @@ import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkApplicationInfo;
@@ -20,6 +23,8 @@ import core.result.VulkanException;
 import core.result.VulkanResult;
 
 public class RenderUtil {
+	
+	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
 	/**
 	 * Creates VkInsatnce.
@@ -34,27 +39,38 @@ public class RenderUtil {
 	 */
 	public static VkInstance createInstance(VkApplicationInfo appInfo, Collection<String> validationLayers, Collection<String> extensionNames) throws VulkanException {		
 		
+		//Logger info
+		StringBuilder logString = new StringBuilder();		
+		logString.append("\nCreating an instance with folowing validation layers:\n");
+		
 		// Create ByteBuffer array with names of validation layers.
 		ByteBuffer[] layers = new ByteBuffer[validationLayers.size()];
 		int pos = 0;
-		for(String layerName : validationLayers)
+		for (String layerName : validationLayers) {
 			layers[pos++] = memUTF8(layerName);
+			logString.append("\t" + layerName + "\n");
+		}
 		
 		// Create pointer buffer of the enabled layers.
 		PointerBuffer ppEnabledLayerNames = memAllocPointer(layers.length);
-		for(int i = 0; i < layers.length; i++)
+		for (int i = 0; i < layers.length; i++)
 			ppEnabledLayerNames.put(layers[i]);
 		ppEnabledLayerNames.flip();
+		
+		//Logger info about extensions
+		logString.append("\nAnd folowing extensions:\n");
 		
 		// Create extension name buffers
 		ByteBuffer[] extensions = new ByteBuffer[extensionNames.size()];
 		pos = 0;
-		for(String name : extensionNames)
+		for (String name : extensionNames) {
 			extensions[pos++] = memUTF8(name);
+			logString.append("\t" + name + "\n");
+		}
 		
 		// Create pointer buffer to extension name buffers
 		PointerBuffer ppExtensions = memAllocPointer(extensions.length);
-		for(int i = 0; i < extensions.length; i++)
+		for (int i = 0; i < extensions.length; i++)
 			ppExtensions.put(extensions[i]);
 		ppExtensions.flip();
 		
@@ -82,6 +98,8 @@ public class RenderUtil {
 		memFree(ppEnabledLayerNames);
 		
 		instanceCreateInfo.free();
+		
+		logger.log(Level.CONFIG, logString.toString());
 		
 		return out;
 	}
@@ -163,7 +181,7 @@ public class RenderUtil {
 		validate(err, "Could not enumerate physical devices!");
 		
 		VkPhysicalDevice[] devices = new VkPhysicalDevice[devCount];
-		for(int i = 0; i < devCount; i++)
+		for (int i = 0; i < devCount; i++)
 			devices[i] = new VkPhysicalDevice(pDevices.get(i), instance);
 		
 		memFree(dev_count);
