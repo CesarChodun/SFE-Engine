@@ -3,6 +3,7 @@ package core.hardware;
 import static org.lwjgl.glfw.GLFW.*;
 
 import org.lwjgl.glfw.GLFWGammaRamp;
+import org.lwjgl.glfw.GLFWVidMode;
 
 public class Monitor {
 
@@ -12,6 +13,8 @@ public class Monitor {
 	private int x, y;
 	private int width, height;
 	private float gamma;
+	
+	private GLFWVidMode videoMode;
 	
 	public Monitor(long handle) {
 		this.handle = handle;
@@ -28,11 +31,23 @@ public class Monitor {
 		this.width = width[0];
 		this.height = height[0];
 		
+		videoMode = glfwGetVideoMode(handle);
+		
 		this.gamma = 1.0f;
 		glfwSetGamma(handle, gamma);
 	}
 	
+	public int getWidth() {
+		return videoMode.width();
+	}
 	
+	public int getHeight() {
+		return videoMode.height();
+	}
+	
+	public int getRefreshRate() {
+		return videoMode.refreshRate();
+	}
 
 	public GLFWGammaRamp getGammaRamp() {
 		return glfwGetGammaRamp(handle);
@@ -59,19 +74,19 @@ public class Monitor {
 		return name;
 	}
 
-	public int getX() {
+	public int getWorkAreaX() {
 		return x;
 	}
 
-	public int getY() {
+	public int getWorkAreaY() {
 		return y;
 	}
 
-	public int getWidth() {
+	public int getWorkAreaWidth() {
 		return width;
 	}
 
-	public int getHeight() {
+	public int getWorkAreaHeight() {
 		return height;
 	}
 }

@@ -67,6 +67,7 @@ public class HardwareManager {
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
 		
 		PointerBuffer pMonitors = glfwGetMonitors();
 		int monitorCount = pMonitors.capacity();
@@ -79,7 +80,7 @@ public class HardwareManager {
 		return physicalDevices;
 	}
 	
-	public Monitor getPrimaryMonitor() {
+	public static Monitor getPrimaryMonitor() {
 		return monitors[0];
 	}
 
