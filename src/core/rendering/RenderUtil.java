@@ -2,6 +2,9 @@ package core.rendering;
 
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceFormatsKHR;
+import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfacePresentModesKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 import java.lang.invoke.MethodHandles;
@@ -18,6 +21,8 @@ import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
+import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
+import org.lwjgl.vulkan.VkSurfaceFormatKHR;
 
 import core.result.VulkanException;
 import core.result.VulkanResult;
@@ -26,6 +31,108 @@ public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
+	/**
+	  *	<h5>Description:</h5>
+	  * <p>
+	  * 	Obtains available surface extensions.
+	  * </p>
+	  * @param physicalDevice	- Physical device to obtain properties from.
+	  * @param surface			- Surface handle.
+	  * @return					- Buffer with <b><i><code>VkSurfaceFormatKHR</code></i></b>.
+	 * @throws VulkanException 
+	  * @see 					{@link VkSurfaceFormatKHR}
+	  */
+	public static VkSurfaceFormatKHR.Buffer listSurfaceFormats(VkPhysicalDevice physicalDevice, long surface) throws VulkanException{
+		 IntBuffer pCount = memAllocInt(1);
+		 int err = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pCount, null);
+		 validate(err, "Failed to enumerate surface formats!");
+		 int count = pCount.get(0);
+		 
+		 VkSurfaceFormatKHR.Buffer out = VkSurfaceFormatKHR.calloc(count);
+		 err = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, pCount, out);
+		 memFree(pCount);
+		 validate(err, "Failed to obtain surface formats!");
+		 
+		 return out;
+	 }
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 	Obtains desired color format if possible.
+	 * </p>
+	 * 
+	 * @param physicalDevice		- Physical device to obtain informations from.
+	 * @param surface				- Surface handle.
+	 * @param first					- Index to start iterating from. Most likely <b>0</b>.
+	 * @param desiredFormat			- Most suitable color format.
+	 * @param desiredColorSpace		- Most suitable color space.
+	 * @return						- Returns <b><i><code>ColorFormatAndSpace</code></i></b> that support <b>desiredColorFormat</b>
+	 * 								if possible. Otherwise <b>null</b>.
+	 * @throws VulkanException 
+	 */
+	public static ColorFormatAndSpace getNextColorFormatAndSpace(int first, VkPhysicalDevice physicalDevice, long surface, int desiredFormat, int desiredColorSpace) throws VulkanException {
+		VkSurfaceFormatKHR.Buffer formats = listSurfaceFormats(physicalDevice, surface);
+		ColorFormatAndSpace out = null;
+		int size = formats.remaining();
+		
+		if(size == 1 && formats.get(0).format() == VK_FORMAT_UNDEFINED)
+			return new ColorFormatAndSpace(desiredFormat, desiredColorSpace == -1 ? formats.get(0).colorSpace() : desiredColorSpace);
+		
+		for(int i = first; i < size; i++)
+			if(formats.get(i).format() == desiredFormat || desiredFormat == -1) {
+				out = new ColorFormatAndSpace(formats.get(i).format(), formats.get(i).colorSpace());
+				
+				if(formats.get(i).colorSpace() == desiredColorSpace || desiredColorSpace == -1)
+					break;
+			}
+		
+		formats.free();
+		
+		return out;
+	}
+	
+	/**
+     * <h5>Description:</h5>
+	 * <p>
+	 * 		Gets current surface present modes.
+	 * </p>
+     * @param physicalDevice
+     * @param surface
+     * @return
+	 * @throws VulkanException 
+     */
+    public static IntBuffer getSurfacePresentModes(VkPhysicalDevice physicalDevice, long surface) throws VulkanException {
+    	IntBuffer pCount = memAllocInt(1);
+    	int err = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pCount, null);
+    	validate(err, "Failed to obtain present mode count!");
+    	int count = pCount.get(0);
+    	
+    	IntBuffer modes = memAllocInt(count);
+    	err = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, pCount, modes);
+    	validate(err, "Failed to obtain surface present modes!");
+
+    	memFree(pCount);
+    	return modes;
+    }
+	
+	/**
+	 * Obtains <b><i><code>VkSurfaceCapabilitiesKHR</code></i></b>.
+	 * 
+     * @param physicalDevice 	
+     * @param surface			
+     * @return					Surface capabilities.
+	 * @throws VulkanException 	when failed to obtain surface capabilities.
+     * @see {@link org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR}
+     */
+    public static VkSurfaceCapabilitiesKHR getSurfaceCapabilities(VkPhysicalDevice physicalDevice, long surface) throws VulkanException {
+    	VkSurfaceCapabilitiesKHR pSurfaceCapabilities = VkSurfaceCapabilitiesKHR.calloc();
+    	int err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, pSurfaceCapabilities);
+    	validate(err, "Failed to obtain surface capabilities!");
+    	
+    	return pSurfaceCapabilities;
+    }
+	
 	/**
 	 * Creates VkInsatnce.
 	 * 

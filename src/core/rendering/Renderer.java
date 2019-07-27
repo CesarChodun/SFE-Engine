@@ -1,57 +1,90 @@
 package core.rendering;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.vulkan.KHRSwapchain.*;
+import static org.lwjgl.vulkan.VK10.*;
+import static core.result.VulkanResult.*;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.lwjgl.vulkan.VkApplicationInfo;
-import org.lwjgl.vulkan.VkInstance;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 
-import core.resources.Asset;
+import org.lwjgl.vulkan.VkCommandBuffer;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
+
+import core.rendering.factories.CommandBufferFactory;
+import core.rendering.factories.SwapchainFactory;
 import core.result.VulkanException;
 
-import static core.rendering.RenderUtil.*;
-
-public class Renderer {
+public abstract class Renderer {
 	
-	protected static final String INSTANCE_DATA_FILE = "instance.cfg";
-	protected static final String INSTANCE_VALIDATION_LAYERS = "VALIDATION_LAYERS";
-	protected static final String INSTANCE_EXTENSIONS = "EXTENSIONS";
-
-	private String app;
-	private VkApplicationInfo appInfo;
-	private VkInstance instance;
+	private Window window;
+	private VkDevice device;
 	
-	public Renderer(VkApplicationInfo info, Asset config) throws FileNotFoundException, VulkanException {
-		this.appInfo = info;
-		this.instance = createInstanceFromAsset(info, config);
+	private CommandBufferFactory cmdFactory;
+	private SwapchainFactory swapFactory;
+	
+	private Long swapchain = VK_NULL_HANDLE;
+	private long[] images;
+	private VkCommandBuffer[] commandBuffers;
+
+	public Renderer(Window window, VkDevice device, CommandBufferFactory cmdFactory, SwapchainFactory swapchainFactory) {
+		this.window = window;
+		this.device = device;
 		
+		this.cmdFactory = cmdFactory;
+		this.swapFactory = swapchainFactory;
 	}
 	
-	private static VkInstance createInstanceFromAsset(VkApplicationInfo appInfo, Asset config) throws FileNotFoundException, VulkanException {
-		File cfgFile = config.get(INSTANCE_DATA_FILE);
+	public void update() throws VulkanException {
+		recreateSwapchain();
 		
-		if (!cfgFile.exists())
-			throw new FileNotFoundException("Failed to locate file: " + cfgFile.getPath().toString() + "!");
-		
-		JSONObject obj = new JSONObject(new JSONTokener(new FileReader(cfgFile)));
-		
-		JSONArray layers = obj.getJSONArray(INSTANCE_VALIDATION_LAYERS);
-		List<String> layerNames = new ArrayList<String>(layers.length());
-		for (int i = 0; i < layers.length(); i++)
-			layerNames.add(layers.getString(i));
-		
-		JSONArray extensions = obj.getJSONArray(INSTANCE_EXTENSIONS);
-		List<String> extensionNames = new ArrayList<String>(extensions.length());
-		for (int i = 0; i < extensions.length(); i++)
-			extensionNames.add(extensions.getString(i));
-		
-		return createInstance(appInfo, layerNames, extensionNames);
+		if(this.commandBuffers != null)
+			destroyCmdBuffers();
+		this.commandBuffers = cmdFactory.createCmdBuffers(images);
 	}
+	
+	private void destroyCmdBuffers() {
+		cmdFactory.destroyCmdBuffers(commandBuffers);
+		commandBuffers = null;
+	}
+	
+	private void recreateSwapchain() throws VulkanException {
+		
+    	VkSwapchainCreateInfoKHR createInfo = swapFactory.getCreateInfo(window, swapchain);
+		
+    	//Create swapchain
+    	LongBuffer pSwapchain = memAllocLong(1);
+    	int err = vkCreateSwapchainKHR(device, createInfo, null, pSwapchain);
+    	validate(err, "Failed to recreate swapchain!");
+    	swapchain = pSwapchain.get(0);
+    	
+    	//Destroying old swapchain.
+    	if(swapchain != VK_NULL_HANDLE)
+    		vkDestroySwapchainKHR(device, swapchain, null);
+    	
+    	//Extracting image handles from swapchain.
+    	IntBuffer pSwapchainImageCount = memAllocInt(1);
+    	err = vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, null);
+    	validate(err, "Failed to enumerate swapchain images!");
+    	
+    	int swapchainImageCount = pSwapchainImageCount.get(0);
+    	
+    	LongBuffer pSwapchainImages = memAllocLong(swapchainImageCount);
+    	err = vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
+    	validate(err, "Failed to obtain swapchain images!");
+    	
+    	images = new long[swapchainImageCount];
+    	for(int i = 0; i < swapchainImageCount; i++)
+    		images[i] = pSwapchainImages.get(i);
+    	
+    	//Clean up
+    	memFree(pSwapchain);
+    	memFree(pSwapchainImageCount);
+    	memFree(pSwapchainImages);
+    	createInfo.free();
+	}
+	
+	public abstract void render();
 	
 }
