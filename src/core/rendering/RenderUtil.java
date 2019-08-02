@@ -10,17 +10,22 @@ import static org.lwjgl.vulkan.VK10.*;
 import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkApplicationInfo;
+import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtensionProperties;
+import org.lwjgl.vulkan.VkFenceCreateInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
+import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
 import org.lwjgl.vulkan.VkSurfaceFormatKHR;
 
@@ -31,6 +36,48 @@ public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
 
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 		Creates fence.
+	 * </p>
+	 * @param device	- Logical device
+	 * @param ci		- Fence create info
+	 * @param alloc		- Allocation callbacks
+	 * @return			- Handle to the fence
+	 * @throws VulkanException 
+	 */
+	public static long createFence(VkDevice device, VkFenceCreateInfo ci, VkAllocationCallbacks alloc) throws VulkanException {
+		LongBuffer longBuffer = memAllocLong(1);
+		int err = vkCreateFence(device, ci, null, longBuffer);
+		validate(err, "Failed to acquire semaphore!");
+		
+		memFree(longBuffer);
+		
+		return longBuffer.get(0);
+	}
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 		Creates semaphore.
+	 * </p>
+	 * @param device 	- Logical device
+	 * @param ci		- Semaphore create info
+	 * @param alloc		- Allocation callbacks
+	 * @return			- Handle to the semaphore
+	 * @throws VulkanException 
+	 */
+	public static long createSemaphore(VkDevice device, VkSemaphoreCreateInfo ci, VkAllocationCallbacks alloc) throws VulkanException {	
+		LongBuffer longBuffer = memAllocLong(1);
+		int err = vkCreateSemaphore(device, ci, alloc, longBuffer);
+		validate(err, "Failed to acquire semaphore!");
+		
+		memFree(longBuffer);
+		
+		return longBuffer.get(0);
+	}
+	
 	/**
 	  *	<h5>Description:</h5>
 	  * <p>
