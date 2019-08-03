@@ -7,15 +7,20 @@ import java.util.List;
 
 public class FixedSizeQueue <T> {
 	
+	//TODO: test
+	
 	private int next;
+	private int first;
 	private int size;
 	private List<T> arr;
 
 	public FixedSizeQueue(int capacity) {
+		first = 0;
 		next = 0;
 		size = 0;
 		arr = new ArrayList<T>(capacity);
 		
+		arr.clear();
 		for (int i = 0; i < arr.size(); i++)
 			arr.add(null);
 	}
@@ -27,11 +32,11 @@ public class FixedSizeQueue <T> {
 	 * @return
 	 */
 	public T get(int x) {
-		return arr.get((next + x + 1) % arr.size());
+		return arr.get((first + x) % arr.size());
 	}
 	
 	private T set(int x, T t) {
-		return arr.set((next + x + 1) % arr.size(), t);
+		return arr.set((first + x) % arr.size(), t);
 	}
 	
 	public int size() {
@@ -63,15 +68,20 @@ public class FixedSizeQueue <T> {
 
 	public void clear() {
 		size = 0;
+		first = 0;
+		next = 0;
+		for (int i = 0; i < size; i++)
+			arr.set(i, null);
 	}
 
 	public void add(T e) {
-		set(-1, e);
-		size = Math.min(size + 1, arr.size());
-		next--;
+		size++;
+		set(size, e);
+		size = Math.min(size, arr.size());
+		next++;
 		
-		if (next < 0)
-			next += arr.size();
+		if (next >= arr.size())
+			next -= arr.size();
 	}
 
 	public T pop() {
@@ -79,7 +89,8 @@ public class FixedSizeQueue <T> {
 			return null;
 		
 		size--;
-		return set(0, null);
+		first++;
+		return set(-1, null);
 	}
 
 	public T top() {
