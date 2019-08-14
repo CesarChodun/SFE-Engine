@@ -48,6 +48,15 @@ public class Asset {
 		return out.exists();
 	}
 	
+	public File getAssetLocation() {
+		return location;
+	}
+	
+	@Deprecated
+	public ConfigFile getConfigFile(String path) throws IOException, AssertionError {
+		return new ConfigFile(this, path);
+	}
+	
 	/**
 	 * 
 	 * @see {@link java.io.File.createNewFile()}
