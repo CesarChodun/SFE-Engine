@@ -18,9 +18,11 @@ import java.util.logging.Logger;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkApplicationInfo;
+import org.lwjgl.vulkan.VkCommandPoolCreateInfo;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkFenceCreateInfo;
+import org.lwjgl.vulkan.VkFramebufferCreateInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
@@ -35,7 +37,89 @@ import core.result.VulkanResult;
 public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
-
+	
+	/**
+	 * Creates new command pool.
+	 * 
+	 * @param device			valid vulkan device
+	 * @param queueFamilyIndex	designates a queue family as described 
+	 * 		in section Queue Family Properties. All command buffers allocated
+	 *  	from this command pool must be submitted on queues from the same
+	 *  	queue family.
+	 * @param flags				must be a valid combination of VkCommandPoolCreateFlagBits values
+	 * @return					Command pool handle.
+	 * @throws VulkanException	When command pool creation fails
+	 */
+	public static long createCommandPool(VkDevice device, int queueFamilyIndex, int flags) throws VulkanException {
+		VkCommandPoolCreateInfo createInfo = VkCommandPoolCreateInfo.calloc()
+				.sType(VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO)
+				.pNext(NULL)
+				.flags(flags)
+				.queueFamilyIndex(queueFamilyIndex);
+		
+		LongBuffer pCommandPool = memAllocLong(1);
+		int err = vkCreateCommandPool(device, createInfo, null, pCommandPool);
+		validate(err, "Failed to create command pool!");
+		
+		long out = pCommandPool.get(0);
+		
+		memFree(pCommandPool);
+		createInfo.clear();
+		
+		return out;
+	}
+	
+	/**
+	 * 
+	 * Creeates framebuffers. 
+	 * Has to be invoken on the main thread!
+	 * 
+	 * @param device		vulkan device
+	 * @param renderPass	current render pass
+	 * @param imageViews	image views
+	 * @param attachments	a list of attachments
+	 * @param width			frame buffer width(>0)
+	 * @param height		frame buffer height(>0)
+	 * 
+	 * @return a list of frame buffers binded to corresponding images
+	 * @throws VulkanException	when there was a problem with frame buffers creation process
+	 */
+	public static long[] createFramebuffers(VkDevice device, long renderPass, long[] imageViews, long[] attachments, int width, int height) throws VulkanException {
+		
+		long[] frameBuffers;
+		
+		LongBuffer attachmentsBuffer = memAllocLong(attachments.length);
+		for (int i = 0; i < attachments.length; i++)
+			attachmentsBuffer.put(i, attachments[i]);
+		
+		VkFramebufferCreateInfo frameBufferCreateInfo = VkFramebufferCreateInfo.calloc()
+				.sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
+				.pNext(NULL)
+				.flags(0)
+				.renderPass(renderPass)
+				.pAttachments(attachmentsBuffer)
+				.width(width)
+				.height(height)
+				.layers(1);
+		
+		frameBuffers = new long[imageViews.length];
+		LongBuffer pFramebuffer = memAllocLong(1);
+		
+		for(int i = 0; i < imageViews.length; i++) {
+			pFramebuffer.put(0, imageViews[i]);
+			int err = vkCreateFramebuffer(device, frameBufferCreateInfo, null, pFramebuffer);
+			long framebuffer = pFramebuffer.get(0);
+			validate(err, "Failed to create frame buffer!");
+			frameBuffers[i] = framebuffer;
+		}
+		
+		memFree(pFramebuffer);
+		memFree(attachmentsBuffer);
+		frameBufferCreateInfo.free();
+		
+		return frameBuffers;
+	}
+	
 	/**
 	 * <h5>Description:</h5>
 	 * <p>

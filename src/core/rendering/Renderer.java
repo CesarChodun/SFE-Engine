@@ -40,6 +40,7 @@ public abstract class Renderer {
 	
 	private Long swapchain = VK_NULL_HANDLE;
 	private long[] images;
+	private long[] framebuffers;
 	private VkCommandBuffer[] commandBuffers;
 	
 	
