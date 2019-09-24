@@ -7,15 +7,26 @@ import org.lwjgl.glfw.GLFWVidMode;
 
 public class Monitor {
 
+	/** The unique id of the monitor. */
 	private long handle;
 	
+	/** Name of the monitor. */
 	private String name;
+	/** Work area x and y position. */
 	private int x, y;
+	/** Work area width and height. */
 	private int width, height;
+	/** Monitor's gamma value. */
 	private float gamma;
 	
+	/** Monitor's video mode. */
 	private GLFWVidMode videoMode;
 	
+	/** Creates a new monitor object 
+	 * from the GLFW monitor handle.
+	 * 
+	 * @param handle
+	 */
 	public Monitor(long handle) {
 		this.handle = handle;
 		obtainMonitorData();

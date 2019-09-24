@@ -6,20 +6,25 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceCapabilities
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceFormatsKHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfacePresentModesKHR;
 import static org.lwjgl.vulkan.VK10.*;
+import static core.Util.*;
 
 import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkApplicationInfo;
 import org.lwjgl.vulkan.VkCommandPoolCreateInfo;
 import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkDeviceCreateInfo;
+import org.lwjgl.vulkan.VkDeviceQueueCreateInfo;
 import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkFenceCreateInfo;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
@@ -27,6 +32,8 @@ import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
+import org.lwjgl.vulkan.VkPhysicalDeviceMemoryProperties;
+import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
 import org.lwjgl.vulkan.VkSurfaceFormatKHR;
@@ -37,6 +44,129 @@ import core.result.VulkanResult;
 public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 		Obtains queue from logical device.
+	 * </p>
+	 * @param device
+	 * @param queueFamilyIndex
+	 * @param queueIndex		- If only queue family capabilities are considered queue index should equal <b>0</b>.
+	 * @return
+	 */
+	public static VkQueue getDeviceQueue(VkDevice device, int queueFamilyIndex, int queueIndex) {
+		PointerBuffer pQueue = memAllocPointer(1);
+		vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, pQueue);
+		long queueHandle = pQueue.get(0);
+		memFree(pQueue);
+		return new VkQueue(queueHandle, device);
+	}
+	
+	
+	/**
+	 * 
+	 * Creates <code><b><i>LogicalDevice</i></b></code> with given parameters.
+	 * 
+	 * @param dev					- <b>Must</b> be a valid <code><b><i>PhysicalDevice</i></b></code>.
+	 * @param requiredQueueFlags	- Bitwise <b>OR</b> of required queue flags.
+	 * @param layers				- Layers to be enabled.
+	 * @param extensions			- Needed extensions.
+	 * @return	<p>Valid LogicalDevice.</p>
+	 * @throws VulkanException 		when device creation process fails.
+	 * @see {@link core.employees.LogicalDevice}
+	 */
+	public static VkDevice createLogicalDevice(VkPhysicalDevice dev, int queueFamilyIndex, FloatBuffer queuePriorities, int flags, @Nullable Collection<String> layers, @Nullable Collection<String> extensions) throws VulkanException {
+
+		ByteBuffer[] layersBuff = null;
+		if (layers != null)
+			layersBuff = makeByteBuffers(layers);
+		
+		PointerBuffer pExtensions = null;
+		
+		if (extensions != null) {
+			ByteBuffer[] extensionsBuff = makeByteBuffers(extensions);
+			pExtensions = makePointer(extensionsBuff);
+		}
+		
+		return createLogicalDevice(dev, queueFamilyIndex, queuePriorities, flags, layersBuff, pExtensions);
+	}
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>Creates <code><b><i>LogicalDevice</i></b></code> with given parameters.</p>
+	 * @param dev					- <b>Must</b> be a valid <code><b><i>PhysicalDevice</i></b></code>.
+	 * @param requiredQueueFlags	- Bitwise <b>OR</b> of required queue flags.
+	 * @param layers				- Layers to be enabled.
+	 * @param extensions			- Needed extensions.
+	 * @return	<p>Valid LogicalDevice.</p>
+	 * @throws VulkanException 		when device creation process fails.
+	 * @see {@link core.employees.LogicalDevice}
+	 */
+	public static VkDevice createLogicalDevice(VkPhysicalDevice dev, int queueFamilyIndex, FloatBuffer queuePriorities, int flags, @Nullable ByteBuffer[] layers, @Nullable PointerBuffer extensions) throws VulkanException {
+		VkDevice out = null;
+		
+		PointerBuffer ppEnabledLayerNames = (layers == null) ? null : makePointer(layers);
+		
+		VkDeviceQueueCreateInfo.Buffer deviceQueueCreateInfo = VkDeviceQueueCreateInfo.calloc(1)
+				.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
+				.pNext(NULL)
+				.queueFamilyIndex(queueFamilyIndex)
+				.pQueuePriorities(queuePriorities);
+		
+		VkDeviceCreateInfo deviceCreateInfo = VkDeviceCreateInfo.calloc()
+				.sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
+				.pNext(NULL)
+				.flags(flags)
+				.pQueueCreateInfos(deviceQueueCreateInfo)
+				.ppEnabledLayerNames(ppEnabledLayerNames)
+				.ppEnabledExtensionNames(extensions);
+		
+		PointerBuffer pdev = memAllocPointer(1);
+		int err = vkCreateDevice(dev, deviceCreateInfo, null, pdev);
+		validate(err, "Failed to create logical device!");
+		
+		long ldev = pdev.get(0);
+		out = new VkDevice(ldev, dev, deviceCreateInfo);
+
+		deviceCreateInfo.free();
+		deviceQueueCreateInfo.free();
+		
+		memFree(queuePriorities);
+		memFree(ppEnabledLayerNames);
+		memFree(pdev);
+		
+		return out;
+	}
+	
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 			Returns memory type that meets requirements.
+	 * </p>
+	 * @param memoryProperties	- Memory properties.
+	 * @param bits				- Interesting indices.
+	 * @param properties		- Properties that memory type should meet.
+	 * @param typeIndex			- Integer buffer for returned value.
+	 * @return					- Information about successfulness of the operation(true - success, false - fail).
+	 */
+	 public static boolean getMemoryType(VkPhysicalDevice device, int bits, int properties, IntBuffer typeIndex) {
+		 VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties.calloc();
+		 vkGetPhysicalDeviceMemoryProperties(device, memoryProperties);
+		 
+		 boolean ret = false;
+		 
+		 for(int i = 0; i < 32; i++) 
+			 if((bits & (1<<i)) > 0)
+				 if((memoryProperties.memoryTypes(i).propertyFlags() & properties) == properties) {
+					 typeIndex.put(0, i);
+					 ret = true;
+					 break;
+				 }
+		 
+		 memoryProperties.free();
+		 return ret;
+	 }
 	
 	/**
 	 * Creates new command pool.

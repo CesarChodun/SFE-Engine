@@ -1,5 +1,7 @@
 package game.game_logo;
 
+
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -10,20 +12,31 @@ import core.HardwareManager;
 import core.hardware.Monitor;
 import core.rendering.Window;
 import core.resources.Asset;
-import core.resources.Dimension;
+import core.resources.ConfigFile;
+import core.resources.ResourceUtil;
 import core.result.VulkanException;
 
-public class GameLogoWindow{
+public class GameLogoWindow {
 	
 	protected static final String GAME_LOGO_WINDOW_ASSET = "LogoWindowLauncher";
 	protected static final String WINDOW_CONFIG_FILE = "window.cfg";
 	
 	protected static final String 
-			WINDOW_NAME_KEY = "WindowName",
+			WINDOW_NAME_KEY = "WINDOW_NAME",
 			WIDTH_KEY = "WIDTH",
 			HEIGHT_KEY = "HEIGHT",
 			POSX_KEY = "POSX",
-			POSY_KEY = "POSY";
+			POSY_KEY = "POSY",
+			FULLSCREEN_KEY = "FULSCREEN";
+	
+	protected static final String 
+			DEFAULT_WINDOW_NAME = "window",
+			DEFAULT_WIDTH = "50%",
+			DEFAULT_HEIGHT = "50%",
+			DEFAULT_POSX = "0",
+			DEFAULT_POSY = "0";
+	protected static final Boolean
+			DEFAULT_FULLSCREEN = false;
 	
 	protected Asset config;
 	private Window window;
@@ -45,38 +58,22 @@ public class GameLogoWindow{
 	}
 	
 	private static Window createLogoWindow(Asset config) throws JSONException, VulkanException, IOException {
-		
-		if (!config.exists(WINDOW_CONFIG_FILE))
-			createDefaultWindowCFG(config);
-		
-		JSONObject windowcfg = config.getJSON(WINDOW_CONFIG_FILE);
+		ConfigFile windowcfg = config.getConfigFile(WINDOW_CONFIG_FILE);
 		
 		Monitor monitor = HardwareManager.getPrimaryMonitor();
-		int width = Dimension.toPx(windowcfg.getString(WIDTH_KEY), monitor.getWidth());
-		int height = Dimension.toPx(windowcfg.getString(HEIGHT_KEY), monitor.getHeight());
-		int x = Dimension.toPx(windowcfg.getString(POSX_KEY), monitor.getWidth());
-		int y = Dimension.toPx(windowcfg.getString(POSY_KEY), monitor.getHeight());
+		int width = ResourceUtil.toPx(windowcfg.getString(WIDTH_KEY, DEFAULT_WIDTH), monitor.getWidth());
+		int height = ResourceUtil.toPx(windowcfg.getString(HEIGHT_KEY, DEFAULT_HEIGHT), monitor.getHeight());
+		int x = ResourceUtil.toPx(windowcfg.getString(POSX_KEY, DEFAULT_POSX), monitor.getWidth());
+		int y = ResourceUtil.toPx(windowcfg.getString(POSY_KEY, DEFAULT_POSY), monitor.getHeight());
+		boolean fullscreen = windowcfg.getBoolean(FULLSCREEN_KEY, DEFAULT_FULLSCREEN);
 		
-		Window window = new Window(HardwareManager.getInstance(), windowcfg.getString(WINDOW_NAME_KEY), x, y, 
-				width, height);
+		
+		Window window = new Window(HardwareManager.getInstance(), windowcfg.getString(WINDOW_NAME_KEY, DEFAULT_WINDOW_NAME), x, y, 
+				width, height, fullscreen);
+		
+		windowcfg.close();
 		
 		return window;
-	}
-	
-	private static void createDefaultWindowCFG(Asset asset) throws IOException {
-		asset.newFile(WINDOW_CONFIG_FILE);
-		
-		JSONObject json = new JSONObject();
-		
-		json.put(WINDOW_NAME_KEY, "Window name");
-		json.put(WIDTH_KEY, "200");
-		json.put(HEIGHT_KEY, "200");
-		json.put(POSX_KEY, "200");
-		json.put(POSY_KEY, "200");
-		
-		FileWriter writer = new FileWriter(asset.get(WINDOW_CONFIG_FILE));
-		json.write(writer, 4, 1);
-		writer.close();
 	}
 
 	public Window getWindow() {

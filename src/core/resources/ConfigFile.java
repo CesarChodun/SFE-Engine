@@ -20,6 +20,8 @@ import org.json.JSONObject;
 public class ConfigFile implements Closeable{
 	
 	private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
+	
+	private static final Level NULL_PARAMETER_RETURNED = Level.FINER;
 
 	boolean created = false;
 	private JSONObject file;
@@ -42,7 +44,7 @@ public class ConfigFile implements Closeable{
 				throw new AssertionError("Failed to create json file!");
 			created = true;
 			
-			this.file = asset.getJSON(path);
+			this.file = new JSONObject();//asset.getJSON(path);
 		}
 	}
 	
@@ -80,10 +82,10 @@ public class ConfigFile implements Closeable{
 	
 	public String getString(String key, String defaultValue) {
 		
-		if (!file.isNull(key))
+		if (!file.isNull(key)) 
 			return file.getString(key);
 		
-		file.append(key, defaultValue);
+		file.put(key, defaultValue);
 		return defaultValue;
 	}
 	
@@ -92,7 +94,7 @@ public class ConfigFile implements Closeable{
 		if (!file.isNull(key))
 			return file.getInt(key);
 		
-		file.append(key, defaultValue);
+		file.put(key, (int) defaultValue);
 		return defaultValue;
 	}
 
@@ -101,7 +103,7 @@ public class ConfigFile implements Closeable{
 		if (!file.isNull(key))
 			return file.getFloat(key);
 		
-		file.append(key, defaultValue);
+		file.put(key, (float) defaultValue);
 		return defaultValue;
 	}
 	
@@ -110,16 +112,16 @@ public class ConfigFile implements Closeable{
 		if (!file.isNull(key))
 			return file.getDouble(key);
 		
-		file.append(key, defaultValue);
+		file.put(key, (double) defaultValue);
 		return defaultValue;
 	}
 	
-	public Boolean getString(String key, Boolean defaultValue) {
+	public Boolean getBoolean(String key, Boolean defaultValue) {
 		
 		if (!file.isNull(key))
 			return file.getBoolean(key);
 		
-		file.append(key, defaultValue);
+		file.put(key, (boolean) defaultValue);
 		return defaultValue;
 	}
 }

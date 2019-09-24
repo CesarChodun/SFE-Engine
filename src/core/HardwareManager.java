@@ -1,7 +1,5 @@
 package core;
 
-import static org.lwjgl.vulkan.VK10.*;
-import static core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static core.rendering.RenderUtil.*;
 import static core.rendering.RenderAssetUtil.*;
@@ -9,19 +7,15 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static core.hardware.HardwareUtil.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkApplicationInfo;
 import org.lwjgl.vulkan.VkInstance;
-import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkQueueFamilyProperties;
 
@@ -33,24 +27,35 @@ import core.resources.ResourceUtil;
 import core.result.GLFWError;
 import core.result.VulkanException;
 
+/**
+ * Class for hardware management.
+ * And Vulkan configuration.
+ */
 public class HardwareManager {
 	
+	/** Configuration files. */
 	private static final String 
 		HARDWARE_ASSET_FILE = "hardware",
 		HARDWARE_CFG = "hardware.cfg";
 	
+	/** Name of the queue family requirements field. */
 	private static final String QUEUE_FAMILY_REQUIREMENTS_KEY = "queue_requirements";
 	
+	/***/
 	private static final String CLASS_NAME = HardwareManager.class.getName();
+	/** Default logger for this class. */
 	protected static final Logger logger = Logger.getLogger(CLASS_NAME);
 	
+	/** A list of required extensions. */
 	private static String[] requiredExtensions;
 	
+	/** Vulkan Instance. */
 	private static VkInstance instance;
+	/** A list of available vulkan devices. */
 	private static VkPhysicalDevice[] physicalDevices;
-	
+	/** A list of available monitors(displays). */
 	private static Monitor[] monitors;
-
+	/** Hardware configuration file. */
 	private static ConfigFile hardwareCFG;
 	
 	/**
@@ -65,7 +70,7 @@ public class HardwareManager {
 		instance = createInstanceFromAsset(appInfo, config, requiredExtensions);
 		physicalDevices = enumeratePhysicalDevices(instance);
 		
-		hardwareCFG = config.getSubAsset(HARDWARE_ASSET_FILE).getConfigFile(HARDWARE_CFG);
+		hardwareCFG = new ConfigFile(config.getSubAsset(HARDWARE_ASSET_FILE), HARDWARE_CFG);
 	}
 	
 	/**
@@ -190,6 +195,9 @@ public class HardwareManager {
 		return instance;
 	}
 	
+	/**
+	 * Destroys the hardware manager data(invoke after shutting down the engine).
+	 */
 	public static void destroy() {
 		hardwareCFG.close();
 	}

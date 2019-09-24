@@ -18,7 +18,9 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkCommandBufferAllocateInfo;
 import org.lwjgl.vulkan.VkCommandBufferBeginInfo;
 import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkRenderPassBeginInfo;
+import org.lwjgl.vulkan.VkViewport;
 
 import core.rendering.recording.Recordable;
 import core.resources.Asset;
@@ -80,7 +82,7 @@ public class CommandBufferFactory{
 		cfg.close();
 	}
 
-	public VkCommandBuffer[] createCmdBuffers(long[] framebuffers) {
+	public VkCommandBuffer[] createCmdBuffers(int width, int height, long... framebuffers) {
 		long commandPool;
 		try {
 			commandPool = createCommandPool(device, queueFamilyIndex, flags);
@@ -91,14 +93,14 @@ public class CommandBufferFactory{
 		
 		VkCommandBuffer[] commandBuffers;
 		
-		VkClearValue.Buffer cv = VkClearValue.calloc(2);
-		cv.get(0).color()
+		VkClearValue.Buffer cv = VkClearValue.calloc(1);
+		cv.color()
 			.float32(0, clearValues[0])
             .float32(1, clearValues[1])
             .float32(2, clearValues[2])
             .float32(3, clearValues[3]);
-		cv.get(1).depthStencil()
-			.depth(1f);
+//		cv.get(1).depthStencil()
+//			.depth(1f);
 		
 		VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)
@@ -106,8 +108,8 @@ public class CommandBufferFactory{
 				.renderPass(renderPass)
 				.pClearValues(cv);
 		
-//		renderPassBeginInfo.renderArea().offset().set(0, 0);
-//		renderPassBeginInfo.renderArea().extent().set(width, height);
+		renderPassBeginInfo.renderArea().offset().set(0, 0);
+		renderPassBeginInfo.renderArea().extent().set(width, height);
 		
 		VkCommandBufferAllocateInfo cbai = VkCommandBufferAllocateInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)
@@ -121,18 +123,18 @@ public class CommandBufferFactory{
 				.pNext(NULL);
 		
 		// Update dynamic viewport state
-//		VkViewport.Buffer viewport = VkViewport.calloc(1)
-//				.height(height)
-//				.width(width)
-//				.minDepth(0.0f)
-//				.maxDepth(1.0f)
-//				.x(0)
-//				.y(0);
+		VkViewport.Buffer viewport = VkViewport.calloc(1)
+				.height(height)
+				.width(width)
+				.minDepth(0.0f)
+				.maxDepth(1.0f)
+				.x(0)
+				.y(0);
 
-		//Update dynamic scissor state
-//		VkRect2D.Buffer scissor = VkRect2D.calloc(1);
-//		scissor.extent().set(width, height);
-//		scissor.offset().set(0, 0);
+//		Update dynamic scissor state
+		VkRect2D.Buffer scissor = VkRect2D.calloc(1);
+		scissor.extent().set(width, height);
+		scissor.offset().set(0, 0);
 		
 		PointerBuffer pCommandBuffer = memAllocPointer(framebuffers.length);
 		int err = vkAllocateCommandBuffers(device, cbai, pCommandBuffer);
@@ -145,9 +147,9 @@ public class CommandBufferFactory{
 		
 		commandBuffers = new VkCommandBuffer[framebuffers.length];
 		
-//		IntBuffer descOffsets = memAllocInt(1);
-//		descOffsets.put(0);
-//		descOffsets.flip();
+		IntBuffer descOffsets = memAllocInt(1);
+		descOffsets.put(0);
+		descOffsets.flip();
 		
 		for(int i = 0; i < framebuffers.length; i++) {
 //			LongBuffer pDesc = memAllocLong(2);
@@ -168,10 +170,12 @@ public class CommandBufferFactory{
 			
 			vkCmdBeginRenderPass(commandBuffers[i], renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
+
+			vkCmdSetViewport(commandBuffers[i], 0, viewport);
+			vkCmdSetScissor(commandBuffers[i], 0, scissor);
+			
 			cmdWork.record(commandBuffers[i]);
 			
-//			vkCmdSetViewport(commandBuffers[i], 0, viewport);
-//			vkCmdSetScissor(commandBuffers[i], 0, scissor);
 ////			
 //			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 			

@@ -1,5 +1,10 @@
 package core.result;
 
+/**
+ * 
+ * @author Cezary Chodun
+ *
+ */
 public class GLFWError extends Error {
 	
 	/**
@@ -8,6 +13,9 @@ public class GLFWError extends Error {
 	private static final long serialVersionUID = 4381649662106122057L;
 	private String message;
 	
+	/**
+	 * 
+	 */
 	public GLFWError() {}
 	
 	public GLFWError(String message) {

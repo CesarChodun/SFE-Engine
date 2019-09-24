@@ -8,20 +8,24 @@ import static core.result.VulkanResult.*;
 
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFenceCreateInfo;
+import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkPresentInfoKHR;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 import org.lwjgl.vulkan.VkSubmitInfo;
+import org.lwjgl.vulkan.VkSubresourceLayout;
 import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
 
-import core.dataStructures.FixedSizeQueue;
 import core.rendering.factories.CommandBufferFactory;
+import core.rendering.factories.FrameBufferFactory;
 import core.rendering.factories.SwapchainFactory;
 import core.result.VulkanException;
 
@@ -30,21 +34,24 @@ import core.result.VulkanException;
  * @author Cezary Chodun
  *
  */
-public abstract class Renderer {
+public class Renderer {
 	
 	private Window window;
 	private VkDevice device;
 	
 	private CommandBufferFactory cmdFactory;
 	private SwapchainFactory swapFactory;
+	private FrameBufferFactory fbFactory;
+	private VkImageViewCreateInfo imageViewCreateInfo;
 	
 	private Long swapchain = VK_NULL_HANDLE;
 	private long[] images;
+	private long[] imageViews;
 	private long[] framebuffers;
 	private VkCommandBuffer[] commandBuffers;
 	
 	
-	private FixedSizeQueue<Integer> 
+	private List<Integer> 
 	renderImageIndices, 
 	busyFrames;
 
@@ -67,17 +74,32 @@ public abstract class Renderer {
 	private VkQueue queue;
 	
 	//Must be freed
-	private LongBuffer pSwapchains;
+	private LongBuffer pSwapchain;
 	//Must be freed
 	private IntBuffer pImageIndex;
 	
+	private int width, height;
 
-	public Renderer(Window window, VkDevice device, VkQueue queue, CommandBufferFactory cmdFactory, SwapchainFactory swapchainFactory) {
+	public Renderer(
+			Window window, 
+			VkDevice device, 
+			VkQueue queue, 
+			VkImageViewCreateInfo imageViewCreateInfo,
+			CommandBufferFactory cmdFactory, 
+			SwapchainFactory swapchainFactory, 
+			FrameBufferFactory frameBufferFactory) {
+		
 		this.window = window;
 		this.device = device;
+		this.queue = queue;
+		this.imageViewCreateInfo = imageViewCreateInfo;
+		
+		if (device.getCapabilities().vkCreateSwapchainKHR == NULL)
+			throw new AssertionError("The device cannot create the swapchain.");
 		
 		this.cmdFactory = cmdFactory;
 		this.swapFactory = swapchainFactory;
+		this.fbFactory = frameBufferFactory;
 		
 		initRenderingResources();
 	}
@@ -96,8 +118,7 @@ public abstract class Renderer {
 		pSignalSemaphores = memAllocLong(1);
 		pCommandBuffers = memAllocPointer(1);
 
-		pSwapchains = memAllocLong(1);
-		pSwapchains.put(swapchain).flip();
+		pSwapchain = memAllocLong(1);
 		
 		pImageIndex = memAllocInt(1);
 		pImageIndex.put(0).flip();
@@ -106,7 +127,7 @@ public abstract class Renderer {
 				.sType(VK_STRUCTURE_TYPE_PRESENT_INFO_KHR)
 				.pNext(NULL)
 				.swapchainCount(1)
-				.pSwapchains(pSwapchains)
+				.pSwapchains(pSwapchain)
 				.pImageIndices(pImageIndex)
 				.pWaitSemaphores(null)
 				.pResults(null);
@@ -115,17 +136,30 @@ public abstract class Renderer {
 				.sType(VK_STRUCTURE_TYPE_FENCE_CREATE_INFO)
 				.pNext(NULL)
 				.flags(0);
+		
+		IntBuffer pWaitDstStageMask = memAllocInt(1);
+        pWaitDstStageMask.put(0, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+		
+		submitInfo = VkSubmitInfo.calloc()
+				.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO)
+                .pNext(NULL)
+                .pWaitDstStageMask(pWaitDstStageMask);
+//                .waitSemaphoreCount(pImageAcquiredSemaphore.remaining())
+//                .pWaitSemaphores(pImageAcquiredSemaphore)
+//                .pWaitDstStageMask(pWaitDstStageMask)
+//                .pCommandBuffers(pCommandBuffers)
+//                .pSignalSemaphores(pRenderCompleteSemaphore);
 	}
 	
 	public void update() throws VulkanException {
 		recreateSwapchain();
 		
-		if(this.commandBuffers != null)
+		if(this.commandBuffers != null) 
 			destroyCmdBuffers();
-		this.commandBuffers = cmdFactory.createCmdBuffers(images);
+		this.commandBuffers = cmdFactory.createCmdBuffers(width, height, framebuffers);
 		
-		renderImageIndices = new FixedSizeQueue<Integer>(images.length);
-		busyFrames = new FixedSizeQueue<Integer>(images.length);
+		renderImageIndices = new ArrayList<Integer>(images.length);
+		busyFrames = new ArrayList<Integer>(images.length);
 		
 		//Clean up
 		for (int i = 0; i < imageAcquireSemaphores.length; i++) {
@@ -155,19 +189,62 @@ public abstract class Renderer {
 		commandBuffers = null;
 	}
 	
+	@Deprecated //TODO remove
+	/**
+     * <h5>Description:</h5>
+	 * <p>
+	 * 		Creates image views(swapchain <b>must</b> be created before this call).
+	 * </p>
+     * @param device
+     * @param colorAttachmentView
+     */
+    public long[] createImageViews(VkDevice device, VkImageViewCreateInfo colorAttachmentView, long... images) throws VulkanException {
+    	
+    	long[] imageViews = new long[images.length];
+    	
+    	LongBuffer pView = memAllocLong(1);
+    	for(int i = 0; i < images.length; i++) {
+    		colorAttachmentView.image(images[i]);
+    		int err = vkCreateImageView(device, colorAttachmentView, null, pView);
+    		validate(err, "Failed to create image view.");
+    		
+    		imageViews[i] = pView.get(0);
+    	}
+    	
+    	memFree(pView);
+    	
+    	return imageViews;
+    }
+    
+	@Deprecated //TODO remove
+    /**
+     * <h5>Description:</h5>
+	 * <p>
+	 * 		Destroys swapchain image views.
+	 * 		<b>Note</b> when creating new swapchain image views from the old one are deleted automatically.
+	 * </p>
+     * @param device
+     */
+    public void destroyImageViews(VkDevice device, long...imageViews) {    	
+    	for(int i = 0; i < imageViews.length; i++)
+    		vkDestroyImageView(device, imageViews[i], null);
+    }
+	
 	private void recreateSwapchain() throws VulkanException {
 		
     	VkSwapchainCreateInfoKHR createInfo = swapFactory.getCreateInfo(window, swapchain);
-		
-    	//Create swapchain
-    	LongBuffer pSwapchain = memAllocLong(1);
-    	int err = vkCreateSwapchainKHR(device, createInfo, null, pSwapchain);
-    	validate(err, "Failed to recreate swapchain!");
-    	swapchain = pSwapchain.get(0);
+    	width = createInfo.imageExtent().width();
+    	height = createInfo.imageExtent().height();
+    	
     	
     	//Destroying old swapchain.
     	if(swapchain != VK_NULL_HANDLE)
     		vkDestroySwapchainKHR(device, swapchain, null);
+    	
+    	//Create swapchain
+    	int err = vkCreateSwapchainKHR(device, createInfo, null, pSwapchain);
+    	validate(err, "Failed to recreate swapchain!");
+    	swapchain = pSwapchain.get(0);
     	
     	//Extracting image handles from swapchain.
     	IntBuffer pSwapchainImageCount = memAllocInt(1);
@@ -180,17 +257,29 @@ public abstract class Renderer {
     	err = vkGetSwapchainImagesKHR(device, swapchain, pSwapchainImageCount, pSwapchainImages);
     	validate(err, "Failed to obtain swapchain images!");
     	
+    	
     	images = new long[swapchainImageCount];
     	for(int i = 0; i < swapchainImageCount; i++)
     		images[i] = pSwapchainImages.get(i);
     	
+
+    	if(imageViews != null)
+    		destroyImageViews(device);
+    	imageViews = createImageViews(device, imageViewCreateInfo, images);
+    	
+    	//Create framebuffers
+    	if (framebuffers != null)
+    		fbFactory.destroyFramebuffers(framebuffers);
+    	framebuffers = fbFactory.createFramebuffers(width, height, imageViews);
+    	
     	//Clean up
-    	memFree(pSwapchain);
     	memFree(pSwapchainImageCount);
     	memFree(pSwapchainImages);
     	createInfo.free();
 	}
 
+	//TODO
+	private int workingImages = 0;
 	
 	/**
 	 * 
@@ -200,9 +289,15 @@ public abstract class Renderer {
 	 */
 	public boolean acquireNextImage() throws VulkanException {
 		
+		if (images == null)
+			update();
+		
 		// Checks whether there are free images
-		if (renderImageIndices.size() == images.length)
+//		if (renderImageIndices.size() + busyFrames.size() == images.length)
+//			return false;
+		if (workingImages >= images.length)
 			return false;
+		workingImages++;
 		
 		long semaphore = createSemaphore(device, imageAcquireSemaphoreCreateInfo, null);
 		
@@ -219,16 +314,13 @@ public abstract class Renderer {
 	}
 	
 	public boolean submitToQueue() throws VulkanException {
-		
-		Integer imageIndex = renderImageIndices.top();
-		if (imageIndex == null)
+		if (renderImageIndices.size() == 0)
 			return false;
 		
-		if (vkGetFenceStatus(device, workDoneFences[imageIndex]) != VK_SUCCESS)
-			return false;
-		renderImageIndices.pop();
+		Integer imageIndex = renderImageIndices.remove(0);	
 		
-		vkDestroySemaphore(device, renderCompleteSemaphores[imageIndex], null);
+		if (renderCompleteSemaphores[imageIndex] != VK_NULL_HANDLE)
+			vkDestroySemaphore(device, renderCompleteSemaphores[imageIndex], null);
 		renderCompleteSemaphores[imageIndex] = createSemaphore(device, renderCompleteSemaphoreCreateInfo, null);
 		
 		pWaitSemaphores.put(0, imageAcquireSemaphores[imageIndex]);
@@ -251,9 +343,14 @@ public abstract class Renderer {
 	}
 	
 	public boolean presentKHR() throws VulkanException {
-		Integer imageIndex = busyFrames.pop();
-		if (imageIndex == null)
+		if (busyFrames.size() == 0)
 			return false;
+		Integer imageIndex = busyFrames.get(0);
+		
+
+		if (vkGetFenceStatus(device, workDoneFences[imageIndex]) != VK_SUCCESS)
+			return false;
+		imageIndex = busyFrames.remove(0);
 		
 		pSignalSemaphores.put(0, renderCompleteSemaphores[imageIndex]);
 		
@@ -262,6 +359,9 @@ public abstract class Renderer {
 		
 		int err = vkQueuePresentKHR(queue, presentInfo);
 		validate(err, "Failed to present image!");
+		
+		//TODO remove
+		workingImages--;
 		
 		return true;
 	}

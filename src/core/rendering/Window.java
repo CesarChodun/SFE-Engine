@@ -1,13 +1,11 @@
 package core.rendering;
 
 import static org.lwjgl.system.MemoryUtil.*;
-import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 import java.nio.LongBuffer;
 
 import org.lwjgl.vulkan.VkInstance;
 
-import core.hardware.Monitor;
 import core.result.VulkanException;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -22,12 +20,18 @@ import static core.result.VulkanResult.*;
  */
 public class Window {
 	
+	/** Default settings for window size and position. */
 	public static final int DEFAULT_WIDTH = 800, DEFAULT_HEIGHT = 600, DEFAULT_X = 0, DEFAULT_Y = 0;
+	/** Default name setting. */
 	public static final String DEFAULT_NAME = "Window";
 
+	/** Window properties. */
 	private int width = DEFAULT_WIDTH, height = DEFAULT_HEIGHT, x = DEFAULT_X, y = DEFAULT_Y;
+	/** Window name. */
 	private String name = DEFAULT_NAME;
+	/** Window id. */
 	private long windowID;
+	/** Corresponding window surface. */
 	private long surface;
 	
 	/**
@@ -49,6 +53,26 @@ public class Window {
 	public Window(VkInstance instance, String name) throws VulkanException {
 		this.name = name;
 		createWindow(instance, NULL);
+	}
+	
+	/**
+	 * Creates a full screen window, or a window
+	 * with default dimensions.
+	 * 
+	 * @param instance
+	 * @param name
+	 * @param fullScreen
+	 * @throws VulkanException
+	 */
+	public Window(VkInstance instance, String name, int width, int height, boolean fullScreen) throws VulkanException {				
+		this.name = name;
+		this.width = width;
+		this.height = height;
+		
+		if(fullScreen == false)
+			createWindow(instance, NULL);
+		else
+			createWindow(instance, glfwGetPrimaryMonitor());
 	}
 	
 	/**
@@ -126,7 +150,8 @@ public class Window {
 	 */
 	private void createWindow(VkInstance instance, long monitor) throws VulkanException {
 		windowID = glfwCreateWindow(width, height, name, monitor, NULL);
-		setPos(x, y);
+		if (monitor == NULL)
+			setPos(x, y);
 		
 		LongBuffer pSurface = memAllocLong(1);
 		int err = glfwCreateWindowSurface(instance, windowID, null, pSurface);
@@ -135,16 +160,19 @@ public class Window {
 		memFree(pSurface);
 	}
 	
+	/** Destroys the Window. */
 	public void destroyWindow() {
 		glfwDestroyWindow(windowID);
 	}
 	
+	/** Sets visibility of the window. */
 	public void setVisible(boolean val) {
 		if(val)
 			glfwShowWindow(windowID);
 		else
 			glfwHideWindow(windowID);
 	}
+	/** Tells whether the Window is currently visible. */
 	public boolean isVsible() {
 		return ((glfwGetWindowAttrib(windowID, GLFW_VISIBLE) == 0)? true : false);
 	}
@@ -163,6 +191,9 @@ public class Window {
 	public void setWindowHint(int hint, int val) {
 		glfwWindowHint(hint, val);
 	}
+	public int getWindowAttrib(int hint) {
+		return glfwGetWindowAttrib(windowID, hint);
+	}
 	public void fullScreen(boolean full) {
 		if(full == true)
 			glfwSetWindowMonitor(windowID, glfwGetPrimaryMonitor(), x, y, width, height, GLFW_DONT_CARE);
@@ -170,6 +201,7 @@ public class Window {
 			glfwSetWindowMonitor(windowID, NULL, x, y, width, height, GLFW_DONT_CARE);
 	}
 	
+	/** Returns the window GLFW handle. */
 	public long getWindowID() {
 		return windowID;
 	}

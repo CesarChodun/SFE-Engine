@@ -5,15 +5,30 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * 
+ * Quick access queue data structure.
+ * 
+ * @author Cezary Chodun
+ *
+ * @param <T>	The data type.
+ */
 public class FixedSizeQueue <T> {
 	
-	//TODO: test
-	
+	/** Position for the next element. */
 	private int next;
+	/** Position of the first element. */
 	private int first;
+	/** Size of the queue. */
 	private int size;
+	/** Storage data structure. */
 	private List<T> arr;
 
+	/**
+	 * Creates the queue.
+	 * 
+	 * @param capacity		Queue capacity.
+	 */
 	public FixedSizeQueue(int capacity) {
 		first = 0;
 		next = 0;
@@ -26,28 +41,44 @@ public class FixedSizeQueue <T> {
 	}
 	
 	/**
-	 * Get the x-th element in the queue.
+	 * Obtains the x-th element in the queue.
 	 * 
-	 * @param x
-	 * @return
+	 * @param x				Index of the required element.
+	 * @return		The x-th element.
 	 */
 	public T get(int x) {
 		return arr.get((first + x) % arr.size());
 	}
 	
+	/**
+	 * 
+	 * Sets the x-th element in the queue.
+	 * 
+	 * @param x				Element index.
+	 * @param t				The value.
+	 * @return		The inserted element.
+	 */
 	private T set(int x, T t) {
 		return arr.set((first + x) % arr.size(), t);
 	}
 	
+	/** Returns the queue size(not capacity). */
 	public int size() {
 		return size;
 	}
+	
+	/** Returns the queue capacity. */
+	public int capacity() {
+		return arr.size();
+	}
 
+	/** Checks whether the queue is empty. */
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
-	public boolean contains(Object o) {
+	/** Checks whether an element is present in the queue(O(n) complexity). */
+	public boolean contains(T o) {
 		
 		for (int i = 0; i < size; i++)
 			if (o.equals(get(i)))
@@ -56,16 +87,14 @@ public class FixedSizeQueue <T> {
 		return false;
 	}
 
-	public Iterator<T> iterator() {
-		return arr.iterator();
-	}
-
+	/** Adds a collection of elements to the queue. */
 	public void addAll(Collection<? extends T> c) {
 
 		for (T t  : c)
 			add(t);
 	}
 
+	/** Clears the queue data. */
 	public void clear() {
 		size = 0;
 		first = 0;
@@ -74,6 +103,7 @@ public class FixedSizeQueue <T> {
 			arr.set(i, null);
 	}
 
+	/** Adds an element to the queue. */
 	public void add(T e) {
 		size++;
 		set(size, e);
@@ -84,6 +114,7 @@ public class FixedSizeQueue <T> {
 			next -= arr.size();
 	}
 
+	/** Returns and removes the first element in the queue. */
 	public T pop() {
 		if(size == 0)
 			return null;
@@ -93,6 +124,7 @@ public class FixedSizeQueue <T> {
 		return set(-1, null);
 	}
 
+	/** Returns the first element in the queue. */
 	public T top() {
 		return get(0);
 	}

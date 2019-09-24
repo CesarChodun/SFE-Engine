@@ -52,7 +52,6 @@ public class Asset {
 		return location;
 	}
 	
-	@Deprecated
 	public ConfigFile getConfigFile(String path) throws IOException, AssertionError {
 		return new ConfigFile(this, path);
 	}

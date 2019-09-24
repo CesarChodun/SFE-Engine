@@ -1,9 +1,10 @@
 package core.rendering;
 
+
 public class ColorFormatAndSpace {
 
-	public int colorFormat;
-	public int colorSpace;
+	public int colorFormat = 0;
+	public int colorSpace = 0;
 	
 	public ColorFormatAndSpace(int colorFormat, int colorSpace) {
 		this.colorFormat = colorFormat;
