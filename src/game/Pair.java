@@ -1,4 +1,4 @@
-package util;
+package game;
 
 /**
  * Data structure for storing pairs of objects.

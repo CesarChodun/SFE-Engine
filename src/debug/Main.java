@@ -1,6 +1,6 @@
 package debug;
 
-import time.*;
+import game.time.*;
 
 public class Main {
 

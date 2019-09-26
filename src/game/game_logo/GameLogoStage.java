@@ -16,7 +16,6 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Vector3f;
 import org.json.JSONException;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
@@ -49,7 +48,6 @@ import game.rendering.GLFWTask;
 import game.rendering.RenderingTask;
 import game.rendering.WindowTask;
 import game.rendering.WindowTask.WindowCloseCallback;
-import geometry.Mesh;
 
 public class GameLogoStage implements GameStage{
 	

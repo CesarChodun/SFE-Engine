@@ -2,11 +2,9 @@ package game.game_logo;
 
 
 
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import core.HardwareManager;
 import core.hardware.Monitor;

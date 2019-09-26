@@ -1,4 +1,4 @@
-package time;
+package game.time;
 
 /**
  * Class containing informations 

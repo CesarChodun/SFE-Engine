@@ -1,4 +1,4 @@
-package time;
+package game.time;
 
 import java.util.ArrayList;
 import java.util.Collection;

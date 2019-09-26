@@ -1,4 +1,4 @@
-package geometry;
+package game.geometry;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
