@@ -30,6 +30,10 @@ import core.result.VulkanException;
 /**
  * Class for hardware management.
  * And Vulkan configuration.
+ * 
+ * @author Cezary Chodun
+ * @since 24.09.2019
+ * 
  */
 public class HardwareManager {
 	
@@ -41,7 +45,7 @@ public class HardwareManager {
 	/** Name of the queue family requirements field. */
 	private static final String QUEUE_FAMILY_REQUIREMENTS_KEY = "queue_requirements";
 	
-	/***/
+	/** The enclosing class name. */
 	private static final String CLASS_NAME = HardwareManager.class.getName();
 	/** Default logger for this class. */
 	protected static final Logger logger = Logger.getLogger(CLASS_NAME);
@@ -61,8 +65,13 @@ public class HardwareManager {
 	/**
 	 * Initializes the most basic engine libraries.
 	 * 
-	 * @throws VulkanException
-	 * @throws IOException 
+	 * @throws VulkanException	
+	 * 		If there was a problem with Instance 
+	 * 		creation process, or when the device 
+	 * 		enumeration process failed.
+	 * @throws IOException 		
+	 * 		If failed to create JSON file, 
+	 * 		or if an I/O error occurred.
 	 */
 	public static void init(VkApplicationInfo appInfo, Asset config) throws VulkanException, IOException {
 

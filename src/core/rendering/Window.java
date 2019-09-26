@@ -13,10 +13,10 @@ import static org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface;
 import static core.result.VulkanResult.*;
 
 /**
- * <h5>Description:</h5>
- * <p>Class for creating window using <b>GLFW</b>.</p>
- * @author Cezary Choduń
- *
+ * Class for creating windows using <b>GLFW</b>.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
  */
 public class Window {
 	
@@ -35,9 +35,9 @@ public class Window {
 	private long surface;
 	
 	/**
-	 * 	<h5>Description:</h5>
-	 * 	<p>Create window with default name and dimensions.</p>
-	 * @throws VulkanException 
+	 * Creates a window with default name and dimensions.
+	 * 
+	 * @throws VulkanException 	When the window creation process fails.
 	 * 
 	 */
 	public Window(VkInstance instance) throws VulkanException {
@@ -45,10 +45,10 @@ public class Window {
 	}
 	
 	/**
-	 * 	<h5>Description:</h5>
-	 * 	<p>Create window with default dimensions and custom name.</p>
-	 * 	@param name	- Name of the window.
-	 * @throws VulkanException 
+	 * Creates a window with default dimensions and custom name.
+	 * 
+	 * @param name		Name of the window.
+	 * @throws VulkanException When the window creation process fails.
 	 */
 	public Window(VkInstance instance, String name) throws VulkanException {
 		this.name = name;
@@ -59,10 +59,13 @@ public class Window {
 	 * Creates a full screen window, or a window
 	 * with default dimensions.
 	 * 
-	 * @param instance
-	 * @param name
-	 * @param fullScreen
-	 * @throws VulkanException
+	 * @param instance		The Vulkan instance.
+	 * @param name			Name of the window.
+	 * @param fullScreen	
+	 * 		If true window will be created
+	 * 		as full screen window, and if false it will
+	 * 		be a windowed one.
+	 * @throws VulkanException	When the window creation process fails.
 	 */
 	public Window(VkInstance instance, String name, int width, int height, boolean fullScreen) throws VulkanException {				
 		this.name = name;
@@ -76,13 +79,14 @@ public class Window {
 	}
 	
 	/**
-	 * 	<h5>Description:</h5>
-	 * 	<p>Create window with custom name and dimensions.</p>
+	 * 	Create a window with custom name and dimensions.
 	 * 
-	 * 	@param width	- Width of the created window.
-	 * 	@param height	- Height of the created window. 
-	 * 	@param name		- Name of the window.
-	 * @throws VulkanException 
+	 *  @param instance		The Vulkan instance.
+	 * 	@param width	Width of the created window.
+	 * 	@param height	Height of the created window. 
+	 * 	@param name		Name of the window.
+	 * 
+	 * @throws VulkanException 	When the window creation process fails.
 	 */
 	public Window(VkInstance instance, String name, int width, int height) throws VulkanException {
 		this.height = height;
@@ -93,15 +97,15 @@ public class Window {
 	}
 	
 	/**
-	 * 	<h5>Description:</h5>
-	 * 	<p>Create window with custom name and dimensions.</p>
+	 * 	Creates a window with custom name and dimensions.
 	 * 
-	 * 	@param x  		- Horizontal distance between top left monitor corner and top left window corner.
-	 * 	@param y 		- Vertical distance between top left monitor corner and top left window corner.
-	 * 	@param width	- Width of the created window.
-	 * 	@param height	- Height of the created window. 
-	 * 	@param name		- Name of the window.
-	 * @throws VulkanException 
+	 *  @param instance		The Vulkan instance.
+	 * 	@param x  		Horizontal distance between top left monitor corner and top left window corner.
+	 * 	@param y 		Vertical distance between top left monitor corner and top left window corner.
+	 * 	@param width	Width of the created window.
+	 * 	@param height	Height of the created window. 
+	 * 	@param name		Name of the window.
+	 * @throws VulkanException 	When the window creation process fails.
 	 */
 	public Window(VkInstance instance, String name, int x, int y, int width, int height) throws VulkanException {		
 		this.x = x;
@@ -114,16 +118,19 @@ public class Window {
 	}
 	
 	/**
-	 * 	<h5>Description:</h5>
-	 * 	<p>Create window with custom name and dimensions.</p>
+	 * 	Create a window with custom name and dimensions.
 	 * 
-	 * 	@param x  		- Horizontal distance between top left monitor corner and top left window corner.
-	 * 	@param y 		- Vertical distance between top left monitor corner and top left window corner.
-	 * 	@param width	- Width of the created window.
-	 * 	@param height	- Height of the created window. 
-	 * 	@param name		- Name of the window.
-	 *  @param fullScreen - Creates full screen window(if true).
-	 * @throws VulkanException 
+	 *  @param instance		The Vulkan instance.
+	 * 	@param x  		Horizontal distance between top left monitor corner and top left window corner.
+	 * 	@param y 		Vertical distance between top left monitor corner and top left window corner.
+	 * 	@param width	Width of the created window.
+	 * 	@param height	Height of the created window. 
+	 * 	@param name		Name of the window.
+	 *  @param fullScreen 
+	 * 		If true window will be created
+	 * 		as full screen window, and if false it will
+	 * 		be a windowed one.
+	 * @throws VulkanException 	When the window creation process fails.
 	 */
 	public Window(VkInstance instance, String name, int x, int y, int width, int height, boolean fullScreen) throws VulkanException {		
 		this.x = x;
@@ -144,8 +151,8 @@ public class Window {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
-	 * <p>Creates a window.</p>
+	 * Creates a window.
+	 * 
 	 * @throws VulkanException		when the window creation fails.
 	 */
 	private void createWindow(VkInstance instance, long monitor) throws VulkanException {

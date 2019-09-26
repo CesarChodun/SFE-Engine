@@ -41,6 +41,13 @@ import org.lwjgl.vulkan.VkSurfaceFormatKHR;
 import core.result.VulkanException;
 import core.result.VulkanResult;
 
+/**
+ * Class for utility methods for
+ * rendering tasks.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
+ */
 public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());

@@ -8,6 +8,16 @@ import java.util.Collection;
 
 import org.lwjgl.PointerBuffer;
 
+/**
+ * Class with general use functions,
+ * that doesn't fit in other category
+ * within core package. Or may be used
+ * for various of purposes, so it is
+ * hard to classify them.
+ * 
+ * @author Cezary Chodun
+ * @since 24.09.2019
+ */
 public class Util {
 
 	/**
@@ -56,7 +66,6 @@ public class Util {
 			pb.put(b);
 		
 		pb.flip();
-		
 		return pb;
 	}
 	

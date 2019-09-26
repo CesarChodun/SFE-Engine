@@ -5,6 +5,13 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWGammaRamp;
 import org.lwjgl.glfw.GLFWVidMode;
 
+/**
+ * Data structure for obtaining information about 
+ * user displays.
+ * 
+ * @author Cezary Chodun
+ * @since 24.09.2019
+ */
 public class Monitor {
 
 	/** The unique id of the monitor. */
@@ -32,6 +39,7 @@ public class Monitor {
 		obtainMonitorData();
 	}
 	
+	/** Obtains the monitor data. Should be invoked only by constructor. */
 	private void obtainMonitorData() {
 		this.name = glfwGetMonitorName(handle);
 		
@@ -51,52 +59,40 @@ public class Monitor {
 	public int getWidth() {
 		return videoMode.width();
 	}
-	
 	public int getHeight() {
 		return videoMode.height();
 	}
-	
 	public int getRefreshRate() {
 		return videoMode.refreshRate();
 	}
-
 	public GLFWGammaRamp getGammaRamp() {
 		return glfwGetGammaRamp(handle);
 	}
-
 	public void setGammaRamp(GLFWGammaRamp gammaRamp) {
 		glfwSetGammaRamp(handle, gammaRamp);
 	}
-
 	public float getGamma() {
 		return gamma;
 	}
-
 	public void setGamma(float gamma) {
 		this.gamma = gamma;
 		glfwSetGamma(handle, gamma);
 	}
-
 	public long getHandle() {
 		return handle;
 	}
-
 	public String getName() {
 		return name;
 	}
-
 	public int getWorkAreaX() {
 		return x;
 	}
-
 	public int getWorkAreaY() {
 		return y;
 	}
-
 	public int getWorkAreaWidth() {
 		return width;
 	}
-
 	public int getWorkAreaHeight() {
 		return height;
 	}

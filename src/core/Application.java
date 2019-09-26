@@ -2,15 +2,10 @@ package core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.lwjgl.vulkan.VkApplicationInfo;
 
 import core.resources.Asset;
@@ -25,7 +20,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * about the application and engine.
  * 
  * @author Cezary Chodun
- *
+ * @since 26.09.2019
  */
 public class Application {
 
@@ -51,6 +46,7 @@ public class Application {
 		APP_PATCH_KEY = "APPLICATION_VERSION_PATCH",
 		DEFAULT_ENGINE_NAME = "Engine",
 		DEFAULT_APPLICATION_NAME = "Application";
+	/** Default configuration values.*/
 	protected static final Integer
 		DEFAULT_API_MAJOR = 1,
 		DEFAULT_API_MINOR = 0,
@@ -78,8 +74,7 @@ public class Application {
 	 * 
 	 * @param appLocation				File containing the application.
 	 * 
-	 * @throws FileNotFoundException
-	 * 		//TODO: Get error description.
+	 * @throws FileNotFoundException	When the asset wasn't found.
 	 */
 	public static void init(File appLocation) throws FileNotFoundException {
 		applicationLocation = appLocation;
@@ -140,8 +135,8 @@ public class Application {
 	 * @throws JSONException			
 	 * 		If there is a syntax error in the source string
 	 * 		or a duplicated key.
-	 * @throws AssertionError 
-	 * @throws IOException 
+	 * @throws AssertionError 	If failed to create JSON file.
+	 * @throws IOException 		If an I/O error occurred.
 	 */
 	private static VkApplicationInfo createAppInfo(Asset asset) throws JSONException, IOException, AssertionError {
 		

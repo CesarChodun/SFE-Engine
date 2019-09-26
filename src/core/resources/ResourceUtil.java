@@ -21,7 +21,7 @@ import org.json.JSONTokener;
  * Class for managing resource containers.
  * 
  * @author Cezary Chodun
- *
+ * @since 26.09.2019
  */
 public class ResourceUtil {
 	
@@ -30,7 +30,9 @@ public class ResourceUtil {
 	/** Initial indent for JSON writer. */
 	public static final Integer INDENT = 1;
 	
+	/** Logging level for JSON errors. */
 	private static final Level JSON_ERROR_MSG_LVL = Level.FINER;
+	/** Default logger for the class. */
 	private static final Logger logger = Logger.getLogger(ResourceUtil.class.getName());
 	
 	/** 

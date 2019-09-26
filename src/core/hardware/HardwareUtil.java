@@ -15,6 +15,13 @@ import org.lwjgl.vulkan.VkQueueFamilyProperties;
 
 import core.result.VulkanException;
 
+/**
+ * 
+ * Class with utilities for hardware managment.
+ * 
+ * @author Cezary Chodun
+ * @since 24.09.2019
+ */
 public class HardwareUtil {
 
 	/**

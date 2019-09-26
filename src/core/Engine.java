@@ -10,7 +10,7 @@ import java.util.Set;
  * It <b>SHOULD</b> be running from the first thread.
  * 
  * @author Cezary Chodun
- *
+ * @since 26.09.2019
  */
 public class Engine implements Runnable{
 	

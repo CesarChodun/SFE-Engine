@@ -31,37 +31,61 @@ import core.result.VulkanException;
 
 /**
  * Externally synchronized
+ * 
+ * Handles the rendering work.
+ * Obtains frames, and submits
+ * the work to the GPU.
+ * 
  * @author Cezary Chodun
- *
+ * @since 26.09.2019
  */
 public class Renderer {
 	
+	/** Targeted window. */
 	private Window window;
+	/** Vulkan device. */
 	private VkDevice device;
 	
+	/** Factory for creating command buffers. */
 	private CommandBufferFactory cmdFactory;
+	/** Factory for (re)creating swapchain. */
 	private SwapchainFactory swapFactory;
+	/** Framebuffers factory. */
 	private FrameBufferFactory fbFactory;
+	
+	/** Create info for image views.*/
 	private VkImageViewCreateInfo imageViewCreateInfo;
-	
-	private Long swapchain = VK_NULL_HANDLE;
-	private long[] images;
-	private long[] imageViews;
-	private long[] framebuffers;
-	private VkCommandBuffer[] commandBuffers;
-	
-	
-	private List<Integer> 
-	renderImageIndices, 
-	busyFrames;
-
-	private long[] imageAcquireSemaphores = new long[0];
-	protected long[] renderCompleteSemaphores = new long[0];
-	
+	/** Create info for semaphores reporting image acquisition. */
 	protected VkSemaphoreCreateInfo imageAcquireSemaphoreCreateInfo;
+	/** Create info for semaphores reporting render task completion. */
 	protected VkSemaphoreCreateInfo renderCompleteSemaphoreCreateInfo;
+	/** Create info for fence indicating that render was successful. */
 	protected VkFenceCreateInfo workDoneFenceInfo;
 	
+	/** Current swapchain. */
+	private Long swapchain = VK_NULL_HANDLE;
+	/** A list of images acquired from surface. */
+	private long[] images;
+	/** A list of created image views. */
+	private long[] imageViews;
+	/** A list of frame buffers. */
+	private long[] framebuffers;
+	/** A list of created command buffers. */
+	private VkCommandBuffer[] commandBuffers;
+	
+
+	/** Acquired images count. */
+	private int acquiredImages = 0;
+	private List<Integer> 
+		renderImageIndices, 
+		busyFrames;
+
+	/** Semaphore handles. */
+	private long[] 
+			imageAcquireSemaphores = new long[0],
+			renderCompleteSemaphores = new long[0];
+	
+	/** Queue submit info. */
 	protected VkSubmitInfo submitInfo;
 	private LongBuffer pWaitSemaphores;
 	private LongBuffer pSignalSemaphores;
@@ -278,8 +302,6 @@ public class Renderer {
     	createInfo.free();
 	}
 
-	//TODO
-	private int workingImages = 0;
 	
 	/**
 	 * 
@@ -292,12 +314,10 @@ public class Renderer {
 		if (images == null)
 			update();
 		
-		// Checks whether there are free images
-//		if (renderImageIndices.size() + busyFrames.size() == images.length)
-//			return false;
-		if (workingImages >= images.length)
+		// Checking if a next image can be acquired.
+		if (acquiredImages >= images.length)
 			return false;
-		workingImages++;
+		acquiredImages++;
 		
 		long semaphore = createSemaphore(device, imageAcquireSemaphoreCreateInfo, null);
 		
@@ -360,8 +380,8 @@ public class Renderer {
 		int err = vkQueuePresentKHR(queue, presentInfo);
 		validate(err, "Failed to present image!");
 		
-		//TODO remove
-		workingImages--;
+		// The image can be acquired again.
+		acquiredImages--;
 		
 		return true;
 	}

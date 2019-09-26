@@ -13,22 +13,35 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * TODO documentation
+ * Class for obtaining configuration 
+ * data from file.
+ * 
  * @author Cezary Chodun
- *
+ * @since 25.09.2019
  */
 public class ConfigFile implements Closeable{
 	
+	/** Default logger for the class. */
 	private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
-	
-	private static final Level NULL_PARAMETER_RETURNED = Level.FINER;
 
+	/** Tells whether the JSON object was created. */
 	boolean created = false;
+	/** The JSON object with configuration data. */
 	private JSONObject file;
+	/** Parental asset folder. */
 	private Asset asset;
+	/** The path to the JSON file. */
 	private String path;
 	
-	public ConfigFile(Asset asset, String path) throws IOException, AssertionError {
+	/**
+	 * Creates a new configuration file from the asset,
+	 * and given its path within the asset.
+	 * 
+	 * @param asset		Asset containing the configuration file.
+	 * @param path		Path to the configuration file within the asset.
+	 * @throws IOException		If an I/O error occurred.
+	 */
+	public ConfigFile(Asset asset, String path) throws IOException{
 		this.asset = asset;
 		this.path = path;
 		
@@ -39,15 +52,15 @@ public class ConfigFile implements Closeable{
 		}
 		
 		if (this.file == null) {
-			
-			if (!asset.newFile(path))
-				throw new AssertionError("Failed to create json file!");
 			created = true;
 			
 			this.file = new JSONObject();//asset.getJSON(path);
 		}
 	}
 	
+	/**
+	 * Saves JSON data to the file.
+	 */
 	public void close() {
 		if (created) {
 			FileWriter writer;
@@ -56,16 +69,22 @@ public class ConfigFile implements Closeable{
 				file.write(writer, ResourceUtil.INDENT_FACTOR, ResourceUtil.INDENT);
 				writer.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
+	/**
+	 * Obtains an array from the JSON object.
+	 * 
+	 * @param <T>			Type of the objects in the list.
+	 * @param key			The key(name) of the value.
+	 * @param defaultValue	The default value for the key.
+	 * @return		A list with the objects from the JSON file.
+	 */
 	public <T> List<T> getArray(String key, List<T> defaultValue) {		
 		if (file.isNull(key)) {
 			file.put(key, defaultValue);
@@ -80,6 +99,16 @@ public class ConfigFile implements Closeable{
 		return out;
 	}
 	
+	/**
+	 * 
+	 * Obtains a String from the JSON file.
+	 * 
+	 * @param key			Key of the value.
+	 * @param defaultValue	Default value.
+	 * @return		
+	 * 		Value corresponding to the key from the
+	 * 		JSON object or the default value.
+	 */
 	public String getString(String key, String defaultValue) {
 		
 		if (!file.isNull(key)) 
@@ -89,6 +118,16 @@ public class ConfigFile implements Closeable{
 		return defaultValue;
 	}
 	
+	/**
+	 * 
+	 * Obtains a Integer from the JSON file.
+	 * 
+	 * @param key			Key of the value.
+	 * @param defaultValue	Default value.
+	 * @return		
+	 * 		Value corresponding to the key from the
+	 * 		JSON object or the default value.
+	 */
 	public Integer getInteger(String key, Integer defaultValue) {
 		
 		if (!file.isNull(key))
@@ -98,6 +137,16 @@ public class ConfigFile implements Closeable{
 		return defaultValue;
 	}
 
+	/**
+	 * 
+	 * Obtains a Float from the JSON file.
+	 * 
+	 * @param key			Key of the value.
+	 * @param defaultValue	Default value.
+	 * @return		
+	 * 		Value corresponding to the key from the
+	 * 		JSON object or the default value.
+	 */
 	public Float getFloat(String key, Float defaultValue) {
 		
 		if (!file.isNull(key))
@@ -107,6 +156,16 @@ public class ConfigFile implements Closeable{
 		return defaultValue;
 	}
 	
+	/**
+	 * 
+	 * Obtains a Double from the JSON file.
+	 * 
+	 * @param key			Key of the value.
+	 * @param defaultValue	Default value.
+	 * @return		
+	 * 		Value corresponding to the key from the
+	 * 		JSON object or the default value.
+	 */
 	public Double getDouble(String key, Double defaultValue) {
 		
 		if (!file.isNull(key))
@@ -116,6 +175,16 @@ public class ConfigFile implements Closeable{
 		return defaultValue;
 	}
 	
+	/**
+	 * 
+	 * Obtains a Boolean from the JSON file.
+	 * 
+	 * @param key			Key of the value.
+	 * @param defaultValue	Default value.
+	 * @return		
+	 * 		Value corresponding to the key from the
+	 * 		JSON object or the default value.
+	 */
 	public Boolean getBoolean(String key, Boolean defaultValue) {
 		
 		if (!file.isNull(key))
