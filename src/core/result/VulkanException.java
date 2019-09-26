@@ -1,11 +1,11 @@
 package core.result;
 
 /**
- * 
- * @author Cezary Chodun
- *
  *	Class representing an exception caused
  *	by the vulkan loader.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
  */
 public class VulkanException extends Exception{
 	

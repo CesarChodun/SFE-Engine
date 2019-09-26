@@ -1,12 +1,18 @@
 package debug.InitializationDemo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import core.Application;
 import core.HardwareManager;
 import core.resources.JSONParser;
 import core.result.VulkanException;
@@ -54,30 +60,14 @@ public class InitializationDemo {
 		core.setLevel(Level.ALL);
 		
 		HardwareManager hardware = null;
+		hardware = new HardwareManager();
+		
 		try {
-			hardware = new HardwareManager();
-		} catch (VulkanException e) {
+			Application.init(new File("resources/InitializationDemo"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-//		JSONObject p = new JSONObject("");
-		Test test = new Test();
-		test.setID(1);
-		test.setConsoleLog(new Test());
-		test.setName("Kolejny");
-		
-		JSONObject json = JSONParser.toJSON(test);
-		System.out.print(json.toString(2));
-		
-		JSONObject json2 = new JSONObject(s);
-		Test test2 = new Test();
-		Test child = new Test();
-		test2.setConsoleLog(child);
-		JSONParser.populateData(test2, json2);
-		
-		JSONObject json3 = JSONParser.toJSON(test2);
-		System.out.print(json3.toString(2));
-		
 		
 	}
 	

@@ -1,11 +1,11 @@
 package core.result;
 
 /**
- * 
- * @author Cezary Chodun
- *
  *	Class for managing Vulkan results.
  *
+ *
+ * @author Cezary Chodun
+ * @since 26.09.2019
  */
 public class VulkanResult {
 

@@ -13,16 +13,36 @@ import org.json.JSONTokener;
 
 import core.Application;
 
+/**
+ * Class for transferring information
+ * from a JSON file to a class.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
+ */
 public class JSONParser {
 	
-	protected static final String CLASS_IDENTIFIER = "Class";
-	protected static final String GET_PREF = "get";
-	protected static final String SET_PREF = "set";
-	public static final String LOGGER_NAME = "core.resources.JSONParser";
+	/** */
+	protected static final String 
+			CLASS_IDENTIFIER = "Class",
+			GET_PREF = "get",
+			SET_PREF = "set",
+			LOGGER_NAME = "core.resources.JSONParser";
 	
-	
+	/** Default class logger. */
 	protected static Logger logger = Logger.getLogger(LOGGER_NAME);
 	
+	/**
+	 * Searches for a method in a class.
+	 * 	
+	 * @param c			The class.
+	 * @param name		Name of the method.
+	 * @param params	Parameter types.
+	 * 
+	 * @return		
+	 * 		If the method exists it is returned, 
+	 * 		otherwise null is returned. 
+	 */
 	private static Method searchForMethod(Class<?> c, String name, Class<?>... params) {
 		Method method = null;
 		
@@ -36,6 +56,14 @@ public class JSONParser {
 		return method;
 	}
 	
+	/**
+	 * Compares two classes, and checks
+	 * whether they are interchangeable.
+	 * 
+	 * @param c1	The first class.
+	 * @param c2	The second class.
+	 * @return		True if classes are  interchangeable.
+	 */
 	private static boolean compareClass(Class<?> c1, Class<?> c2) {
 		if(c1.equals(c2))
 			return true;
@@ -61,6 +89,17 @@ public class JSONParser {
 		return false;
 	}
 	
+	/**
+	 * Searches for similar method in a class.
+	 * 
+	 * @param c			The class.
+	 * @param name		Name of the method.
+	 * @param params	Parameter types.
+	 * @return		
+	 * 		If a method with interchangeable parameters
+	 * 		exists and has the same name it is returned.
+	 * 		Otherwise null is returned.
+	 */
 	private static Method searchForSimilarMethod(Class<?> c, String name, Class<?>... params) {
 		for (Method m : c.getMethods()) 
 			if (m.getName().equals(name)) {
@@ -77,12 +116,29 @@ public class JSONParser {
 		return null;
 	}
 	
+	/**
+	 * Reads JSON data from a JSON file.
+	 * 
+	 * @param file		The JSON file.
+	 * @return		A JSON object created from the file.
+	 * @throws FileNotFoundException	
+	 * 		If the file does not exist,
+	 * 		is a directory rather than a regular file,
+	 * 		or for some other reason cannot be opened for
+	 * 		reading.
+	 */
 	public static JSONObject readJSONObject(File file) throws FileNotFoundException {
 		FileReader reader = new FileReader(file);
 		
 		return new JSONObject(new JSONTokener(reader));
 	}
 	
+	/**
+	 * Populates object values with JSON data.
+	 * 
+	 * @param obj	The object.
+	 * @param json	The JSON object.
+	 */
 	public static void populateData(Object obj, JSONObject json) {
 		if (obj ==  null) {
 			if(Application.DEBUG)
@@ -125,9 +181,6 @@ public class JSONParser {
 					Method m = null;
 					try {
 						m = searchForSimilarMethod(obj.getClass(), setMethodName, toAdd.getClass());
-//						
-//						if (m == null && toAdd.getClass().equals(Integer.class))
-//							m = searchForMethod(obj.getClass(), setMethodName, int.class);
 
 						if (m != null)
 							m.invoke(obj, toAdd);
@@ -137,37 +190,6 @@ public class JSONParser {
 					
 				}
 			}
-	}
-
-	
-	public static JSONObject toJSON(Object obj) {
-//		JSONObject json = new JSONObject();
-//		Method[] methods = obj.getClass().getDeclaredMethods();
-//		
-//		json.put(CLASS_IDENTIFIER, obj.getClass());
-//		for (Method m : methods) {
-//			if(m.getName().startsWith(GET_PREF) && m.getParameterCount() == 0) {
-//				try {
-//					String parameterName = m.getName().substring(GET_PREF.length());
-//					parameterName = String.valueOf(parameterName.charAt(0)).toLowerCase() + 
-//										parameterName.substring(1);
-//					
-//					Object next = m.invoke(obj, null);
-//					
-//					if (m.getReturnType().isPrimitive() || m.getReturnType() == String.class)
-//						json.put(parameterName, next);
-//					else {
-//						if (next != null)
-//							json.put(parameterName, toJSON(next));
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//		
-//		return json;
-		return new JSONObject(obj);
 	}
 	
 }

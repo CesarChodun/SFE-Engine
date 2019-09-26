@@ -3,11 +3,11 @@ package core.result;
 import java.util.HashMap;
 
 /**
- * 
- * @author Cezary Chodun
- *
  *	Enum for representing exceptions
  *	that can be thrown by Vulkan loader.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
  */
 public enum VulkanExceptions {
 
