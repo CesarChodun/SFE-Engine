@@ -172,4 +172,10 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 		return createInfo;
 	}
 
+	@Override
+	public void destroyInfo(VkSwapchainCreateInfoKHR info) {
+		// TODO Auto-generated method stub
+		info.free();
+	}
+
 }
