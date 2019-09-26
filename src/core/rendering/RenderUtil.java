@@ -28,6 +28,7 @@ import org.lwjgl.vulkan.VkDeviceQueueCreateInfo;
 import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkFenceCreateInfo;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
+import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
@@ -51,6 +52,42 @@ import core.result.VulkanResult;
 public class RenderUtil {
 	
 	public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+	
+	/**
+     * Creates image views(swapchain <b>must</b> be created before this call).
+     * 
+     * @param device
+     * @param colorAttachmentView
+     */
+    public static long[] createImageViews(VkDevice device, VkImageViewCreateInfo colorAttachmentView, long... images) throws VulkanException {
+    	
+    	long[] imageViews = new long[images.length];
+    	
+    	LongBuffer pView = memAllocLong(1);
+    	for(int i = 0; i < images.length; i++) {
+    		colorAttachmentView.image(images[i]);
+    		int err = vkCreateImageView(device, colorAttachmentView, null, pView);
+    		validate(err, "Failed to create image view.");
+    		
+    		imageViews[i] = pView.get(0);
+    	}
+    	
+    	memFree(pView);
+    	
+    	return imageViews;
+    }
+    
+    /**
+     * Destroys swapchain image views.
+	 * <b>Note</b> when creating new swapchain image views from the old one are deleted automatically.
+	 * 
+     * @param device		The Vulkan device.
+     * @param imageViews	The image views to be destroyed.
+     */
+    public static void destroyImageViews(VkDevice device, long...imageViews) {    	
+    	for(int i = 0; i < imageViews.length; i++)
+    		vkDestroyImageView(device, imageViews[i], null);
+    }
 	
 	/**
 	 * <h5>Description:</h5>

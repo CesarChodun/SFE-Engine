@@ -1,5 +1,11 @@
 package core.rendering.factories;
 
+/**
+ * Class for creating framebuffers.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
+ */
 public interface FrameBufferFactory {
 
 	/**

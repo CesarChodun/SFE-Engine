@@ -10,7 +10,6 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -21,7 +20,6 @@ import org.lwjgl.vulkan.VkPresentInfoKHR;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 import org.lwjgl.vulkan.VkSubmitInfo;
-import org.lwjgl.vulkan.VkSubresourceLayout;
 import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
 
 import core.rendering.factories.CommandBufferFactory;
@@ -35,6 +33,19 @@ import core.result.VulkanException;
  * Handles the rendering work.
  * Obtains frames, and submits
  * the work to the GPU.
+ * 
+ * Class usage:
+ * 
+ * There are three important methods
+ * in the class:
+ * 
+ * 	- acquireNextImage()
+ *  - submitToQueue()
+ *  - presentKHR()
+ *  
+ *  They should be invoked in the above order.
+ *  And it is application who decides
+ *  how to divide work in between this calls.
  * 
  * @author Cezary Chodun
  * @since 26.09.2019
@@ -84,26 +95,45 @@ public class Renderer {
 	private long[] 
 			imageAcquireSemaphores = new long[0],
 			renderCompleteSemaphores = new long[0];
-	
-	/** Queue submit info. */
-	protected VkSubmitInfo submitInfo;
-	private LongBuffer pWaitSemaphores;
-	private LongBuffer pSignalSemaphores;
-	private PointerBuffer pCommandBuffers;
-	
-	protected VkPresentInfoKHR presentInfo;
-	
+	/** Array of fence handles. */
 	private long[] workDoneFences = new long[0];
 	
-	private VkQueue queue;
+	/** Buffer with semaphore handles. */
+	private LongBuffer 
+			pWaitSemaphores,
+			pSignalSemaphores;
+	/** Buffer with pointers to the command buffers. */
+	private PointerBuffer pCommandBuffers;
+
+	/** Queue submit info. */
+	protected VkSubmitInfo submitInfo;
+	/** KHR present info. */
+	protected VkPresentInfoKHR presentInfo;
 	
+	/** Queue transferring the rendering work.*/
+	private VkQueue queue;
 	//Must be freed
+	/** Buffer with the swapchain handle. */
 	private LongBuffer pSwapchain;
 	//Must be freed
+	/** Buffer for obtaining next image index. */
 	private IntBuffer pImageIndex;
-	
+	/** Current width and height of the surface images. */
 	private int width, height;
 
+	/**
+	 * Creates a new renderer.
+	 * 
+	 * <b>Must</b> be invoked on the first thread!
+	 * 
+	 * @param window				Targeted window.
+	 * @param device				Device that will perform the rendering work.
+	 * @param queue					Queue for submitting the work.
+	 * @param imageViewCreateInfo	Create info for image views.
+	 * @param cmdFactory			Command buffer factory.
+	 * @param swapchainFactory		Swapchain factory.
+	 * @param frameBufferFactory	Frame buffers factory.
+	 */
 	public Renderer(
 			Window window, 
 			VkDevice device, 
@@ -128,6 +158,9 @@ public class Renderer {
 		initRenderingResources();
 	}
 	
+	/**
+	 * Initializes required resources for renderer.
+	 */
 	private void initRenderingResources() {
 		imageAcquireSemaphoreCreateInfo = VkSemaphoreCreateInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO)
@@ -168,13 +201,14 @@ public class Renderer {
 				.sType(VK_STRUCTURE_TYPE_SUBMIT_INFO)
                 .pNext(NULL)
                 .pWaitDstStageMask(pWaitDstStageMask);
-//                .waitSemaphoreCount(pImageAcquiredSemaphore.remaining())
-//                .pWaitSemaphores(pImageAcquiredSemaphore)
-//                .pWaitDstStageMask(pWaitDstStageMask)
-//                .pCommandBuffers(pCommandBuffers)
-//                .pSignalSemaphores(pRenderCompleteSemaphore);
 	}
 	
+	/**
+	 * Updates the renderer. Recreates the swapchain and 
+	 * corresponding resources.
+	 * 
+	 * @throws VulkanException	When failed to create the fence.
+	 */
 	public void update() throws VulkanException {
 		recreateSwapchain();
 		
@@ -208,52 +242,21 @@ public class Renderer {
 			workDoneFences[i] = createFence(device, workDoneFenceInfo, null);
 	}
 	
+	/**
+	 * Helper function for destroying the created
+	 * command buffers.
+	 */
 	private void destroyCmdBuffers() {
 		cmdFactory.destroyCmdBuffers(commandBuffers);
 		commandBuffers = null;
 	}
 	
-	@Deprecated //TODO remove
-	/**
-     * <h5>Description:</h5>
-	 * <p>
-	 * 		Creates image views(swapchain <b>must</b> be created before this call).
-	 * </p>
-     * @param device
-     * @param colorAttachmentView
-     */
-    public long[] createImageViews(VkDevice device, VkImageViewCreateInfo colorAttachmentView, long... images) throws VulkanException {
-    	
-    	long[] imageViews = new long[images.length];
-    	
-    	LongBuffer pView = memAllocLong(1);
-    	for(int i = 0; i < images.length; i++) {
-    		colorAttachmentView.image(images[i]);
-    		int err = vkCreateImageView(device, colorAttachmentView, null, pView);
-    		validate(err, "Failed to create image view.");
-    		
-    		imageViews[i] = pView.get(0);
-    	}
-    	
-    	memFree(pView);
-    	
-    	return imageViews;
-    }
-    
-	@Deprecated //TODO remove
-    /**
-     * <h5>Description:</h5>
-	 * <p>
-	 * 		Destroys swapchain image views.
-	 * 		<b>Note</b> when creating new swapchain image views from the old one are deleted automatically.
-	 * </p>
-     * @param device
-     */
-    public void destroyImageViews(VkDevice device, long...imageViews) {    	
-    	for(int i = 0; i < imageViews.length; i++)
-    		vkDestroyImageView(device, imageViews[i], null);
-    }
 	
+	/**
+	 * Recreates the swapchain.
+	 * 
+	 * @throws VulkanException	When there is a problem creating the swapchain.
+	 */
 	private void recreateSwapchain() throws VulkanException {
 		
     	VkSwapchainCreateInfoKHR createInfo = swapFactory.getCreateInfo(window, swapchain);
@@ -299,15 +302,20 @@ public class Renderer {
     	//Clean up
     	memFree(pSwapchainImageCount);
     	memFree(pSwapchainImages);
-    	createInfo.free();
+    	swapFactory.destroyInfo(createInfo);
 	}
 
 	
 	/**
+	 * Tries to acquire a new image from the swapchain.
 	 * 
-	 * Must be synchronized!
+	 * <b>Must</b> be synchronized!
 	 * 
-	 * @throws VulkanException
+	 * @throws VulkanException When there is problem acquiring the image.
+	 * 
+	 * @return		
+	 * 		True if the process was successful
+	 * 		(there was an image to be acquired) and false otherwise.
 	 */
 	public boolean acquireNextImage() throws VulkanException {
 		
@@ -321,8 +329,8 @@ public class Renderer {
 		
 		long semaphore = createSemaphore(device, imageAcquireSemaphoreCreateInfo, null);
 		
-		int[] pImageIndex = new int[1];//TODO: Utilize fences
-		int err = vkAcquireNextImageKHR(device, swapchain, 0xFFFFFFFFFFFFFFFFL, semaphore, VK_NULL_HANDLE, pImageIndex);
+		int[] pImageIndex = new int[1];
+		int err = vkAcquireNextImageKHR(device, swapchain, 0xFFFFFFFFFFFFFFFFL, semaphore, VK_NULL_HANDLE, pImageIndex);//Fences can be used for synchronization.
 		validate(err, "Failed to acquire imageIndex image KHR!");
 		int nextImage = pImageIndex[0];
 		
@@ -333,6 +341,16 @@ public class Renderer {
 		return true;
 	}
 	
+	/**
+	 * Submits the work to the queue.
+	 * 
+	 * <b>Must</b> be synchronized!
+	 * 
+	 * @return	
+	 * 		True if the submit process was successful(there was a frame ready to be submitted),
+	 *  	and false otherwise.
+	 * @throws VulkanException	When failed to create semaphore, or submit to queue.
+	 */
 	public boolean submitToQueue() throws VulkanException {
 		if (renderImageIndices.size() == 0)
 			return false;
@@ -362,6 +380,17 @@ public class Renderer {
 		return true;
 	}
 	
+	/**
+	 * Presents the rendered image to the window.
+	 * 
+	 * <b>Must</b> be synchronized!
+	 * 
+	 * @return		
+	 * 		True if the operation was successful(there was a rendered image to present).
+	 * 		And false otherwise.
+	 * 
+	 * @throws VulkanException		When failed to present the image.
+	 */
 	public boolean presentKHR() throws VulkanException {
 		if (busyFrames.size() == 0)
 			return false;
@@ -387,6 +416,10 @@ public class Renderer {
 	}
 	
 	public void destroy() {
+		memFree(pSwapchain);
+		memFree(pImageIndex);
+		
+
 		//TODO: Free resources
 	}
 }

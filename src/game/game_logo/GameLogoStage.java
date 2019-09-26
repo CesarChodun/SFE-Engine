@@ -1,6 +1,5 @@
 package game.game_logo;
 
-import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 import static org.lwjgl.vulkan.KHRSurface.*;
@@ -10,9 +9,7 @@ import static core.rendering.RenderUtil.*;
 import static core.result.VulkanResult.validate;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
@@ -21,7 +18,6 @@ import java.util.List;
 
 import org.joml.Vector3f;
 import org.json.JSONException;
-import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -30,10 +26,8 @@ import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
 import org.lwjgl.vulkan.VkQueue;
-import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkRenderPassCreateInfo;
 import org.lwjgl.vulkan.VkSubpassDescription;
-import org.lwjgl.vulkan.VkViewport;
 
 import core.Application;
 import core.Engine;
@@ -41,21 +35,17 @@ import core.EngineTask;
 import core.HardwareManager;
 import core.hardware.PhysicalDeviceJudge;
 import core.rendering.ColorFormatAndSpace;
+import core.rendering.Recordable;
 import core.rendering.RenderUtil;
 import core.rendering.Renderer;
 import core.rendering.Window;
 import core.rendering.factories.CommandBufferFactory;
-import core.rendering.factories.SwapchainFactory;
-import core.rendering.recording.Recordable;
-import core.resources.Asset;
 import core.result.VulkanException;
-import demos.PrimitiveDemo.Vertices;
 import game.GameStage;
 import game.factories.BasicFramebufferFactory;
 import game.factories.BasicSwapchainFactory;
 import game.rendering.BasicPipeline;
 import game.rendering.GLFWTask;
-import game.rendering.RenderingPipeline;
 import game.rendering.RenderingTask;
 import game.rendering.WindowTask;
 import game.rendering.WindowTask.WindowCloseCallback;
@@ -65,18 +55,6 @@ public class GameLogoStage implements GameStage{
 	
 	private GameLogoWindow window;
 	private Engine engine;
-	
-	private Mesh mesh;
-	
-	@Deprecated
-	private void makeMesh() {
-		List<Vector3f> ver = new ArrayList<Vector3f>();
-		ver.add(new Vector3f(0, 0, 0));
-		ver.add(new Vector3f(1, 0, 0));
-		ver.add(new Vector3f(1, 1, 0));
-		
-		mesh = new Mesh(ver);
-	}
 	
 	public GameLogoStage(Engine engine) {
 		this.engine = engine;
@@ -304,9 +282,6 @@ public class GameLogoStage implements GameStage{
 	
 	@Override
 	public void present() throws GameStageException {
-		// TODO Auto-generated method stub
-		
-		makeMesh();
 		
 		VkPhysicalDevice physicalDevice = HardwareManager.getBestPhysicalDevice(new PhysicalDeviceJudge() {
 

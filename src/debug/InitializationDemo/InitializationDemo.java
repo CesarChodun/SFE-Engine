@@ -60,29 +60,10 @@ public class InitializationDemo {
 		core.setLevel(Level.ALL);
 		
 		HardwareManager hardware = null;
-		try {
-			hardware = new HardwareManager();
-		} catch (VulkanException e) {
-			e.printStackTrace();
-		}
-		
-//		JSONObject obj = Application.createJSONAppInfo();
-//		try {
-//			System.out.print(obj.toString(2));
-//			
-//			FileWriter out = new FileWriter(new File("resources/InitializationDemo/config/appInfo.cfg"));
-//			obj.write(out, 2, 1);
-//			out.close();
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		hardware = new HardwareManager();
 		
 		try {
-			Application app = new Application(new File("resources/InitializationDemo"));
+			Application.init(new File("resources/InitializationDemo"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

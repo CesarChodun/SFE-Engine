@@ -6,10 +6,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.nio.LongBuffer;
 import java.util.HashMap;
 
 import org.lwjgl.PointerBuffer;
@@ -22,15 +19,20 @@ import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkRenderPassBeginInfo;
 import org.lwjgl.vulkan.VkViewport;
 
-import core.rendering.recording.Recordable;
+import core.rendering.Recordable;
 import core.resources.Asset;
 import core.resources.ConfigFile;
-import core.result.VulkanError;
 import core.result.VulkanException;
 
-
+/**
+ * Class for command buffer creation.
+ * 
+ * @author Cezary Chodun
+ * @since 26.09.2019
+ */
 public class CommandBufferFactory{
 	
+	/** Configuration file keys.*/
 	public static final String 
 		CONFIG_FILE_NAME = "cmdFactory.cfg",
 		CV_KEY_0 = "red",
@@ -38,25 +40,37 @@ public class CommandBufferFactory{
 		CV_KEY_2 = "blue",
 		CV_KEY_3 = "alfa";
 
+	/** Configuration file default values. */
 	private static final float 
 		CV_VALUE_0 = 1f, 
 		CV_VALUE_1 = 1f, 
 		CV_VALUE_2 = 1f, 
 		CV_VALUE_3 = 0.5f ;
 	
-//	 /**
-//     * This is just -1L, but it is nicer as a symbolic constant.
-//     */
-//    private static final long UINT64_MAX = 0xFFFFFFFFFFFFFFFFL;
-	
+	/** The render pass for command buffers to use. */
 	private long renderPass;
+	/** Clear values. */
 	private float[] clearValues;
+	/** The Vulkan logical device. */
 	private VkDevice device;
+	/** Recordable work. */
 	private Recordable cmdWork;
+	/***/
 	private int queueFamilyIndex, flags;
 	
+	/** A map of command buffers pools. */
 	private HashMap<VkCommandBuffer, Long> cmdPools = new HashMap<VkCommandBuffer, Long>();
 	
+	/**
+	 * Creates a new Command Buffer factory.
+	 * 
+	 * @param device			Vulkan device.
+	 * @param cmdWork			Work that will be encoded by command buffer.
+	 * @param renderPass		The current render pass.
+	 * @param queueFamilyIndex	Index of the render queue family.
+	 * @param flags				Command buffer flags(for command pool creation).
+	 * @param clearValues		Clear values for the rendered image.
+	 */
 	public CommandBufferFactory(VkDevice device, Recordable cmdWork, long renderPass, int queueFamilyIndex, int flags, float[] clearValues) {
 		this.device = device;
 		this.cmdWork = cmdWork;
@@ -66,7 +80,22 @@ public class CommandBufferFactory{
 		this.flags = flags;
 	}
 	
-	public CommandBufferFactory(VkDevice device, Recordable cmdWork, int queueFamilyIndex, int flags, long renderPass, Asset config) throws IOException, AssertionError {
+	//TODO read flags from config file.
+	@Deprecated
+	/**
+	 * 
+	 * //TODO docs
+	 * 
+	 * @param device
+	 * @param cmdWork
+	 * @param queueFamilyIndex
+	 * @param flags
+	 * @param renderPass
+	 * @param config
+	 * @throws IOException
+	 * @throws AssertionError
+	 */
+	public CommandBufferFactory(VkDevice device, Recordable cmdWork, long renderPass, int queueFamilyIndex, int flags, Asset config) throws IOException, AssertionError {
 		this.device = device;
 		this.cmdWork = cmdWork;
 		this.renderPass = renderPass;
@@ -82,6 +111,14 @@ public class CommandBufferFactory{
 		cfg.close();
 	}
 
+	/**
+	 * Creates command buffers(one for each frame buffer).
+	 * 
+	 * @param width			Image width.
+	 * @param height		Image height.
+	 * @param framebuffers	The frame buffers.
+	 * @return		The command buffers.
+	 */
 	public VkCommandBuffer[] createCmdBuffers(int width, int height, long... framebuffers) {
 		long commandPool;
 		try {
@@ -99,7 +136,7 @@ public class CommandBufferFactory{
             .float32(1, clearValues[1])
             .float32(2, clearValues[2])
             .float32(3, clearValues[3]);
-//		cv.get(1).depthStencil()
+//		cv.get(1).depthStencil()			//TODO implement clear values for multiple attachments!
 //			.depth(1f);
 		
 		VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc()
@@ -122,6 +159,7 @@ public class CommandBufferFactory{
 				.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)
 				.pNext(NULL);
 		
+		//TODO remove viewport and scisors.
 		// Update dynamic viewport state
 		VkViewport.Buffer viewport = VkViewport.calloc(1)
 				.height(height)
@@ -202,8 +240,26 @@ public class CommandBufferFactory{
 		return commandBuffers;
 	}
 
+	/**
+	 * Destroys the command buffers allocated from this factory.
+	 * It is required that the command buffer list
+	 * contains the same command buffer set. 
+	 * As returned in the createCmdBuffers().
+	 * 
+	 * Cannot be invoked if any of the command buffers
+	 * is in the pending state!
+	 * 
+	 * @param buffers		The list of buffers returned by 
+	 * createCmdBuffers().
+	 */
 	public void destroyCmdBuffers(VkCommandBuffer[] buffers) {
-		//Nothing to do
+		
+		for (VkCommandBuffer cmd : buffers) 
+			if (cmdPools.containsKey(cmd)){
+				Long pool = cmdPools.get(cmd);
+				vkDestroyCommandPool(device, pool, null);
+			}
+		
 	}
 	
 	
