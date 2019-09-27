@@ -348,9 +348,9 @@ public class GameLogoStage implements GameStage{
 		}
 		
 		float[] cv = new float[4];
-		cv[0] = 1.0f;
-		cv[1] = 1.0f;
-		cv[2] = 1.0f;
+		cv[0] = 0.08f;
+		cv[1] = 0.10f;
+		cv[2] = 0.16f;
 		cv[3] = 1.0f;
 		
 //		//Make render pass
