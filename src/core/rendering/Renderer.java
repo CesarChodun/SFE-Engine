@@ -120,6 +120,8 @@ public class Renderer {
 	private IntBuffer pImageIndex;
 	/** Current width and height of the surface images. */
 	private int width, height;
+	/** A pointer to an array of pipeline stages at which each corresponding semaphore wait will occur. */
+	private IntBuffer pWaitDstStageMask;
 
 	/**
 	 * Creates a new renderer.
@@ -194,7 +196,7 @@ public class Renderer {
 				.pNext(NULL)
 				.flags(0);
 		
-		IntBuffer pWaitDstStageMask = memAllocInt(1);
+		pWaitDstStageMask = memAllocInt(1);
         pWaitDstStageMask.put(0, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
 		
 		submitInfo = VkSubmitInfo.calloc()
@@ -415,11 +417,28 @@ public class Renderer {
 		return true;
 	}
 	
+	/**
+	 * Destroys allocated resources.
+	 * 
+	 * TODO: free swapchain resources.
+	 */
 	public void destroy() {
 		memFree(pSwapchain);
 		memFree(pImageIndex);
 		
-
-		//TODO: Free resources
+		imageAcquireSemaphoreCreateInfo.free();
+		renderCompleteSemaphoreCreateInfo.free();
+		
+		memFree(pWaitSemaphores);
+		memFree(pSignalSemaphores);
+		memFree(pCommandBuffers);
+		
+		presentInfo.free();
+		
+		workDoneFenceInfo.free();
+		
+		memFree(pWaitDstStageMask);
+		
+		submitInfo.free();
 	}
 }

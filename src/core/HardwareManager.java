@@ -9,7 +9,6 @@ import static core.hardware.HardwareUtil.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.lwjgl.PointerBuffer;
@@ -23,7 +22,6 @@ import core.hardware.Monitor;
 import core.hardware.PhysicalDeviceJudge;
 import core.resources.Asset;
 import core.resources.ConfigFile;
-import core.resources.ResourceUtil;
 import core.result.GLFWError;
 import core.result.VulkanException;
 
@@ -133,11 +131,7 @@ public class HardwareManager {
 	 */
 	public static int getMostSuitableQueueFamily(VkPhysicalDevice physicalDevice) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
-		List<String> queueFamilyRequirements = hardwareCFG.getArray(QUEUE_FAMILY_REQUIREMENTS_KEY, new ArrayList<String>());
-		List<Integer> requirementsList = ResourceUtil.getStaticIntValuesFromClass(VK10.class, queueFamilyRequirements);
-		int requirements = 0;
-		for (int i = 0; i < requirementsList.size(); i++)
-			requirements |= requirementsList.get(i);
+		int requirements = hardwareCFG.getFlags(VK10.class, QUEUE_FAMILY_REQUIREMENTS_KEY, new ArrayList<String>());
 		
 		VkQueueFamilyProperties.Buffer queueFamilyProperties = newQueueFamilyProperties(physicalDevice);
 		int outIndex = getNextQueueFamilyIndex(0, requirements, queueFamilyProperties);

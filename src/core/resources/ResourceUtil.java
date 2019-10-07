@@ -21,7 +21,7 @@ import org.json.JSONTokener;
  * Class for managing resource containers.
  * 
  * @author Cezary Chodun
- * @since 26.09.2019
+ * @since 01.10.2019
  */
 public class ResourceUtil {
 	
@@ -115,6 +115,34 @@ public class ResourceUtil {
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * 
+	 * Obtains default static Integer values from a given class.
+	 * 
+	 * @param c 						The class to retrieve static values from.
+	 * @param valueNames				The names of the static values.
+	 * 
+	 * @return	A list of the values. In the same order as given by the
+	 * 			<code>valueNames</code> list.
+	 * 
+	 * @throws NoSuchFieldException			if a field with the specified name is not found.
+	 * 
+	 * @throws SecurityException			 If a security manager, s, is present and the caller's
+	 * 	class loader is not the same as or an ancestor of the class loader for the current class
+	 * 	and invocation of s.checkPackageAccess() denies access to the package of this class.
+	 * 
+	 * @throws IllegalArgumentException		if the specified object is not an instance of 
+	 * 	the class or interface declaring the underlying field (or a subclass or implementor thereof), 
+	 * 	or if the field value cannot be converted to the type int by a widening conversion.
+	 * 
+	 * @throws IllegalAccessException		if this Field object is enforcing Java language
+	 * 		 access control and the underlying field is inaccessible.
+	 */
+	public static int getStaticIntValueFromClass(Class<?> c, String valueName) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		Field f = c.getField(valueName);
+		return f.getInt(null);
 	}
 	
 	/**

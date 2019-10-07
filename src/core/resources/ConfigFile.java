@@ -17,7 +17,7 @@ import org.json.JSONObject;
  * data from file.
  * 
  * @author Cezary Chodun
- * @since 25.09.2019
+ * @since 01.10.2019
  */
 public class ConfigFile implements Closeable{
 	
@@ -74,6 +74,71 @@ public class ConfigFile implements Closeable{
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * Obtains flags with names from the configuration file.
+	 * Flags values are taken from the 'source' class.
+	 * And if the configuration file doesn't
+	 * contain any value for the key, the default value
+	 * is used instead.
+	 * 
+	 * @param source		Class for the flags integer values.
+	 * @param key			The key to the string with flag names.
+	 * @param defaultValue	The default list of flag names.
+	 * 
+	 * @return		Combined flags(using or operator).
+	 * 
+	 * @throws NoSuchFieldException			
+	 * 		If a field with the specified name is not found.SecurityException.
+	 * @throws SecurityException			
+	 * 		If a security manager, s, is present and the caller'sclass loader
+	 * 		is not the same as or an ancestor of the class loader for the current 
+	 * 		class and invocation of s.checkPackageAccess() denies access to the 
+	 * 		package of this class.IllegalArgumentException.
+	 * @throws IllegalArgumentException
+	 * 		If the specified object is not an instance of the class or interface 
+	 * 		declaring the underlying field (or a subclass or implementor thereof),
+	 * 		or if the field value cannot be converted to the type int by a widening.
+	 * @throws IllegalAccessException
+	 * 		If this Field object is enforcing Java language 
+	 * 		access control and the underlying field is inaccessible.
+	 */
+	public int getFlags(Class<?> source, String key, List<String> defaultValue) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		
+		List<String> flagNames = getArray(key, defaultValue);
+		List<Integer> flagValues = ResourceUtil.getStaticIntValuesFromClass(source, flagNames);
+		int flags = 0;
+		for (int i = 0; i < flagValues.size(); i++)
+			flags |= flagValues.get(i);
+		
+		return flags;
+	}
+	
+	/**
+	 * Obtains a static int value from the given class.
+	 * The static variable has the name equal to the
+	 * string that corresponds to the given key.
+	 * 
+	 * @param source			The class to obtain value from.
+	 * @param key				Key to the string.
+	 * @param defaultValue		Default value of the string.
+	 * @return		Value from the class.
+	 * @throws AssertionError	When failed to obtain the value.
+	 */
+	public int getStaticIntFromClass(Class<?> source, String key, String defaultValue) throws AssertionError {
+		
+		String valueName = getString(key, defaultValue);
+		int out = 0;
+		
+		try {
+			out = ResourceUtil.getStaticIntValueFromClass(source, valueName);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+			throw new AssertionError("Failed to load static value from a class!");
+		}
+		
+		return out;
 	}
 	
 	@SuppressWarnings("unchecked")
