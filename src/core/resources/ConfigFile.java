@@ -65,6 +65,7 @@ public class ConfigFile implements Closeable{
 		if (created) {
 			FileWriter writer;
 			try {
+				asset.newFile(path);
 				writer = new FileWriter(asset.get(path));
 				file.write(writer, ResourceUtil.INDENT_FACTOR, ResourceUtil.INDENT);
 				writer.close();
@@ -141,6 +142,7 @@ public class ConfigFile implements Closeable{
 		return out;
 	}
 	
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	/**
 	 * Obtains an array from the JSON object.
@@ -156,10 +158,31 @@ public class ConfigFile implements Closeable{
 			return defaultValue;
 		}
 
-		JSONArray arr = file.getJSONArray(key);
+		JSONArray arr = file.getJSONArray(key);		
 		List<T> out = new ArrayList<T>();
 		for (int i = 0; i < arr.length(); i++)
 			out.add((T) arr.get(i));
+		
+		return out;
+	}
+	
+	/**
+	 * Obtains an float array from the JSON object.
+	 * 
+	 * @param key			The key(name) of the value.
+	 * @param defaultValue	The default value for the key.
+	 * @return		A list with the objects from the JSON file.
+	 */
+	public List<Float> getFloatArray(String key, List<Float> defaultValue) {
+		if (file.isNull(key)) {
+			file.put(key, defaultValue);
+			return defaultValue;
+		}
+		
+		JSONArray arr = file.getJSONArray(key);		
+		List<Float> out = new ArrayList<Float>();
+		for (int i = 0; i < arr.length(); i++)
+			out.add(arr.getFloat(i));
 		
 		return out;
 	}

@@ -23,38 +23,24 @@ import core.rendering.Recordable;
 import core.resources.Asset;
 import core.resources.ConfigFile;
 import core.result.VulkanException;
+import rendering.recording.RenderPass;
 
 /**
  * Class for command buffer creation.
  * 
  * @author Cezary Chodun
- * @since 26.09.2019
+ * @since 26.09.2019//edit
  */
 public class CommandBufferFactory{
 	
-	/** Configuration file keys.*/
-	public static final String 
-		CONFIG_FILE_NAME = "cmdFactory.cfg",
-		CV_KEY_0 = "red",
-		CV_KEY_1 = "green",
-		CV_KEY_2 = "blue",
-		CV_KEY_3 = "alfa";
-
-	/** Configuration file default values. */
-	private static final float 
-		CV_VALUE_0 = 1f, 
-		CV_VALUE_1 = 1f, 
-		CV_VALUE_2 = 1f, 
-		CV_VALUE_3 = 0.5f ;
+	
 	
 	/** The render pass for command buffers to use. */
-	private long renderPass;
+	private RenderPass renderPass;
 	/** Clear values. */
 	private float[] clearValues;
 	/** The Vulkan logical device. */
 	private VkDevice device;
-	/** Recordable work. */
-	private Recordable cmdWork;
 	/***/
 	private int queueFamilyIndex, flags;
 	
@@ -71,44 +57,12 @@ public class CommandBufferFactory{
 	 * @param flags				Command buffer flags(for command pool creation).
 	 * @param clearValues		Clear values for the rendered image.
 	 */
-	public CommandBufferFactory(VkDevice device, Recordable cmdWork, long renderPass, int queueFamilyIndex, int flags, float[] clearValues) {
+	public CommandBufferFactory(VkDevice device, RenderPass renderPass, int queueFamilyIndex, int flags, float[] clearValues) {
 		this.device = device;
-		this.cmdWork = cmdWork;
 		this.renderPass = renderPass;
 		this.clearValues = clearValues;
 		this.queueFamilyIndex = queueFamilyIndex;
 		this.flags = flags;
-	}
-	
-	//TODO read flags from config file.
-	@Deprecated
-	/**
-	 * 
-	 * //TODO docs
-	 * 
-	 * @param device
-	 * @param cmdWork
-	 * @param queueFamilyIndex
-	 * @param flags
-	 * @param renderPass
-	 * @param config
-	 * @throws IOException
-	 * @throws AssertionError
-	 */
-	public CommandBufferFactory(VkDevice device, Recordable cmdWork, long renderPass, int queueFamilyIndex, int flags, Asset config) throws IOException, AssertionError {
-		this.device = device;
-		this.cmdWork = cmdWork;
-		this.renderPass = renderPass;
-		this.queueFamilyIndex = queueFamilyIndex;
-		this.flags = flags;
-		
-		ConfigFile cfg = new ConfigFile(config, CONFIG_FILE_NAME);
-		this.clearValues = new float[4];
-		this.clearValues[0] = cfg.getFloat(CV_KEY_0, CV_VALUE_0);
-		this.clearValues[1] = cfg.getFloat(CV_KEY_1, CV_VALUE_1);
-		this.clearValues[2] = cfg.getFloat(CV_KEY_2, CV_VALUE_2);
-		this.clearValues[3] = cfg.getFloat(CV_KEY_3, CV_VALUE_3);
-		cfg.close();
 	}
 
 	/**
@@ -130,23 +84,9 @@ public class CommandBufferFactory{
 		
 		VkCommandBuffer[] commandBuffers;
 		
-		VkClearValue.Buffer cv = VkClearValue.calloc(1);
-		cv.color()
-			.float32(0, clearValues[0])
-            .float32(1, clearValues[1])
-            .float32(2, clearValues[2])
-            .float32(3, clearValues[3]);
-//		cv.get(1).depthStencil()			//TODO implement clear values for multiple attachments!
-//			.depth(1f);
 		
-		VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc()
-				.sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)
-				.pNext(NULL)
-				.renderPass(renderPass)
-				.pClearValues(cv);
-		
-		renderPassBeginInfo.renderArea().offset().set(0, 0);
-		renderPassBeginInfo.renderArea().extent().set(width, height);
+//		renderPassBeginInfo.renderArea().offset().set(0, 0);
+//		renderPassBeginInfo.renderArea().extent().set(width, height);
 		
 		VkCommandBufferAllocateInfo cbai = VkCommandBufferAllocateInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)
@@ -159,20 +99,20 @@ public class CommandBufferFactory{
 				.sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)
 				.pNext(NULL);
 		
-		//TODO remove viewport and scisors.
-		// Update dynamic viewport state
-		VkViewport.Buffer viewport = VkViewport.calloc(1)
-				.height(height)
-				.width(width)
-				.minDepth(0.0f)
-				.maxDepth(1.0f)
-				.x(0)
-				.y(0);
+//		//TODO remove viewport and scisors.
+//		// Update dynamic viewport state
+//		VkViewport.Buffer viewport = VkViewport.calloc(1)
+//				.height(height)
+//				.width(width)
+//				.minDepth(0.0f)
+//				.maxDepth(1.0f)
+//				.x(0)
+//				.y(0);
 
 //		Update dynamic scissor state
-		VkRect2D.Buffer scissor = VkRect2D.calloc(1);
-		scissor.extent().set(width, height);
-		scissor.offset().set(0, 0);
+//		VkRect2D.Buffer scissor = VkRect2D.calloc(1);
+//		scissor.extent().set(width, height);
+//		scissor.offset().set(0, 0);
 		
 		PointerBuffer pCommandBuffer = memAllocPointer(framebuffers.length);
 		int err = vkAllocateCommandBuffers(device, cbai, pCommandBuffer);
@@ -185,9 +125,9 @@ public class CommandBufferFactory{
 		
 		commandBuffers = new VkCommandBuffer[framebuffers.length];
 		
-		IntBuffer descOffsets = memAllocInt(1);
-		descOffsets.put(0);
-		descOffsets.flip();
+//		IntBuffer descOffsets = memAllocInt(1);
+//		descOffsets.put(0);
+//		descOffsets.flip();
 		
 		for(int i = 0; i < framebuffers.length; i++) {
 //			LongBuffer pDesc = memAllocLong(2);
@@ -195,7 +135,6 @@ public class CommandBufferFactory{
 //			pDesc.flip();
 			
 			commandBuffers[i] = new VkCommandBuffer(pCommandBuffer.get(i), device);
-			renderPassBeginInfo.framebuffer(framebuffers[i]);
 			
 			
 			err = vkBeginCommandBuffer(commandBuffers[i], cbbi);
@@ -206,13 +145,13 @@ public class CommandBufferFactory{
 				throw new AssertionError(e.getMessage());
 			}
 			
-			vkCmdBeginRenderPass(commandBuffers[i], renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			renderPass.record(commandBuffers[i], framebuffers[i]);
 
-
-			vkCmdSetViewport(commandBuffers[i], 0, viewport);
-			vkCmdSetScissor(commandBuffers[i], 0, scissor);
-			
-			cmdWork.record(commandBuffers[i]);
+ 
+//			vkCmdSetViewport(commandBuffers[i], 0, viewport);
+//			vkCmdSetScissor(commandBuffers[i], 0, scissor);
+//			
+//			cmdWork.record(commandBuffers[i]);
 			
 ////			
 //			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
@@ -222,7 +161,7 @@ public class CommandBufferFactory{
 //			
 //			mesh.draw(commandBuffers[i]);
 //			
-			vkCmdEndRenderPass(commandBuffers[i]);
+//			vkCmdEndRenderPass(commandBuffers[i]);
 			err = vkEndCommandBuffer(commandBuffers[i]);
 			try {
 				validate(err, "Failed to end command buffer!");

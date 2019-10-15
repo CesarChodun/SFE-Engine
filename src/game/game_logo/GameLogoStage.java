@@ -16,6 +16,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONException;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
@@ -25,8 +26,11 @@ import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
 import org.lwjgl.vulkan.VkQueue;
+import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkRenderPassCreateInfo;
+import org.lwjgl.vulkan.VkSubpassDependency;
 import org.lwjgl.vulkan.VkSubpassDescription;
+import org.lwjgl.vulkan.VkViewport;
 
 import core.Application;
 import core.Engine;
@@ -48,6 +52,8 @@ import game.rendering.GLFWTask;
 import game.rendering.RenderingTask;
 import game.rendering.WindowTask;
 import game.rendering.WindowTask.WindowCloseCallback;
+import rendering.config.Attachments;
+import rendering.recording.RenderPass;
 
 public class GameLogoStage implements GameStage{
 	
@@ -114,18 +120,8 @@ public class GameLogoStage implements GameStage{
 		
 	}
 	
-	//TODO automate
-	private long createRenderPass(VkDevice logicalDevice, int colorFormat) throws VulkanException {
-		VkAttachmentDescription.Buffer attachments = VkAttachmentDescription.calloc(1)
-				.format(colorFormat)
-				.samples(VK_SAMPLE_COUNT_1_BIT)
-				.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR)
-				.storeOp(VK_ATTACHMENT_STORE_OP_STORE)
-				.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE)
-				.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE)
-				.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED)//VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL)
-				.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);//VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);//
-		
+	//TODO automate subpasses?
+	private RenderPass createRenderPass(VkDevice logicalDevice, int colorFormat) throws VulkanException, AssertionError, IOException {
 		VkAttachmentReference.Buffer colorReference = VkAttachmentReference.calloc(1)
 				.attachment(0)
 				.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
@@ -140,26 +136,10 @@ public class GameLogoStage implements GameStage{
 				.pDepthStencilAttachment(null)
 				.pPreserveAttachments(null);
 		
-		VkRenderPassCreateInfo pCreateInfo = VkRenderPassCreateInfo.calloc()
-				.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
-				.pNext(NULL)
-				.pAttachments(attachments)
-				.pSubpasses(subpass)
-				.pDependencies(null);
+		Attachments attachments = new Attachments(Application.getConfigAssets().getSubAsset("RenderPass1"), "attachment01.cfg");
 		
-		LongBuffer pRenderPass = memAllocLong(1);
-		int err = vkCreateRenderPass(logicalDevice, pCreateInfo, null, pRenderPass);
-		validate(err, "Failed to create render pass!");
 		
-		long handle = pRenderPass.get(0);
-		
-		memFree(pRenderPass);
-		attachments.free();
-		colorReference.free();
-		subpass.free();
-		pCreateInfo.free();
-		
-		return handle;
+		return new RenderPass(logicalDevice, attachments, subpass, null);
 	}
 	
 	private Recordable makeRecordable(VkDevice device, VkPhysicalDevice physicalDevice, Long pipeline) {
@@ -169,20 +149,22 @@ public class GameLogoStage implements GameStage{
 			@Override
 			public void record(VkCommandBuffer buffer) {
 				// Update dynamic viewport state
-//				VkViewport.Buffer viewport = VkViewport.calloc(1)
-//						.height(window.getWindow().getHeight())
-//						.width(window.getWindow().getWidth())
-//						.minDepth(0.0f)
-//						.maxDepth(1.0f);
-//				vkCmdSetViewport(buffer, 0, viewport);
-//				viewport.free();
+				VkViewport.Buffer viewport = VkViewport.calloc(1)
+						.width(window.getWindow().getWidth())
+						.height(window.getWindow().getHeight())
+						.minDepth(0.0f)
+						.maxDepth(1.0f)
+						.x(0f)
+						.y(0f);
+				vkCmdSetViewport(buffer, 0, viewport);
+				viewport.free();
 				
 				//Update dynamic scissor state
-//				VkRect2D.Buffer scissor = VkRect2D.calloc(1);
-//				scissor.extent().set(window.getWindow().getHeight(), window.getWindow().getWidth());
-//				scissor.offset().set(0, 0);
-//				vkCmdSetScissor(buffer, 0, scissor);
-//				scissor.free();
+				VkRect2D.Buffer scissor = VkRect2D.calloc(1);
+				scissor.extent().set(window.getWindow().getWidth(), window.getWindow().getHeight());
+				scissor.offset().set(0, 0);
+				vkCmdSetScissor(buffer, 0, scissor);
+				scissor.free();
 				
 				//Bind the rendering pipeline (including the shaders)
 				vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -208,74 +190,6 @@ public class GameLogoStage implements GameStage{
 		
 		return recCmd;
 	}
-	
-//	@Deprecated
-//	private static long createRenderPass(VkDevice device, ColorFormatAndSpace colorFormatAndSpace, int samples, int depthType) throws VulkanException {
-//		//Attachments:
-//		VkAttachmentDescription.Buffer attachmentDescription = VkAttachmentDescription.calloc(1);//2
-//		attachmentDescription.get(0)
-//				.format(colorFormatAndSpace.colorFormat)
-//				.samples(samples)
-//				.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR)
-//				.storeOp(VK_ATTACHMENT_STORE_OP_STORE)
-//				.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE)
-//				.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE)
-//				.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED)//TODO: VK_IMAGE_LAYOUT_UNDEFINED/--/VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-//				.finalLayout(VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);//TODO: VK_IMAGE_LAYOUT_PRESENT_SRC_KHR/--/VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
-//				
-////		attachmentDescription.get(1)
-////				.flags(0)
-////				.format(depthType)
-////				.samples(samples)
-////				.loadOp(VK_ATTACHMENT_LOAD_OP_CLEAR)
-////				.storeOp(VK_ATTACHMENT_STORE_OP_DONT_CARE)
-////				.stencilLoadOp(VK_ATTACHMENT_LOAD_OP_DONT_CARE)
-////				.stencilStoreOp(VK_ATTACHMENT_STORE_OP_DONT_CARE)
-////				.initialLayout(VK_IMAGE_LAYOUT_UNDEFINED)
-////				.finalLayout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-//		
-//		//Subpass:
-//		VkAttachmentReference.Buffer colorReference = VkAttachmentReference.calloc(1)
-//			.attachment(0)
-//			.layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
-//		VkAttachmentReference depthReference = VkAttachmentReference.calloc()
-//			.attachment(1)
-//			.layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-//		
-//		VkSubpassDescription.Buffer subpassDescription = VkSubpassDescription.calloc(1)
-//				.pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS)
-//				.flags(0)
-//				.pInputAttachments(null)
-//				.colorAttachmentCount(colorReference.remaining())
-//				.pColorAttachments(colorReference)
-//				.pResolveAttachments(null)
-//				.pDepthStencilAttachment(depthReference)
-//				.pPreserveAttachments(null);
-//		
-//		VkRenderPassCreateInfo renderPassCreateInfo = VkRenderPassCreateInfo.calloc()
-//				.sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
-//				.pNext(NULL)
-//				.pAttachments(attachmentDescription)
-//				.pSubpasses(subpassDescription)
-//				.pDependencies(null);
-//		
-//		//Render pass:
-//		LongBuffer pRenderPass = memAllocLong(1);
-//		int err = vkCreateRenderPass(device, renderPassCreateInfo, null, pRenderPass);
-//		validate(err, "Failed to create render pass!");
-//		
-//		long renderPass = pRenderPass.get(0);
-//		memFree(pRenderPass);
-//		
-//		attachmentDescription.free();
-//		colorReference.free();
-//		depthReference.free();
-//		subpassDescription.free();
-//		renderPassCreateInfo.free();
-//		
-//		return renderPass;
-//	}
-	
 	
 	
 	@Override
@@ -339,13 +253,15 @@ public class GameLogoStage implements GameStage{
 		if (pSupported.get(0) != VK_TRUE)
 			throw new AssertionError("Device does not support the khr swapchain.");
 
-		long renderPass = VK_NULL_HANDLE;
+		RenderPass renderPass = null;
 		try {
 			renderPass = createRenderPass(device, colorFormat.colorFormat);
-		} catch (VulkanException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if (renderPass == null)
+			throw new AssertionError("Failed to create render pass!");
 		
 		float[] cv = new float[4];
 		cv[0] = 0.08f;
@@ -378,16 +294,21 @@ public class GameLogoStage implements GameStage{
 		long pipeline = VK_NULL_HANDLE;
 		try {
 //			renderingPipeline = new RenderingPipeline(device, renderPass);
-			pipeline = BasicPipeline.createPipeline(physicalDevice, device, renderPass);//renderingPipeline.getGraphicsPipeline();
+			long rpHandle = VK_NULL_HANDLE;
+			if (renderPass != null)
+				rpHandle = renderPass.handle();
+			
+			pipeline = BasicPipeline.createPipeline(physicalDevice, device, rpHandle);//renderingPipeline.getGraphicsPipeline();
 		} catch (VulkanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		Recordable cmdRecord = makeRecordable(device, physicalDevice, pipeline);
-		CommandBufferFactory basicCMD = new CommandBufferFactory(device, cmdRecord, renderPass, renderQueueFamilyIndex, bufferFlags, cv);
+		renderPass.setWork(cmdRecord);
+		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, bufferFlags, cv);
 		BasicSwapchainFactory swapchainFactory = new BasicSwapchainFactory(physicalDevice, device, colorFormat);
-		BasicFramebufferFactory fbFactory = new BasicFramebufferFactory(device, renderPass);
+		BasicFramebufferFactory fbFactory = new BasicFramebufferFactory(device, renderPass.handle());
 		
 		Renderer winRenderer = new Renderer(window.getWindow(), device, queue, ivInfo, basicCMD, swapchainFactory, fbFactory);
 		
