@@ -3,7 +3,6 @@ package game.game_logo;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 import static org.lwjgl.vulkan.KHRSurface.*;
-import static org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 import static org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 import static core.rendering.RenderUtil.*;
 import static core.result.VulkanResult.validate;
@@ -16,9 +15,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.annotation.Nullable;
 import org.json.JSONException;
-import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
@@ -27,8 +24,6 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
-import org.lwjgl.vulkan.VkRenderPassCreateInfo;
-import org.lwjgl.vulkan.VkSubpassDependency;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
 
@@ -142,29 +137,45 @@ public class GameLogoStage implements GameStage{
 		return new RenderPass(logicalDevice, attachments, subpass, null);
 	}
 	
-	private Recordable makeRecordable(VkDevice device, VkPhysicalDevice physicalDevice, Long pipeline) {
+	private Recordable makePreset() {
+		//TODO: free resources
 		
-		Recordable recCmd = new Recordable() {
+		// Update dynamic viewport state
+		VkViewport.Buffer viewport = VkViewport.calloc(1)
+				.width(window.getWindow().getWidth())
+				.height(window.getWindow().getHeight())
+				.minDepth(0.0f)
+				.maxDepth(1.0f)
+				.x(0f)
+				.y(0f);
+		
+		//Update dynamic scissor state
+		VkRect2D.Buffer scissor = VkRect2D.calloc(1);
+		scissor.extent().set(window.getWindow().getWidth(), window.getWindow().getHeight());
+		scissor.offset().set(0, 0);
+		
+		Recordable out = new Recordable() {
 
 			@Override
 			public void record(VkCommandBuffer buffer) {
-				// Update dynamic viewport state
-				VkViewport.Buffer viewport = VkViewport.calloc(1)
-						.width(window.getWindow().getWidth())
-						.height(window.getWindow().getHeight())
-						.minDepth(0.0f)
-						.maxDepth(1.0f)
-						.x(0f)
-						.y(0f);
-				vkCmdSetViewport(buffer, 0, viewport);
-				viewport.free();
-				
-				//Update dynamic scissor state
-				VkRect2D.Buffer scissor = VkRect2D.calloc(1);
-				scissor.extent().set(window.getWindow().getWidth(), window.getWindow().getHeight());
-				scissor.offset().set(0, 0);
+
 				vkCmdSetScissor(buffer, 0, scissor);
-				scissor.free();
+				vkCmdSetViewport(buffer, 0, viewport);
+			}
+			
+		};
+		
+		
+		return out;
+	}
+	
+	private Recordable makeRecordable(VkDevice device, VkPhysicalDevice physicalDevice, Long pipeline) {
+		
+		Recordable recCmd = new Recordable() {
+			
+
+			@Override
+			public void record(VkCommandBuffer buffer) {
 				
 				//Bind the rendering pipeline (including the shaders)
 				vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -263,15 +274,6 @@ public class GameLogoStage implements GameStage{
 		if (renderPass == null)
 			throw new AssertionError("Failed to create render pass!");
 		
-		float[] cv = new float[4];
-		cv[0] = 0.08f;
-		cv[1] = 0.10f;
-		cv[2] = 0.16f;
-		cv[3] = 1.0f;
-		
-//		//Make render pass
-//		long renderPass = createRenderPass(device, colorFormat, VK_SAMPLE_COUNT_1_BIT, VK_FORMAT_D16_UNORM);
-		
 		VkImageViewCreateInfo ivInfo = VkImageViewCreateInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
 				.pNext(NULL)
@@ -290,10 +292,8 @@ public class GameLogoStage implements GameStage{
 		.baseArrayLayer(0)
 		.levelCount(VK_REMAINING_MIP_LEVELS);
 		
-//		RenderingPipeline renderingPipeline;
 		long pipeline = VK_NULL_HANDLE;
 		try {
-//			renderingPipeline = new RenderingPipeline(device, renderPass);
 			long rpHandle = VK_NULL_HANDLE;
 			if (renderPass != null)
 				rpHandle = renderPass.handle();
@@ -304,9 +304,11 @@ public class GameLogoStage implements GameStage{
 			e.printStackTrace();
 		}
 		
+		Recordable cmdPreset = makePreset();
 		Recordable cmdRecord = makeRecordable(device, physicalDevice, pipeline);
 		renderPass.setWork(cmdRecord);
-		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, bufferFlags, cv);
+		renderPass.setPreset(cmdPreset);
+		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, bufferFlags);
 		BasicSwapchainFactory swapchainFactory = new BasicSwapchainFactory(physicalDevice, device, colorFormat);
 		BasicFramebufferFactory fbFactory = new BasicFramebufferFactory(device, renderPass.handle());
 		

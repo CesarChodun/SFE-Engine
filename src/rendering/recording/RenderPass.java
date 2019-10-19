@@ -22,28 +22,56 @@ import core.resources.Destroyable;
 import core.result.VulkanException;
 import rendering.config.Attachments;
 
+/**
+ * Structure storing information about 
+ * the rendering work.
+ * 
+ * @author Cezary Chodun
+ * @since 19.10.2019
+ */
 public class RenderPass implements Destroyable{
 
+	/**
+	 * Create info for this render pass.
+	 */
 	private VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.calloc();
+	/**
+	 * Begin info for this render pass.
+	 */
 	private VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc();
+	/**
+	 * Render pass attachments.
+	 */
 	private Attachments attachments;
 	
+	/**
+	 * The render pass preset(a great place to set viewport)
+	 */
+	private Recordable preset;
+	/**
+	 * Rest of the work that needs to be performed in the render pass.
+	 */
 	private Recordable work;
 	
-	private int contents = VK_SUBPASS_CONTENTS_INLINE; //TODO: let the implementation change this value
 	
+	private int contents = VK_SUBPASS_CONTENTS_INLINE; //TODO: Change the architecture to utilize secondary command buffers
+	
+	/**
+	 * The render pass handle.
+	 */
 	private long renderPass;
 	
 	/**
+	 * Creates a render pass.
 	 * 
-	 * 
-	 * @param logicalDevice
+	 * @param logicalDevice		Valid logical device.
 	 * @param attachments		Must be freed after the render pass was destroyed.
-	 * @param subpasses			may be freed afterwards
-	 * @param dependecies		may be freed afterwards
-	 * @throws VulkanException 
+	 * @param subpasses			A buffer with subpasses(may be freed afterwards)
+	 * @param dependencies		A buffer with subpass dependencies(may be freed afterwards)
+	 * 
+	 * @throws VulkanException 	When failed to create the render pass.
 	 */
-	public RenderPass(VkDevice logicalDevice, Attachments attachments, VkSubpassDescription.Buffer subpasses, VkSubpassDependency.@Nullable Buffer dependecies) throws VulkanException {
+	public RenderPass(VkDevice logicalDevice, Attachments attachments, VkSubpassDescription.Buffer subpasses, VkSubpassDependency.@Nullable Buffer dependencies) throws VulkanException {
 		VkAttachmentDescription.Buffer buf = attachments.getBuffer();
 		
 		renderPassInfo
@@ -51,7 +79,7 @@ public class RenderPass implements Destroyable{
 			.pNext(NULL)
 			.pAttachments(buf)
 			.pSubpasses(subpasses)
-			.pDependencies(dependecies);
+			.pDependencies(dependencies);
 		
 		this.attachments = attachments;
 		
@@ -69,21 +97,43 @@ public class RenderPass implements Destroyable{
 			.pClearValues(this.attachments.getClearValues());
 	}
 	
-	public void record(VkCommandBuffer cmd, long frameBuffer) {
+	/**
+	 * Records the data to the command buffer.
+	 * 
+	 * @param cmd			Target command buffer.
+	 * @param frameBuffer	Frame buffer handle.
+	 * @param offsetX		X offset for the render area.
+	 * @param offsetY		Y offset for the render area.
+	 * @param width			Width of the render area.
+	 * @param height		Height of the render area.
+	 */
+	public void record(VkCommandBuffer cmd, long frameBuffer, int offsetX, int offsetY, int width, int height) {
+		renderPassBeginInfo.renderArea().offset().set(offsetX, offsetY);
+		renderPassBeginInfo.renderArea().extent().set(width, height);
 		renderPassBeginInfo.framebuffer(frameBuffer);
 		
 		vkCmdBeginRenderPass(cmd, renderPassBeginInfo, contents);
 		
-		work.record(cmd);
+		if (preset != null)
+			preset.record(cmd);
+		if (work != null)
+			work.record(cmd);
 		
 		vkCmdEndRenderPass(cmd);
 	}
 	
+	/**
+	 * @return the render pass handle.
+	 */
 	public long handle() {
 		return renderPass;
 	}
 
 	@Override
+	/**
+	 * Frees the render pass data.
+	 * @note The attachments are not freed.
+	 */
 	public void destroy() {
 		renderPassInfo.free();
 		renderPassBeginInfo.free();
@@ -94,5 +144,11 @@ public class RenderPass implements Destroyable{
 	}
 	public void setWork(Recordable work) {
 		this.work = work;
+	}
+	public Recordable getPreset() {
+		return preset;
+	}
+	public void setPreset(Recordable preset) {
+		this.preset = preset;
 	}
 }
