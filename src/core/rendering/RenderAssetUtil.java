@@ -46,8 +46,8 @@ public class RenderAssetUtil {
 		
 		ConfigFile cfgFile = config.getConfigFile(INSTANCE_CONFIG_FILE);
 		
-		List<String> layerNames = cfgFile.getArray(INSTANCE_VALIDATION_LAYERS_KEY, new ArrayList<String>());
-		List<String> extensions = cfgFile.getArray(INSTANCE_EXTENSIONS_KEY, new ArrayList<String>());
+		List<String> layerNames = cfgFile.getStringArray(INSTANCE_VALIDATION_LAYERS_KEY, new ArrayList<String>());
+		List<String> extensions = cfgFile.getStringArray(INSTANCE_EXTENSIONS_KEY, new ArrayList<String>());
 		for (String required : requiredExtensions)
 			extensions.add(required);
 		

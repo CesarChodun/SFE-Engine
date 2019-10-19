@@ -188,6 +188,27 @@ public class ConfigFile implements Closeable{
 	}
 	
 	/**
+	 * Obtains an string array from the JSON object.
+	 * 
+	 * @param key			The key(name) of the value.
+	 * @param defaultValue	The default value for the key.
+	 * @return		A list with the objects from the JSON file.
+	 */
+	public List<String> getStringArray(String key, List<String> defaultValue) {
+		if (file.isNull(key)) {
+			file.put(key, defaultValue);
+			return defaultValue;
+		}
+		
+		JSONArray arr = file.getJSONArray(key);		
+		List<String> out = new ArrayList<String>();
+		for (int i = 0; i < arr.length(); i++)
+			out.add(arr.getString(i));
+		
+		return out;
+	}
+	
+	/**
 	 * 
 	 * Obtains a String from the JSON file.
 	 * 
