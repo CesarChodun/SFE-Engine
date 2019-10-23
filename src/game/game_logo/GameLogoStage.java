@@ -48,6 +48,7 @@ import game.rendering.RenderingTask;
 import game.rendering.WindowTask;
 import game.rendering.WindowTask.WindowCloseCallback;
 import rendering.config.Attachments;
+import rendering.config.ImageViewCreateInfo;
 import rendering.recording.RenderPass;
 
 public class GameLogoStage implements GameStage{
@@ -274,23 +275,6 @@ public class GameLogoStage implements GameStage{
 		if (renderPass == null)
 			throw new AssertionError("Failed to create render pass!");
 		
-		VkImageViewCreateInfo ivInfo = VkImageViewCreateInfo.calloc()
-				.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
-				.pNext(NULL)
-				.flags(0)
-				.viewType(VK_IMAGE_VIEW_TYPE_2D)
-				.format(colorFormat.colorFormat);
-		ivInfo.components()
-			.r(VK_COMPONENT_SWIZZLE_R)
-			.g(VK_COMPONENT_SWIZZLE_G)
-			.b(VK_COMPONENT_SWIZZLE_B)
-			.a(VK_COMPONENT_SWIZZLE_A);
-		ivInfo.subresourceRange()
-		.aspectMask(VK_IMAGE_ASPECT_COLOR_BIT)
-		.baseMipLevel(0)
-		.layerCount(1)
-		.baseArrayLayer(0)
-		.levelCount(VK_REMAINING_MIP_LEVELS);
 		
 		long pipeline = VK_NULL_HANDLE;
 		try {
@@ -311,8 +295,15 @@ public class GameLogoStage implements GameStage{
 		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, bufferFlags);
 		BasicSwapchainFactory swapchainFactory = new BasicSwapchainFactory(physicalDevice, device, colorFormat);
 		BasicFramebufferFactory fbFactory = new BasicFramebufferFactory(device, renderPass.handle());
+		ImageViewCreateInfo info;
+		try {
+			info = new ImageViewCreateInfo(Application.getConfigAssets(), "rendererImageVieCI.cfg");
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new AssertionError("Failed to create image view create info.");
+		}
 		
-		Renderer winRenderer = new Renderer(window.getWindow(), device, queue, ivInfo, basicCMD, swapchainFactory, fbFactory);
+		Renderer winRenderer = new Renderer(window.getWindow(), device, queue, info.getInfo(), basicCMD, swapchainFactory, fbFactory);
 		
 
 //		ivInfo.free();
