@@ -227,8 +227,6 @@ public class BasicPipeline {
 		 .compareOp(VK_COMPARE_OP_ALWAYS);
 		 depthStencilState.front(depthStencilState.back());
 		 
-		 System.out.println(depthStencilState.back().depthFailOp());
-		 
 		 //Multi sampling state
 		// No multi sampling used in this example
 		 VkPipelineMultisampleStateCreateInfo multisampleState = VkPipelineMultisampleStateCreateInfo.calloc()
