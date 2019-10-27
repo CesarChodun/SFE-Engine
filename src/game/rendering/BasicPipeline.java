@@ -168,9 +168,10 @@ public class BasicPipeline {
 		
 		 // Vertex input state
 	     // Describes the topoloy used with this pipeline
-		 VkPipelineInputAssemblyStateCreateInfo inputAsemblyInfo = VkPipelineInputAssemblyStateCreateInfo.calloc()
+		 VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo = VkPipelineInputAssemblyStateCreateInfo.calloc()
 		 	.sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
-		 	.topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+		 	.topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
+		 	.primitiveRestartEnable(false);
 		 
 		 //Rasterization state
 		 VkPipelineRasterizationStateCreateInfo rasterizationStateInfo = VkPipelineRasterizationStateCreateInfo.calloc()
@@ -226,6 +227,8 @@ public class BasicPipeline {
 		 .compareOp(VK_COMPARE_OP_ALWAYS);
 		 depthStencilState.front(depthStencilState.back());
 		 
+		 System.out.println(depthStencilState.back().depthFailOp());
+		 
 		 //Multi sampling state
 		// No multi sampling used in this example
 		 VkPipelineMultisampleStateCreateInfo multisampleState = VkPipelineMultisampleStateCreateInfo.calloc()
@@ -243,7 +246,8 @@ public class BasicPipeline {
 		 VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
 				 .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
 				 .pNext(NULL)
-				 .pSetLayouts(null);
+				 .pSetLayouts(null)
+				 .pPushConstantRanges(null);
 		 
 		 LongBuffer pLayout = memAllocLong(1);
 		 err = vkCreatePipelineLayout(logicalDevice, pipelineLayoutCreateInfo, null, pLayout);
@@ -257,20 +261,24 @@ public class BasicPipeline {
 				 .layout(layout)	// <- the layout used for this pipeline (NEEDS TO BE SET! even though it is basically empty)
 				 .renderPass(renderPass)// <- renderpass this pipeline is attached to
 				 .pVertexInputState(vertexCreateInfo)
-				 .pInputAssemblyState(inputAsemblyInfo)
+				 .pInputAssemblyState(inputAssemblyInfo)
+				 .pTessellationState(null)
 				 .pRasterizationState(rasterizationStateInfo)
 				 .pColorBlendState(colorBlendStateInfo)
 				 .pMultisampleState(multisampleState)
 				 .pViewportState(viewportStateCreateInfo)
 				 .pDepthStencilState(depthStencilState)
 				 .pStages(stages)
-				 .pDynamicState(dynamicState);
+				 .pDynamicState(dynamicState)
+//				 .basePipelineHandle(VK_NULL_POINTER)
+//				 .basePipelineIndex(0)
+				 ;
 		 
 		 LongBuffer pPipeline = memAllocLong(1);
 		 err = vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, pipelineCreateInfo, null, pPipeline);
 		 long pipelineHandle = pPipeline.get(0);
 		 memFree(pPipeline);
-		 inputAsemblyInfo.free();
+		 inputAssemblyInfo.free();
 		 rasterizationStateInfo.free();
 		 colorWriteMask.free();
 		 colorBlendStateInfo.free();

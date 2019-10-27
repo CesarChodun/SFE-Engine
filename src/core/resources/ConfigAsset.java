@@ -37,6 +37,22 @@ public class ConfigAsset {
 	}
 	
 	/**
+	 * Obtains an array of JSON objects.
+	 * 
+	 * @param listName	Key for the array.
+	 * @return	The array(converted to list).
+	 */
+	public List<ConfigAsset> getCfgList(String listName) {
+		JSONArray arr = data.getJSONArray(listName);
+		
+		List<ConfigAsset> cfgs = new ArrayList<ConfigAsset>();
+		for (int i = 0; i < arr.length(); i++)
+			cfgs.add(new ConfigAsset(arr.getJSONObject(i)));
+		
+		return cfgs;
+	}
+	
+	/**
 	 * Obtains flags with names from the configuration data.
 	 * Flags values are taken from the 'source' class.
 	 * And if the configuration data doesn't
@@ -141,6 +157,21 @@ public class ConfigAsset {
 		}
 		
 		return out;
+	}
+	
+	/**
+	 * Obtains a static Integer from the given class.
+	 * The static variable has the name equal to the
+	 * string that corresponds to the given key.
+	 * 
+	 * @param source			The class to obtain value from.
+	 * @param key				Key to the string.
+	 * @param defaultValue		Default value of the string.
+	 * @return		Value from the class.
+	 * @throws AssertionError	When failed to obtain the value.
+	 */
+	public Integer getStaticIntegerFromClass(Class<?> source, String key, String defaultValue) throws AssertionError {
+		return new Integer(getStaticIntFromClass(source, key, defaultValue));
 	}
 	
 	@Deprecated
