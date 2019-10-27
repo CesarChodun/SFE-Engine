@@ -11,6 +11,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkGraphicsPipelineCreateInfo;
@@ -110,9 +111,9 @@ public class GraphicsPipeline implements Destroyable{
 		RS_DEPTH_CLAMP_ENABLE_KEY = "depthClampEnable",
 		RS_RASTERIZER_DISCARD_ENABLE_KEY = "rasterizerDiscardEnable",
 		RS_DEPTH_BIAS_ENABLE_KEY = "depthBiasEnable",
-		RS_DEPTH_BIAS_CONSTANT_FACTOR_KEY = "depthBiasEnable",
-		RS_DEPTH_BIAS_CLAMP_KEY = "depthBiasEnable",
-		RS_DEPTH_BIAS_SLOPE_FACTOR_KEY = "depthBiasEnable";
+		RS_DEPTH_BIAS_CONSTANT_FACTOR_KEY = "depthBiasConstantFactor",
+		RS_DEPTH_BIAS_CLAMP_KEY = "depthBiasClampKey",
+		RS_DEPTH_BIAS_SLOPE_FACTOR_KEY = "depthBiasSlopeFactorKey";
 		
 	private static final Float
 		DEFAULT_RS_LINE_WIDTH = 1.0f,
@@ -231,7 +232,7 @@ public class GraphicsPipeline implements Destroyable{
 	
 	private static final String
 		DEFAULT_STAGE = "VK_SHADER_STAGE_VERTEX_BIT",
-		DEFAULT_FILE = "shader.spv",
+		DEFAULT_FILE = "storage/res/shaders/triangle.vert.spv",
 		DEFAULT_MAIN = "main";
 	
 	// Dynamic states
@@ -270,10 +271,10 @@ public class GraphicsPipeline implements Destroyable{
 		this.configFile = configFile;
 		this.device = device;
 		
-		loadPipeline();
+		loadPipeline(renderPass, pipelineLayout);
 	}
 	
-	private void loadPipeline() throws IOException, AssertionError, VulkanException {
+	private void loadPipeline(long renderPass, long layout) throws IOException, AssertionError, VulkanException {
 		pipelineCreateInfo = VkGraphicsPipelineCreateInfo.calloc(1);
 				
 		ConfigFile cfg = asset.getConfigFile(configFile);
@@ -290,6 +291,7 @@ public class GraphicsPipeline implements Destroyable{
 		loadDynamicStates(cfg.getCfgAsset(DYNAMIC_STATES));
 
 		pipelineCreateInfo
+			.sType(VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)
 			.pVertexInputState(vertexCreateInfo)
 			.pInputAssemblyState(inputAsemblyInfo)
 			.pTessellationState(tessellationInfo)
@@ -299,7 +301,11 @@ public class GraphicsPipeline implements Destroyable{
 			.pViewportState(viewportStateCreateInfo)
 			.pDepthStencilState(depthStencilState)
 			.pStages(stages)
-			.pDynamicState(dynamicState);
+			.pDynamicState(dynamicState)
+			.renderPass(renderPass)
+			.layout(layout);
+		
+		cfg.close();
 		
 		LongBuffer pPipeline = memAllocLong(1);
 		int err = vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, pipelineCreateInfo, null, pPipeline);
@@ -309,8 +315,6 @@ public class GraphicsPipeline implements Destroyable{
 		memFree(pPipeline);
 		
 		freeResources();
-		 
-		cfg.close();
 	}
 	
 	private void loadPVertexInputState(ConfigAsset cfg) {
@@ -348,9 +352,12 @@ public class GraphicsPipeline implements Destroyable{
 				 .pNext(NULL)
 				 .pVertexBindingDescriptions(bindingDescription)
 				 .pVertexAttributeDescriptions(attributeDescription);
-		
 	}
 	
+	public long getPipelineHandle() {
+		return pipelineHandle;
+	}
+
 	private void loadInputAsemblyInfo(ConfigAsset cfg) {
 		inputAsemblyInfo = VkPipelineInputAssemblyStateCreateInfo.calloc()
 				.sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
@@ -454,10 +461,20 @@ public class GraphicsPipeline implements Destroyable{
 			.depthFailOp(backCfg.getStaticIntFromClass(VK10.class, DS_DEPTH_FAIL_OP_KEY, DEFAULT_DS_DEPTH_FAIL_OP))
 			.compareOp(backCfg.getStaticIntFromClass(VK10.class, DS_COMPARE_OP_KEY, DEFAULT_DS_COMPARE_OP));
 	}
+	
+//	private ConfigAsset defaultStage() {
+//		JSONObject json = new JSONObject();
+//		
+//		json.put(key, value)
+//		
+//	}
 
 	private void loadStages(ConfigAsset cfg) throws VulkanException {
 		List<ConfigAsset> cfgs = cfg.getCfgList(STAGES_KEY);
 		
+		if (cfgs.size() == 0)
+			cfgs.add(new ConfigAsset(new JSONObject()));
+			
 		stages = VkPipelineShaderStageCreateInfo.calloc(cfgs.size());
 		for (int i = 0; i < cfgs.size(); i++) {
 			ConfigAsset sCfg = cfgs.get(i);
@@ -496,7 +513,8 @@ public class GraphicsPipeline implements Destroyable{
 		attributeDescription.free();
 		vertexCreateInfo.free();
 		inputAsemblyInfo.free();
-		tessellationInfo.free();
+		if (tessellationInfo != null)
+			tessellationInfo.free();
 		rasterizationStateInfo.free();
 		colorWriteMask.free();
 		colorBlendStateInfo.free();

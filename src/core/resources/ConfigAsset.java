@@ -33,6 +33,9 @@ public class ConfigAsset {
 	 * @return	The configuration asset.
 	 */
 	public ConfigAsset getCfgAsset(String cfgAssetName) {
+		if (data.isNull(cfgAssetName))
+			data.put(cfgAssetName, new JSONObject());
+		
 		return new ConfigAsset(data.getJSONObject(cfgAssetName));
 	}
 	
@@ -43,6 +46,9 @@ public class ConfigAsset {
 	 * @return	The array(converted to list).
 	 */
 	public List<ConfigAsset> getCfgList(String listName) {
+		if (data.isNull(listName))
+			data.put(listName, new JSONArray());
+		
 		JSONArray arr = data.getJSONArray(listName);
 		
 		List<ConfigAsset> cfgs = new ArrayList<ConfigAsset>();

@@ -22,6 +22,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
+import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
@@ -48,6 +49,7 @@ import game.rendering.RenderingTask;
 import game.rendering.WindowTask;
 import game.rendering.WindowTask.WindowCloseCallback;
 import rendering.config.Attachments;
+import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
 import rendering.recording.RenderPass;
 
@@ -282,8 +284,33 @@ public class GameLogoStage implements GameStage{
 			if (renderPass != null)
 				rpHandle = renderPass.handle();
 			
-			pipeline = BasicPipeline.createPipeline(physicalDevice, device, rpHandle);//renderingPipeline.getGraphicsPipeline();
+			BasicPipeline.createPipeline(physicalDevice, device, rpHandle);//renderingPipeline.getGraphicsPipeline();
+			// Create the pipeline layout that is used to generate the rendering pipelines that
+		     // are based on this descriptor set layout
+			 VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
+					 .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
+					 .pNext(NULL)
+					 .pSetLayouts(null)
+					 .pPushConstantRanges(null);
+			 
+			 LongBuffer pLayout = memAllocLong(1);
+			 err = vkCreatePipelineLayout(device, pipelineLayoutCreateInfo, null, pLayout);
+			 validate(err, "Failed to create pipeline layout.");
+			 long layout = pLayout.get(0);
+			 memFree(pLayout);
+			 pipelineLayoutCreateInfo.free();
+			 
+			GraphicsPipeline gp = new GraphicsPipeline(Application.getConfigAssets().getSubAsset("pipeline"), "pipeline.cfg", device, rpHandle, layout);
+			
+			pipeline = gp.getPipelineHandle();
+			
 		} catch (VulkanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AssertionError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
