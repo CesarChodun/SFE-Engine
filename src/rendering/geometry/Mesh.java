@@ -6,7 +6,7 @@ import core.resources.Destroyable;
  * Interface representing a mesh that can be rendered.
  * 
  * @author Cezary Chodun
- *
+ * @since 28.10.2019
  */
 public interface Mesh extends Destroyable{
 
