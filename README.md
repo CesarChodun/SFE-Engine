@@ -33,4 +33,4 @@ A small engine based on Vulkan(LWJGL3) and Java. Currently it contains mostly ut
   There are quite a few configuration files with the project. And as there are a lot of hardware configurations. It is very likely that some problems with the engine would be possible to solve using just a few small changes in the configuration files. So if you found a issue with the engine that you think can be solve with the configuration files. Feel free to experiment and If you happen to fix the problem share your thoughts and tips with others!
  
  <h3> Help with code! </h3>
-  Of course there is the usual way to help with the project. And this is by adding new features to it! So if you found yurself quite comfortable with the project feel free to add some tweeks to it!
+  Of course there is the usual way to help with the project. And this is by adding new features to it! So if you found yourself quite comfortable with the project feel free to add some tweeks to it!
