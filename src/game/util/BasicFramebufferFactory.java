@@ -1,4 +1,4 @@
-package game.factories;
+package game.util;
 
 import static core.result.VulkanResult.*;
 import static org.lwjgl.vulkan.VK10.*;

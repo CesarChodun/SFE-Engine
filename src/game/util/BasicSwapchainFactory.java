@@ -1,4 +1,4 @@
-package game.factories;
+package game.util;
 
 import static core.rendering.RenderUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -20,7 +20,6 @@ import core.rendering.Window;
 import core.rendering.factories.SwapchainFactory;
 import core.result.VulkanException;
 
-//TODO: low quality! Code review highly required
 
 public class BasicSwapchainFactory implements SwapchainFactory{
 	
