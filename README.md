@@ -2,6 +2,10 @@
 
 A small engine based on Vulkan(LWJGL3) and Java. Currently it contains mostly utilities for rendering but it should change as the project matures. 
 
+<h2>Relevant links</h2>
+
+ * Trello board for the project: https://trello.com/b/ghMSQq99
+
 <h2>Instalation</h2>
 
  <h3>Prepare your IDE</h3>
