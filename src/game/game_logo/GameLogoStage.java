@@ -7,6 +7,8 @@ import static org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 import static core.rendering.RenderUtil.*;
 import static core.result.VulkanResult.validate;
 
+import rendering.geometry.MeshU2D;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -15,6 +17,7 @@ import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Vector2f;
 import org.json.JSONException;
 import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -41,8 +44,9 @@ import core.rendering.Window;
 import core.rendering.factories.CommandBufferFactory;
 import core.result.VulkanException;
 import game.GameStage;
-import game.factories.BasicFramebufferFactory;
-import game.factories.BasicSwapchainFactory;
+import game.util.BasicFramebufferFactory;
+import game.util.BasicSwapchainFactory;
+import game.geometry.Mesh;
 import game.rendering.BasicPipeline;
 import game.rendering.GLFWTask;
 import game.rendering.RenderingTask;
@@ -65,7 +69,7 @@ public class GameLogoStage implements GameStage{
 	public static void initializeHardware() throws VulkanException, IOException {
 		
 		// Game data initialization(in the current folder)
-		Application.init(new File(""));
+		Application.init("game/windows");
 		
 		//Initialize hardware
 		HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());
@@ -172,7 +176,21 @@ public class GameLogoStage implements GameStage{
 		return out;
 	}
 	
-	private Recordable makeRecordable(VkDevice device, VkPhysicalDevice physicalDevice, Long pipeline) {
+	private Recordable makeRecordable(VkDevice device, VkPhysicalDevice physicalDevice, Long pipeline) throws VulkanException {
+		
+		List<Vector2f> vert = new ArrayList<Vector2f>();
+//		vert.add(new Vector2f(-0.5f, -0.5f));
+//		vert.add(new Vector2f(0.5f, -0.5f));
+//		vert.add(new Vector2f(0.0f, 0.5f));
+		
+		vert.add(new Vector2f(-0.5f, -0.5f));
+		vert.add(new Vector2f(0.5f, -0.5f));
+		vert.add(new Vector2f(-0.5f, 0.5f));
+		vert.add(new Vector2f(-0.5f, 0.5f));
+		vert.add(new Vector2f(0.5f, -0.5f));
+		vert.add(new Vector2f(0.5f, 0.5f));
+
+		final MeshU2D mesh2 = new MeshU2D(physicalDevice, device, vert);
 		
 		Recordable recCmd = new Recordable() {
 			
@@ -187,17 +205,13 @@ public class GameLogoStage implements GameStage{
 				LongBuffer offsets = memAllocLong(1);
 				offsets.put(0, 0L);
 				LongBuffer pBuffers = memAllocLong(1);
-				pBuffers.put(0, BasicPipeline.verticesBuffer);//mesh.getVkVertices(device, physicalDevice).getVerticesBuffer()
+				pBuffers.put(0, mesh2.getVerticesHandle());//mesh.getVkVertices(device, physicalDevice).getVerticesBuffer()
 				vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
 				
 				memFree(pBuffers);
 				memFree(offsets);
 				
-				//Draw triangle
-//				if(!quad)
-					vkCmdDraw(buffer, 3, 1, 0, 0);//TODO check
-//				else
-//					vkCmdDraw(buffer, 6, 1, 0, 0);
+				vkCmdDraw(buffer, mesh2.verticesCount(), 1, 0, 0);//TODO check
 			}
 			
 		};
@@ -316,7 +330,13 @@ public class GameLogoStage implements GameStage{
 		}
 		
 		Recordable cmdPreset = makePreset();
-		Recordable cmdRecord = makeRecordable(device, physicalDevice, pipeline);
+		Recordable cmdRecord = null;
+		try {
+			cmdRecord = makeRecordable(device, physicalDevice, pipeline);
+		} catch (VulkanException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		renderPass.setWork(cmdRecord);
 		renderPass.setPreset(cmdPreset);
 		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, bufferFlags);

@@ -11,7 +11,7 @@ A small engine based on Vulkan(LWJGL3) and Java. Currently it contains mostly ut
  <h3>Prepare your IDE</h3>
  
   * Download and install Vulkan from <a href="https://vulkan.lunarg.com/sdk/home">this</a> site.
-  * Download required LWJGL libraries("Minimal Vulkan" + JOML) from <a href="https://www.lwjgl.org/download">this</a> page.
+  * Download required libraries(see dependecies) and add them to the build path.
   * Create a new project in your IDE.
   * Add the Vulkan libraries to the project.
   * Add <b>Vulkan Game Engine</b> package contents to the project and make sure that your IDE recognizes the source("src") package.
@@ -19,9 +19,20 @@ A small engine based on Vulkan(LWJGL3) and Java. Currently it contains mostly ut
   * You are ready to go!
   
   
-<h2>Required LWJGL libraries</h2>
-<p> It is highly recomended to download default "Minimal Vulkan" preset with JOML selected. You can find it on <a href="https://www.lwjgl.org/download">this</a> website. </p>
+<h2>Dependencies</h2>
+
+ <h3>LWJGL3 and JOML</h3>
+
+ <p> You need "Minimal Vulkan" preset with JOML selected. You can find it on <a href="https://www.lwjgl.org/download">this</a> website. </p>
  
+ <h3> JSON </h3>
+ 
+ <p> The engine uses JSON files and loads it with the following open source library: https://github.com/douglascrockford/JSON-java.git.
+It is required to add it to the build path.</p>
+
+<h3> Nullable anotations </h3>
+
+<p> The project uses Eclipse null anotations(org.eclipse.jdt.annotation.Nullable). If you are using any other IDEs you might need to remove @Nullable anotation from a few files. </p>
 
 <h2>Contribute!</h2>
 <p>Developing fully functional game engine is challenging enough for a team of full time developers. Not to say for a guy that is pursuing bechelor's degree at the same time(and tries to sleep 8 hours a day). So any amount of help is more then welcome!</p>
