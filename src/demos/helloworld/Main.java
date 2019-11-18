@@ -1,4 +1,4 @@
-package demos.initialization;
+package demos.helloworld;
 
 import core.Engine;
 import core.EngineTask;
@@ -27,6 +27,8 @@ private static class ExampleClass implements Runnable, EngineTask {
 			 * 
 			 */
 			
+			System.out.println("The engine is running.");
+			
 			System.out.println("Hello Vulkan Game Engine!");
 			
 			engine.stop();
@@ -41,13 +43,19 @@ private static class ExampleClass implements Runnable, EngineTask {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
+
+		// Creates an engine object.
 		Engine engine = new Engine();
-		
+
+		// Creates a task that will be performed by the engine.
 		ExampleClass example = new ExampleClass(engine);
+		
+		// Adds the task to the engine queue.
+		// It will be invoked on the first thread.
 		engine.addTask(example);
 		
 		try {
+			//Starts the engine(on this thread).
 			engine.run();
 		}
 		catch (Exception e) {

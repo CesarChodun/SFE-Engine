@@ -24,7 +24,7 @@ public class Engine implements Runnable{
 	/** A list of task for engine to complete. */
 	private Queue<EngineTask> tasks = new LinkedList<EngineTask>();
 	/** Tells whether the engine should be running or if it should shut itself down.*/
-	private boolean running = false;
+	private volatile boolean running = false;
 	
 	
 
