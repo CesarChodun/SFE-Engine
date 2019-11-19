@@ -46,6 +46,7 @@ public class Application {
 		APP_PATCH_KEY = "APPLICATION_VERSION_PATCH",
 		DEFAULT_ENGINE_NAME = "Engine",
 		DEFAULT_APPLICATION_NAME = "Application";
+	
 	/** Default configuration values.*/
 	protected static final Integer
 		DEFAULT_API_MAJOR = 1,
@@ -57,6 +58,7 @@ public class Application {
 		DEFAULT_APP_MAJOR = 0, 
 		DEFAULT_APP_MINOR = 1, 
 		DEFAULT_APP_PATCH = 1;
+	
 	/** Basic logger for the class. */
 	protected static Logger appLogger = Logger.getLogger(Application.class.getName());
 	
