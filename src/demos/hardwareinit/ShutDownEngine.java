@@ -1,6 +1,8 @@
 package demos.hardwareinit;
 
 import java.util.concurrent.Semaphore;
+
+import core.Application;
 import core.Engine;
 
 public class ShutDownEngine implements Runnable{
@@ -17,6 +19,7 @@ public class ShutDownEngine implements Runnable{
 	public void run() {
 		try {
 			shouldShutDown.acquire();
+			
 		} catch (InterruptedException e) {
 			System.err.println("Engine shutdown thread was interrupted.");
 			e.printStackTrace();

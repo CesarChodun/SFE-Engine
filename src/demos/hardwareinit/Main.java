@@ -1,5 +1,6 @@
 package demos.hardwareinit;
 
+import core.Application;
 import core.Engine;
 
 public class Main {
@@ -31,6 +32,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		finally {
+			Application.destroy();
 			System.out.println("Engine successfully shut down.");
 		}
 		
