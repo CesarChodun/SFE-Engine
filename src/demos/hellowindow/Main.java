@@ -1,4 +1,4 @@
-package demos.hardwareinit;
+package demos.hellowindow;
 
 import core.Application;
 import core.Engine;
