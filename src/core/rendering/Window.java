@@ -201,11 +201,15 @@ public class Window {
 	public int getWindowAttrib(int hint) {
 		return glfwGetWindowAttrib(windowID, hint);
 	}
-	public void fullScreen(boolean full) {
+	public void setFullScreen(boolean full) {
 		if(full == true)
 			glfwSetWindowMonitor(windowID, glfwGetPrimaryMonitor(), x, y, width, height, GLFW_DONT_CARE);
 		else
 			glfwSetWindowMonitor(windowID, NULL, x, y, width, height, GLFW_DONT_CARE);
+	}
+	public void setName(String name) {
+		this.name = name;
+		glfwSetWindowTitle(windowID, name);
 	}
 	
 	/** Returns the window GLFW handle. */
