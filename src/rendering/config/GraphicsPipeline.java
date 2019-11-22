@@ -461,13 +461,6 @@ public class GraphicsPipeline implements Destroyable{
 			.depthFailOp(backCfg.getStaticIntFromClass(VK10.class, DS_DEPTH_FAIL_OP_KEY, DEFAULT_DS_DEPTH_FAIL_OP))
 			.compareOp(backCfg.getStaticIntFromClass(VK10.class, DS_COMPARE_OP_KEY, DEFAULT_DS_COMPARE_OP));
 	}
-	
-//	private ConfigAsset defaultStage() {
-//		JSONObject json = new JSONObject();
-//		
-//		json.put(key, value)
-//		
-//	}
 
 	private void loadStages(ConfigAsset cfg) throws VulkanException {
 		List<ConfigAsset> cfgs = cfg.getCfgList(STAGES_KEY);
@@ -483,18 +476,12 @@ public class GraphicsPipeline implements Destroyable{
 					device, 
 					new File(sCfg.getString(FILE_KEY, DEFAULT_FILE))
 					);
-//			VkPipelineShaderStageCreateInfo stageInfo = Util.createShaderStage(
-//					shaderModule, 
-//					sCfg.getStaticIntFromClass(VK10.class, STAGE_KEY, DEFAULT_STAGE), 
-//					sCfg.getString(MAIN_KEY, DEFAULT_MAIN));
 			
 			Util.fillShaderStage(
 					stages.get(i), 
 					shaderModule, 
 					sCfg.getStaticIntFromClass(VK10.class, STAGE_KEY, DEFAULT_STAGE), 
 					sCfg.getString(MAIN_KEY, DEFAULT_MAIN));
-			
-//			stages.put(i, stageInfo);
 		}
 	}
 	
