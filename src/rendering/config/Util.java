@@ -61,7 +61,6 @@ public class Util {
 	 * @param stage			- Shader stage.
 	 * @param invokeName	- Name of the method to be invoked.
 	 * @return
-	 * @Deprecated
 	 */
 	public static VkPipelineShaderStageCreateInfo createShaderStage(long shaderModule, int stage, String invokeName) {
 		 VkPipelineShaderStageCreateInfo shaderStage = VkPipelineShaderStageCreateInfo.calloc()
