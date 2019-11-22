@@ -238,8 +238,6 @@ public class BasicPipeline {
 		 
 		 //Load shaders
 		 VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(2);
-//		 stages.get(0).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.vert.spv")), VK_SHADER_STAGE_VERTEX_BIT, "main"));
-//		 stages.get(1).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.frag.spv")), VK_SHADER_STAGE_FRAGMENT_BIT, "main"));
 		
 		 loadShaderStage(
 				 stages.get(0), 
@@ -287,8 +285,8 @@ public class BasicPipeline {
 				 .pDepthStencilState(depthStencilState)
 				 .pStages(stages)
 				 .pDynamicState(dynamicState)
-//				 .basePipelineHandle(VK_NULL_POINTER)
-//				 .basePipelineIndex(0)
+//				 .basePipelineHandle(VK_NULL_POINTER) //Default value
+//				 .basePipelineIndex(0)	//Default value
 				 ;
 		 
 		 LongBuffer pPipeline = memAllocLong(1);
