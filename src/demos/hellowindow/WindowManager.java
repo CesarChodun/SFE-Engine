@@ -14,6 +14,10 @@ import util.window.WindowFactory;
 
 public class WindowManager implements EngineTask{
 
+	/**
+	 * A class that will perform the window(and engine)
+	 * shut down.
+	 */
 	private static class WindowShutDown implements WindowTask.WindowCloseCallback {
 
 		private Engine engine;
@@ -28,14 +32,22 @@ public class WindowManager implements EngineTask{
 		
 		@Override
 		public void close(long windowID) {
-			engine.removeTickTask(windowTask);
+			// Hides the window.
 			window.setVisible(false);
+			// Removes the tick task from the engine.
+			engine.removeTickTask(windowTask);
+			// Destroys the window.
 			window.destroyWindow();
+			// Shut down the engine.
 			engine.stop();
 		}
 		
 	}
 	
+	/**
+	 * A class that will monitor if the window should close,
+	 * and poll the GLFW events.
+	 */
 	private static class WindowTask implements EngineTask{
 		
 		public static interface WindowCloseCallback {
@@ -56,7 +68,10 @@ public class WindowManager implements EngineTask{
 		
 		@Override
 		public void run() throws AssertionError {
+			// Pooling the GLFW events.
 			glfwPollEvents();
+			
+			// Checking if the window should close.
 			if (glfwWindowShouldClose(windowID))
 				closeWindow();
 		}
@@ -66,15 +81,15 @@ public class WindowManager implements EngineTask{
 				closeCall.close(windowID);
 		}
 
-		public WindowCloseCallback getCloseCall() {
-			return closeCall;
-		}
-
 		public void setCloseCall(WindowCloseCallback closeCall) {
 			this.closeCall = closeCall;
 		}
 	}
 	
+	/**
+	 * A class that will create the window 
+	 * and add the window per tick task to the engine.
+	 */
 	private static class CreateWindowTask implements EngineTask {
 
 		private Window window;
@@ -90,23 +105,22 @@ public class WindowManager implements EngineTask{
 		@Override
 		public void run() throws AssertionError {			
 			try {
+				// Creating a window object.
 				window = new Window(HardwareManager.getInstance());
+				// Setting the window data to the values from the file.
 				WindowFactory.loadFromFile(window, asset.getConfigFile("window.cfg"));
 			} catch (VulkanException | IOException e) {
 				System.err.println("Failed to create window.");
 				e.printStackTrace();
 			}
 			
-			window.setVisible(true);
-
+			// Creating a window task that will monitor the window events.
 			WindowTask wt = new WindowTask(window.getWindowID());
 			wt.setCloseCall(new WindowShutDown(engine, window, wt));
 			engine.addTickTask(wt);
-		}
-
-
-		public Window getWindow() {
-			return window;
+			
+			// Showing the window.
+			window.setVisible(true);
 		}
 	}
 	
@@ -120,8 +134,10 @@ public class WindowManager implements EngineTask{
 	
 	@Override
 	public void run() {
-		
+		// Obtaining the asset folder for the window.
 		Asset windowAsset = asset.getSubAsset("window");
+		
+		// Creating a task that will create the window.
 		CreateWindowTask cwt = new CreateWindowTask(engine, windowAsset);
 		engine.addTask(cwt);
 	}

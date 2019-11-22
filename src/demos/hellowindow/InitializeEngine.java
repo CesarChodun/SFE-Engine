@@ -9,11 +9,18 @@ import core.EngineTask;
 import core.HardwareManager;
 import core.result.VulkanException;
 
+/**
+ * Initializes the engine.
+ */
 public class InitializeEngine implements EngineTask {
 	
 	final static String CONFIG_FILE = "demos/hellowindow";
 	private Semaphore workDone;
 	
+	/**
+	 * 
+	 * @param workDone A semaphore that will be released after the initialization
+	 */
 	public InitializeEngine(Semaphore workDone) {
 		this.workDone = workDone;
 	}
@@ -29,6 +36,7 @@ public class InitializeEngine implements EngineTask {
 		 */
 		
 		try {
+			// Initializes the application with the configuration file(CONFIG_FILE)
 			Application.init(CONFIG_FILE);
 			
 			System.out.println("Application data succesfully initialized!");
@@ -40,7 +48,7 @@ public class InitializeEngine implements EngineTask {
 		}
 		
 		try {
-			
+			// Initializes the hardware information.
 			HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());
 			System.out.println("Hardware succesfully initialized!");			
 		} catch (VulkanException e) {
@@ -53,6 +61,7 @@ public class InitializeEngine implements EngineTask {
 			e.printStackTrace();
 		} 
 		
+		// Initialization process has been finished so the semaphore is released
 		workDone.release();
 	}
 }
