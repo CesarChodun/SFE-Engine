@@ -92,6 +92,7 @@ public class CommandBufferFactory{
 			e.printStackTrace();
 			throw new AssertionError(e.getMessage());
 		}
+		cbai.free();
 		
 		commandBuffers = new VkCommandBuffer[framebuffers.length];
 		
@@ -120,6 +121,9 @@ public class CommandBufferFactory{
 		}
 		
 		cmdPools.put(commandBuffers[0], commandPool);
+
+		cbbi.free();
+		pCommandBuffer.free();
 		
 		return commandBuffers;
 	}

@@ -9,7 +9,7 @@ import game.game_hardware_info.HardwareInfoStage;
 import game.game_loggs.LogStage;
 import game.game_logo.GameLogoStage;
 
-public class Game implements Runnable{
+public class Game implements EngineTask{
 
 	private static final boolean DEBUG = true;
 	

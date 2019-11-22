@@ -1,7 +1,10 @@
 package core;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -20,13 +23,15 @@ public class Engine implements Runnable{
 	private static final float TASKS_PER_TICK_SCALING = 0.5f;
 
 	/** A list of tasks that should be executed once per engine tick. */
-	private Set<EngineTask> tickTasks = new HashSet<EngineTask>();
+	private Set<EngineTask> tickTasks = Collections.synchronizedSet(new HashSet<EngineTask>());
 	/** A list of task for engine to complete. */
 	private Queue<EngineTask> tasks = new LinkedList<EngineTask>();
 	/** Tells whether the engine should be running or if it should shut itself down.*/
-	private boolean running = false;
+	private volatile boolean running = false;
 	
-	
+	public Engine() {
+		
+	}
 
 	@Override
 	/**
@@ -40,11 +45,15 @@ public class Engine implements Runnable{
 				// Performs simple tasks(one time tasks)
 				int taskToComplete = (int) (tasks.size() * TASKS_PER_TICK_SCALING) + MINIMUM_TASKS_PER_TICK;
 				for (int  i = 0; i < taskToComplete && tasks.size() > 0; i++) 
-					tasks.poll().run();
+					synchronized(tasks) {
+						tasks.poll().run();
+					}
 
 				// Performs per-tick tasks.
-				for (EngineTask tickTask : tickTasks)
-					tickTask.run();
+				List<EngineTask> tmp = new ArrayList<EngineTask>(tickTasks);
+				for (EngineTask tickTask : tmp)
+					if(running == true)
+						tickTask.run();
 			}
 		}
 		catch (AssertionError e) {

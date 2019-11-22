@@ -461,13 +461,6 @@ public class GraphicsPipeline implements Destroyable{
 			.depthFailOp(backCfg.getStaticIntFromClass(VK10.class, DS_DEPTH_FAIL_OP_KEY, DEFAULT_DS_DEPTH_FAIL_OP))
 			.compareOp(backCfg.getStaticIntFromClass(VK10.class, DS_COMPARE_OP_KEY, DEFAULT_DS_COMPARE_OP));
 	}
-	
-//	private ConfigAsset defaultStage() {
-//		JSONObject json = new JSONObject();
-//		
-//		json.put(key, value)
-//		
-//	}
 
 	private void loadStages(ConfigAsset cfg) throws VulkanException {
 		List<ConfigAsset> cfgs = cfg.getCfgList(STAGES_KEY);
@@ -479,11 +472,16 @@ public class GraphicsPipeline implements Destroyable{
 		for (int i = 0; i < cfgs.size(); i++) {
 			ConfigAsset sCfg = cfgs.get(i);
 			
-			stages.get(i).set(Util.createShaderStage(
-					Util.createShaderModule(device, 
-							new File(sCfg.getString(FILE_KEY, DEFAULT_FILE))), 
+			long shaderModule = Util.createShaderModule(
+					device, 
+					new File(sCfg.getString(FILE_KEY, DEFAULT_FILE))
+					);
+			
+			Util.fillShaderStage(
+					stages.get(i), 
+					shaderModule, 
 					sCfg.getStaticIntFromClass(VK10.class, STAGE_KEY, DEFAULT_STAGE), 
-					sCfg.getString(MAIN_KEY, DEFAULT_MAIN)));
+					sCfg.getString(MAIN_KEY, DEFAULT_MAIN));
 		}
 	}
 	
@@ -521,7 +519,13 @@ public class GraphicsPipeline implements Destroyable{
 		multisampleState.free();
 		viewportStateCreateInfo.free();
 		depthStencilState.free();
+		
+		for (int i = 0; i < stages.remaining(); i++) {
+			memFree(stages.get(i).pName());
+		}
+		
 		stages.free();
+		
 		memFree(dynamicStates);
 		dynamicState.free();
 	}

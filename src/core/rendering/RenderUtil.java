@@ -127,13 +127,25 @@ public class RenderUtil {
 			layersBuff = makeByteBuffers(layers);
 		
 		PointerBuffer pExtensions = null;
+		ByteBuffer[] extensionsBuff = null;
 		
 		if (extensions != null) {
-			ByteBuffer[] extensionsBuff = makeByteBuffers(extensions);
+			extensionsBuff = makeByteBuffers(extensions);
 			pExtensions = makePointer(extensionsBuff);
 		}
 		
-		return createLogicalDevice(dev, queueFamilyIndex, queuePriorities, flags, layersBuff, pExtensions);
+		VkDevice device = createLogicalDevice(dev, queueFamilyIndex, queuePriorities, flags, layersBuff, pExtensions);
+		
+		memFree(pExtensions);
+		if (extensionsBuff != null)
+			for (int i = 0; i < extensionsBuff.length; i++)
+				memFree(extensionsBuff[i]);
+		
+		if (layersBuff != null)
+			for (int i = 0; i < layersBuff.length; i++)
+				memFree(layersBuff[i]);
+		
+		return device;
 	}
 	
 	/**
@@ -238,7 +250,7 @@ public class RenderUtil {
 		long out = pCommandPool.get(0);
 		
 		memFree(pCommandPool);
-		createInfo.clear();
+		createInfo.free();
 		
 		return out;
 	}

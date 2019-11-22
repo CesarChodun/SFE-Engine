@@ -74,8 +74,11 @@ public class BasicSwapchainFactory implements SwapchainFactory{
     	
     	for(int i = 0; i < hsize; i++)
     		for(int j = 0; j < bsize; j++)
-    			if(modes.get(j) == presentModeHierarchy[i])
-    				return modes.get(j);
+    			if(modes.get(j) == presentModeHierarchy[i]) {
+    				Integer out = modes.get(j);
+    		    	memFree(modes);
+    				return out;
+    			}
     	
     	memFree(modes);
     	
@@ -87,13 +90,6 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 
 		int width = (int) (window.getWidth());
     	int height = (int) (window.getHeight());
-//    	ColorFormatAndSpace colorFormatAndSpace;
-//		try {
-//			colorFormatAndSpace = getNextColorFormatAndSpace(0, physicalDevice, window.getSurface(), VK_FORMAT_A8B8G8R8_SRGB_PACK32, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR);
-//		} catch (VulkanException e) {
-//			e.printStackTrace();
-//			throw new AssertionError("Failed to obtain color space!");
-//		}
     	
     	VkSurfaceCapabilitiesKHR caps;
 		try {
@@ -120,16 +116,14 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 		}
     	if(swapchainPresentMode == -1)
     		throw new AssertionError("Failed to locate any suitable mode!");
+    	
     	//Triple buffering:
     	int imageCount = caps.minImageCount();
     	if (imageCount <= 1)
     		imageCount++;
     	if(caps.maxImageCount() > 0 && imageCount > caps.maxImageCount())
     		imageCount = caps.maxImageCount();
-    	//Swap extent
-    	VkExtent2D extent = VkExtent2D.calloc()
-    			.width(width)
-    			.height(height);
+    	
     	//Transform
     	int transform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
     	if((caps.supportedTransforms() & transform) == 0)
@@ -151,8 +145,11 @@ public class BasicSwapchainFactory implements SwapchainFactory{
     			.presentMode(swapchainPresentMode)
     			.oldSwapchain(oldSwapchain)
     			.clipped(true)
-    			.compositeAlpha(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
-    			.imageExtent(extent);
+    			.compositeAlpha(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR);
+    	
+    	createInfo.imageExtent()
+    		.width(width)
+    		.height(height);
     	
     	//Share images between two queues.
     	if(graphicsQueueFamilyIndex != presentQueueFamilyIndex) {//TODO: Check if valid
@@ -173,7 +170,6 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 
 	@Override
 	public void destroyInfo(VkSwapchainCreateInfoKHR info) {
-		// TODO Auto-generated method stub
 		info.free();
 	}
 

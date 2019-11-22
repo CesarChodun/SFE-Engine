@@ -12,6 +12,7 @@ import org.lwjgl.vulkan.VkClearValue;
 
 import core.resources.Asset;
 import core.resources.ConfigFile;
+import core.resources.Destroyable;
 import core.resources.ResourceUtil;
 
 /**
@@ -20,7 +21,7 @@ import core.resources.ResourceUtil;
  * @author Cezary Chodun
  * @since 19.10.2019
  */
-public class Attachments {
+public class Attachments implements Destroyable{
 
 	/**
 	 * Flags for the configuration file.
@@ -187,6 +188,12 @@ public class Attachments {
 	 */
 	public VkAttachmentDescription.Buffer getBuffer() {
 		return attachments;
+	}
+
+	@Override
+	public void destroy() {
+		attachments.free();
+		clearValues.free();
 	}
 	
 }

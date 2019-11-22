@@ -68,7 +68,7 @@ public class GameLogoStage implements GameStage{
 	
 	public static void initializeHardware() throws VulkanException, IOException {
 		
-		// Game data initialization(in the current folder)
+		// Game data initialization
 		Application.init("game/windows");
 		
 		//Initialize hardware

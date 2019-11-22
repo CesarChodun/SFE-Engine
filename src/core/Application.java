@@ -20,7 +20,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * about the application and engine.
  * 
  * @author Cezary Chodun
- * @since 26.09.2019
+ * @since 19.11.2019
  */
 public class Application {
 
@@ -46,6 +46,7 @@ public class Application {
 		APP_PATCH_KEY = "APPLICATION_VERSION_PATCH",
 		DEFAULT_ENGINE_NAME = "Engine",
 		DEFAULT_APPLICATION_NAME = "Application";
+	
 	/** Default configuration values.*/
 	protected static final Integer
 		DEFAULT_API_MAJOR = 1,
@@ -57,6 +58,7 @@ public class Application {
 		DEFAULT_APP_MAJOR = 0, 
 		DEFAULT_APP_MINOR = 1, 
 		DEFAULT_APP_PATCH = 1;
+	
 	/** Basic logger for the class. */
 	protected static Logger appLogger = Logger.getLogger(Application.class.getName());
 	
@@ -77,6 +79,9 @@ public class Application {
 	 * @throws FileNotFoundException	When the asset wasn't found.
 	 */
 	public static void init(File appLocation) throws FileNotFoundException {
+		if (applicationInfo != null)
+			throw new AssertionError("Failed to initialize the application. As it was initialized earlier.");
+		
 		applicationLocation = appLocation;
 		
 		appAssets = new Asset(applicationLocation);
@@ -85,7 +90,7 @@ public class Application {
 			throw new FileNotFoundException();
 
 		try {
-			createAppInfo(configAssets);
+			applicationInfo = createAppInfo(configAssets);
 		} catch (JSONException | IOException | AssertionError e) {
 			e.printStackTrace();
 		}	
@@ -99,6 +104,9 @@ public class Application {
 	 * @throws FileNotFoundException	When the asset wasn't found.
 	 */
 	public static void init(String configName) throws FileNotFoundException {
+		if (applicationInfo != null)
+			throw new AssertionError("Failed to initialize the application. As it was initialized earlier.");
+		
 		applicationLocation = new File("");
 		
 		appAssets = new Asset(new File(applicationLocation.getAbsolutePath() + "/" + CONFIG_FOLDER_NAME));
@@ -107,7 +115,7 @@ public class Application {
 			throw new FileNotFoundException();
 
 		try {
-			createAppInfo(configAssets);
+			applicationInfo = createAppInfo(configAssets);
 		} catch (JSONException | IOException | AssertionError e) {
 			e.printStackTrace();
 		}	
@@ -177,5 +185,17 @@ public class Application {
 		cfg.close();
 		
 		return appInfo;
+	}
+
+	/**
+	 * Destroys the allocated data.
+	 * <b>Note:</b> must be invoked on the main thread.
+	 */
+	public static void destroy() {
+		if (applicationInfo != null) {
+			memFree(applicationInfo.pApplicationName());
+			memFree(applicationInfo.pEngineName());
+			applicationInfo.free();
+		}
 	}
 }
