@@ -2,7 +2,6 @@ package demos.hardwareinit;
 
 import java.util.concurrent.Semaphore;
 
-import core.Application;
 import core.Engine;
 
 public class ShutDownEngine implements Runnable{
