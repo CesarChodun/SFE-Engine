@@ -35,8 +35,6 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 		this.physicalDevice = physicalDevice;
 		this.device = device;
 		this.colorFormatAndSpace = colorFormatAndSpace;
-		
-		
 	}
 	
 	/**
@@ -92,13 +90,6 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 
 		int width = (int) (window.getWidth());
     	int height = (int) (window.getHeight());
-//    	ColorFormatAndSpace colorFormatAndSpace;
-//		try {
-//			colorFormatAndSpace = getNextColorFormatAndSpace(0, physicalDevice, window.getSurface(), VK_FORMAT_A8B8G8R8_SRGB_PACK32, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR);
-//		} catch (VulkanException e) {
-//			e.printStackTrace();
-//			throw new AssertionError("Failed to obtain color space!");
-//		}
     	
     	VkSurfaceCapabilitiesKHR caps;
 		try {
