@@ -17,6 +17,7 @@ public class ShutDownEngine implements Runnable{
 	@Override
 	public void run() {
 		try {
+			// Waits for the semaphore
 			shouldShutDown.acquire();
 			
 		} catch (InterruptedException e) {
@@ -24,6 +25,7 @@ public class ShutDownEngine implements Runnable{
 			e.printStackTrace();
 		}
 		finally {
+			// Shuts the engine down.
 			engine.stop();
 		}
 	}
