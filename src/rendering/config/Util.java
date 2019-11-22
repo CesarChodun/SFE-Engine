@@ -61,6 +61,7 @@ public class Util {
 	 * @param stage			- Shader stage.
 	 * @param invokeName	- Name of the method to be invoked.
 	 * @return
+	 * @Deprecated
 	 */
 	public static VkPipelineShaderStageCreateInfo createShaderStage(long shaderModule, int stage, String invokeName) {
 		 VkPipelineShaderStageCreateInfo shaderStage = VkPipelineShaderStageCreateInfo.calloc()
@@ -70,6 +71,27 @@ public class Util {
 				 .module(shaderModule)
 				 .pName(memUTF8(invokeName));
 		 return shaderStage;
+	 }
+	
+	/**
+	 * 
+	 * @param info			- Info that will be filled
+	 * @param shaderModule	- Shader module.
+	 * @param stage			- Shader stage.
+	 * @param invokeName	- Name of the method to be invoked.
+	 */
+	public static void fillShaderStage(
+			VkPipelineShaderStageCreateInfo info, 
+			long shaderModule, 
+			int stage, 
+			String invokeName
+			) {
+		 info
+			 .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+			 .pNext(NULL)
+			 .stage(stage)
+			 .module(shaderModule)
+			 .pName(memUTF8(invokeName));
 	 }
 	
 	/**

@@ -479,11 +479,22 @@ public class GraphicsPipeline implements Destroyable{
 		for (int i = 0; i < cfgs.size(); i++) {
 			ConfigAsset sCfg = cfgs.get(i);
 			
-			stages.get(i).set(Util.createShaderStage(
-					Util.createShaderModule(device, 
-							new File(sCfg.getString(FILE_KEY, DEFAULT_FILE))), 
+			long shaderModule = Util.createShaderModule(
+					device, 
+					new File(sCfg.getString(FILE_KEY, DEFAULT_FILE))
+					);
+//			VkPipelineShaderStageCreateInfo stageInfo = Util.createShaderStage(
+//					shaderModule, 
+//					sCfg.getStaticIntFromClass(VK10.class, STAGE_KEY, DEFAULT_STAGE), 
+//					sCfg.getString(MAIN_KEY, DEFAULT_MAIN));
+			
+			Util.fillShaderStage(
+					stages.get(i), 
+					shaderModule, 
 					sCfg.getStaticIntFromClass(VK10.class, STAGE_KEY, DEFAULT_STAGE), 
-					sCfg.getString(MAIN_KEY, DEFAULT_MAIN)));
+					sCfg.getString(MAIN_KEY, DEFAULT_MAIN));
+			
+//			stages.put(i, stageInfo);
 		}
 	}
 	
@@ -521,7 +532,13 @@ public class GraphicsPipeline implements Destroyable{
 		multisampleState.free();
 		viewportStateCreateInfo.free();
 		depthStencilState.free();
+		
+		for (int i = 0; i < stages.remaining(); i++) {
+			memFree(stages.get(i).pName());
+		}
+		
 		stages.free();
+		
 		memFree(dynamicStates);
 		dynamicState.free();
 	}

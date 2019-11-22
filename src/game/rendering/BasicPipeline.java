@@ -125,11 +125,13 @@ public class BasicPipeline {
 		 memAlloc.memoryTypeIndex(memoryTypeIndex.get(0));
 		 memFree(memoryTypeIndex);
 		 memReqs.free();
+		 pMemoryProperties.free();
 		 
 		 LongBuffer pMemory = memAllocLong(1);
 		 err = vkAllocateMemory(logicalDevice, memAlloc, null, pMemory);
 		 long memory = pMemory.get(0);
 		 validate(err, "Failed to alocate vertex memory!");
+		 memFree(pMemory);
 		 
 		 PointerBuffer pData = memAllocPointer(1);
 		 err = vkMapMemory(logicalDevice, memory, 0, memAlloc.allocationSize(), 0, pData);
@@ -236,9 +238,26 @@ public class BasicPipeline {
 		 
 		 //Load shaders
 		 VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(2);
-		 stages.get(0).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.vert.spv")), VK_SHADER_STAGE_VERTEX_BIT, "main"));
-		 stages.get(1).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.frag.spv")), VK_SHADER_STAGE_FRAGMENT_BIT, "main"));
+//		 stages.get(0).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.vert.spv")), VK_SHADER_STAGE_VERTEX_BIT, "main"));
+//		 stages.get(1).set(createShaderStage(createShaderModule(logicalDevice, new File("storage/res/shaders/triangle.frag.spv")), VK_SHADER_STAGE_FRAGMENT_BIT, "main"));
+		
+		 loadShaderStage(
+				 stages.get(0), 
+				 createShaderModule(
+						 logicalDevice, 
+						 new File("storage/res/shaders/triangle.vert.spv")
+						 ), 
+				 VK_SHADER_STAGE_VERTEX_BIT, "main");
 		 
+		 loadShaderStage(
+				 stages.get(1), 
+				 createShaderModule(
+						 logicalDevice, 
+						 new File("storage/res/shaders/triangle.frag.spv")
+						 ), 
+				 VK_SHADER_STAGE_FRAGMENT_BIT, 
+				 "main");
+						 
 		 // Create the pipeline layout that is used to generate the rendering pipelines that
 	     // are based on this descriptor set layout
 		 VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
@@ -276,6 +295,7 @@ public class BasicPipeline {
 		 err = vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, pipelineCreateInfo, null, pPipeline);
 		 long pipelineHandle = pPipeline.get(0);
 		 memFree(pPipeline);
+		 vertexCreateInfo.free();
 		 inputAssemblyInfo.free();
 		 rasterizationStateInfo.free();
 		 colorWriteMask.free();
@@ -285,7 +305,14 @@ public class BasicPipeline {
 		 dynamicState.free();
 		 depthStencilState.free();
 		 multisampleState.free();
+		 
+		 bindingDescription.free();
+		 attributeDescription.free();
+		 
+		 for (int i = 0; i < stages.remaining(); i++)
+			 memFree(stages.get(i).pName());
 		 stages.free();
+		 
 		 pipelineCreateInfo.free();
 		 
 		 return pipelineHandle;
@@ -337,6 +364,32 @@ public class BasicPipeline {
 				 .module(shaderModule)
 				 .pName(memUTF8(invokeName));
 		 return shaderStage;
+	 }
+	
+
+	/**
+	 * <h5>Description:</h5>
+	 * <p>
+	 * 		Creates shader stage.
+	 * </p>
+	 * @param shaderModule	- Shader module.
+	 * @param stage			- Shader stage.
+	 * @param invokeName	- Name of the method to be invoked.
+	 * @return
+	 */
+	public static void loadShaderStage(
+			VkPipelineShaderStageCreateInfo info, 
+			long shaderModule, 
+			int stage, 
+			String invokeName
+			) {
+		
+		 info
+			 .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+			 .pNext(NULL)
+			 .stage(stage)
+			 .module(shaderModule)
+			 .pName(memUTF8(invokeName));
 	 }
 	
 	/**

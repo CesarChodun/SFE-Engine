@@ -135,6 +135,9 @@ public class RenderPass implements Destroyable{
 	 * @note The attachments are not freed.
 	 */
 	public void destroy() {
+		attachments.destroy();
+		memFree(renderPassInfo.pSubpasses().pColorAttachments());
+		renderPassInfo.pSubpasses().free();
 		renderPassInfo.free();
 		renderPassBeginInfo.free();
 	}

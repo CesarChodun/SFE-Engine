@@ -25,6 +25,7 @@ import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
 import core.rendering.factories.CommandBufferFactory;
 import core.rendering.factories.FrameBufferFactory;
 import core.rendering.factories.SwapchainFactory;
+import core.resources.Destroyable;
 import core.result.VulkanException;
 
 /**
@@ -50,7 +51,7 @@ import core.result.VulkanException;
  * @author Cezary Chodun
  * @since 26.09.2019
  */
-public class Renderer {
+public class Renderer implements Destroyable{
 	
 	/** Targeted window. */
 	private Window window;
@@ -422,7 +423,10 @@ public class Renderer {
 	 * 
 	 * TODO: free swapchain resources.
 	 */
+	@Override
 	public void destroy() {
+		imageViewCreateInfo.free();
+		
 		memFree(pSwapchain);
 		memFree(pImageIndex);
 		

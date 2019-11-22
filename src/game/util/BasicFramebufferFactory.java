@@ -12,9 +12,10 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
 
 import core.rendering.factories.FrameBufferFactory;
+import core.resources.Destroyable;
 import core.result.VulkanException;
 
-public class BasicFramebufferFactory implements FrameBufferFactory {
+public class BasicFramebufferFactory implements FrameBufferFactory, Destroyable {
 	
 	private long renderPass;
 	private VkDevice device;
@@ -72,7 +73,9 @@ public class BasicFramebufferFactory implements FrameBufferFactory {
 			vkDestroyFramebuffer(device, framebuffer, null);//TODO change allocator
 	}
 
+	@Override
 	public void destroy() {
+		memFree(frameBufferCreateInfo.pAttachments());
 		frameBufferCreateInfo.free();
 	}
 }
