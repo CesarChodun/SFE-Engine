@@ -36,6 +36,12 @@ import core.resources.Destroyable;
 import core.resources.ResourceUtil;
 import core.result.VulkanException;
 
+/**
+ * Vulkan graphics pipeline created from file.
+ * 
+ * @author Cezary Chodun
+ * @since 23.11.2019
+ */
 public class GraphicsPipeline implements Destroyable{
 	
 	private static final String 
@@ -266,6 +272,20 @@ public class GraphicsPipeline implements Destroyable{
 	private IntBuffer dynamicStates;
 	private VkPipelineDynamicStateCreateInfo dynamicState;
 
+	/**
+	 * Creates a graphics pipeline with data taken from a default 
+	 * pipeline info file from the asset.
+	 * 
+	 * @param asset
+	 * @param configFile
+	 * @param device
+	 * @param renderPass
+	 * @param pipelineLayout
+	 * 
+	 * @throws IOException
+	 * @throws AssertionError
+	 * @throws VulkanException
+	 */
 	public GraphicsPipeline(Asset asset, String configFile, VkDevice device, long renderPass, long pipelineLayout) throws IOException, AssertionError, VulkanException {
 		this.asset = asset;
 		this.configFile = configFile;
@@ -354,6 +374,11 @@ public class GraphicsPipeline implements Destroyable{
 				 .pVertexAttributeDescriptions(attributeDescription);
 	}
 	
+	/**
+	 * Returns handle of the pipeline.
+	 * 
+	 * @return
+	 */
 	public long getPipelineHandle() {
 		return pipelineHandle;
 	}
