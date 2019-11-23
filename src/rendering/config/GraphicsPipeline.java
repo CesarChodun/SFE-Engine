@@ -32,9 +32,9 @@ import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 import core.resources.Asset;
 import core.resources.ConfigAsset;
 import core.resources.ConfigFile;
-import core.resources.Destroyable;
 import core.resources.ResourceUtil;
 import core.result.VulkanException;
+import rendering.pipeline.Pipeline;
 
 /**
  * Vulkan graphics pipeline created from file.
@@ -42,7 +42,7 @@ import core.result.VulkanException;
  * @author Cezary Chodun
  * @since 23.11.2019
  */
-public class GraphicsPipeline implements Destroyable{
+public class GraphicsPipeline implements Pipeline{
 	
 	private static final String 
 		VERTEX_INPUT_STATE_KEY = "pVertexInputState",
@@ -378,6 +378,7 @@ public class GraphicsPipeline implements Destroyable{
 	 * Returns handle of the pipeline.
 	 * 
 	 * @return
+	 * @Deprecated
 	 */
 	public long getPipelineHandle() {
 		return pipelineHandle;
@@ -558,5 +559,10 @@ public class GraphicsPipeline implements Destroyable{
 	@Override
 	public void destroy() {
 		vkDestroyPipeline(device, pipelineHandle, null);
+	}
+
+	@Override
+	public long handle() {
+		return pipelineHandle;
 	}
 }
