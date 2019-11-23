@@ -56,7 +56,6 @@ import core.rendering.factories.CommandBufferFactory;
 import core.resources.Destroyable;
 import core.result.VulkanException;
 import demos.util.BasicFramebufferFactory;
-import demos.util.BasicPipeline;
 import demos.util.BasicSwapchainFactory;
 import demos.util.RenderingTask;
 import rendering.config.Attachments;
@@ -303,8 +302,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
 		try {
 			long rpHandle = renderPass.handle();
-			
-			BasicPipeline.createPipeline(physicalDevice, device, rpHandle);
 			
 			//renderingPipeline.getGraphicsPipeline();
 			// Create the pipeline layout that is used to generate the rendering pipelines that
