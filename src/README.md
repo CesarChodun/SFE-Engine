@@ -9,19 +9,24 @@
   
   <li>
     <a href="https://github.com/CesarChodun/Depth/tree/master/src/core">core</a>
-    <p> Package for most basic engine functionalities. </p>
+    <p> Package with the most basic engine functionalities. </p>
   </li>
     
   <li>
-    <a href="https://github.com/CesarChodun/Depth/tree/master/src/debug">debug</a>
-    <p> Package with classes for testing engine functions(Not a part of the engine itself). May include some usefull demos. </p>
+    <a href="https://github.com/CesarChodun/Depth/tree/master/src/demos">demos</a>
+    <p> Package with applications that demonstrates engine capabilities. </p>
   </li>
  
  <li>
-    <a href="https://github.com/CesarChodun/Depth/tree/master/src/game">game</a>
-    <p> Package with a sample engine configuration(Not part of the engine itself). May be used as an advanced demo. </p>
+    <a href="https://github.com/CesarChodun/Depth/tree/master/src/rendering">rendering</a>
+    <p> Package with utilities for rendering. </p>
   </li>
  
+ <li>
+    <a href="https://github.com/CesarChodun/Depth/tree/master/src/util"> util </a>
+    <p> Package with general purpose utilities. </p>
+  </li>
+  
  <!---
   <li>
     <a href="https://github.com/CesarChodun/Depth/tree/master/src/"> </a>
