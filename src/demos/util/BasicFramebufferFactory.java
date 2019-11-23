@@ -1,4 +1,4 @@
-package game.util;
+package demos.util;
 
 import static core.result.VulkanResult.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -17,14 +17,12 @@ import core.result.VulkanException;
 
 public class BasicFramebufferFactory implements FrameBufferFactory, Destroyable {
 	
-	private long renderPass;
 	private VkDevice device;
 	private LongBuffer attachments;
 	private VkFramebufferCreateInfo frameBufferCreateInfo;
 
 	public BasicFramebufferFactory(VkDevice device, long renderPass) {
 		this.device = device;
-		this.renderPass = renderPass;
 		
 		attachments = memAllocLong(1);
 		

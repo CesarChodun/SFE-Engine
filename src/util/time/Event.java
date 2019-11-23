@@ -1,4 +1,4 @@
-package game.time;
+package util.time;
 
 /**
  * Interface for basic events.

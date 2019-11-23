@@ -1,4 +1,4 @@
-package game.rendering;
+package demos.util;
 
 public class FPSCounter {
 	

@@ -55,10 +55,10 @@ import core.rendering.Window;
 import core.rendering.factories.CommandBufferFactory;
 import core.resources.Destroyable;
 import core.result.VulkanException;
-import game.rendering.BasicPipeline;
-import game.rendering.RenderingTask;
-import game.util.BasicFramebufferFactory;
-import game.util.BasicSwapchainFactory;
+import demos.util.BasicFramebufferFactory;
+import demos.util.BasicPipeline;
+import demos.util.BasicSwapchainFactory;
+import demos.util.RenderingTask;
 import rendering.config.Attachments;
 import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
@@ -104,7 +104,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		renderPass.setWork(cmdWork);
 		
 		CommandBufferFactory basicCMD = new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
-		BasicSwapchainFactory swapchainFactory = new BasicSwapchainFactory(physicalDevice, device, colorFormat);
+		BasicSwapchainFactory swapchainFactory = new BasicSwapchainFactory(physicalDevice, colorFormat);
 		BasicFramebufferFactory fbFactory = new BasicFramebufferFactory(device, renderPass.handle());
 		destroy.add(fbFactory);
 		

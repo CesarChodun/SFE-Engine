@@ -1,4 +1,4 @@
-package game.rendering;
+package demos.util;
 
 import core.EngineTask;
 import core.rendering.Renderer;
@@ -23,8 +23,8 @@ public class RenderingTask implements EngineTask{
 			res = ren.submitToQueue();
 			//TODO
 			res = ren.presentKHR();
-			counter.newFrame();
 			if (res ==  true) {
+				counter.newFrame();
 				fps_tick++;
 				if (fps_tick >= 100) {
 					fps_tick = 0;

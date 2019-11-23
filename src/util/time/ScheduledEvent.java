@@ -1,4 +1,4 @@
-package game.time;
+package util.time;
 
 import java.util.Comparator;
 

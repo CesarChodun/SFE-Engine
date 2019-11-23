@@ -1,4 +1,4 @@
-package game.util;
+package demos.util;
 
 import static core.rendering.RenderUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -8,9 +8,6 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.IntBuffer;
 
-
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
 import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
@@ -26,14 +23,12 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 	private static final int[] PRESENT_MODE_HIERARCHY = {VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_FIFO_KHR};
 	
 	private VkPhysicalDevice physicalDevice;
-	private VkDevice device;
 	private ColorFormatAndSpace colorFormatAndSpace;
 	
 	private int graphicsQueueFamilyIndex, presentQueueFamilyIndex;
 	
-	public BasicSwapchainFactory(VkPhysicalDevice physicalDevice, VkDevice device, ColorFormatAndSpace colorFormatAndSpace) {
+	public BasicSwapchainFactory(VkPhysicalDevice physicalDevice, ColorFormatAndSpace colorFormatAndSpace) {
 		this.physicalDevice = physicalDevice;
-		this.device = device;
 		this.colorFormatAndSpace = colorFormatAndSpace;
 	}
 	
@@ -45,7 +40,7 @@ public class BasicSwapchainFactory implements SwapchainFactory{
      * @param capabilities - Surface capabilities.
      * @return
      */
-    private static int[] getSwapchainResolutionRange(VkSurfaceCapabilitiesKHR capabilities) {
+    protected static int[] getSwapchainResolutionRange(VkSurfaceCapabilitiesKHR capabilities) {
     	int[] out = new int[4];
     	
     	out[0] = capabilities.minImageExtent().width();

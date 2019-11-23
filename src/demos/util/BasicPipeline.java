@@ -1,4 +1,4 @@
-package game.rendering;
+package demos.util;
 
 import static core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -38,8 +38,6 @@ import org.lwjgl.vulkan.VkVertexInputAttributeDescription;
 import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 
 import core.result.VulkanException;
-
-import static core.result.VulkanResult.*;
 
 public class BasicPipeline {
 	
