@@ -13,14 +13,12 @@ import static org.lwjgl.vulkan.VK10.VK_NULL_HANDLE;
 import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
 import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
 import static org.lwjgl.vulkan.VK10.VK_PIPELINE_BIND_POINT_GRAPHICS;
-import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 import static org.lwjgl.vulkan.VK10.VK_TRUE;
 import static org.lwjgl.vulkan.VK10.vkCmdBindPipeline;
 import static org.lwjgl.vulkan.VK10.vkCmdBindVertexBuffers;
 import static org.lwjgl.vulkan.VK10.vkCmdDraw;
 import static org.lwjgl.vulkan.VK10.vkCmdSetScissor;
 import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
-import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
 import java.io.IOException;
@@ -36,7 +34,6 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
-import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
@@ -61,7 +58,8 @@ import demos.util.RenderingTask;
 import rendering.config.Attachments;
 import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
-import rendering.geometry.MeshU2D;
+import rendering.engine.geometry.MeshU2D;
+import rendering.pipeline.PipelineLayout;
 import rendering.recording.RenderPass;
 
 public class InitializeRendering implements EngineTask, Destroyable {
@@ -301,27 +299,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		long pipeline = VK_NULL_HANDLE;
 
 		try {
-			long rpHandle = renderPass.handle();
-			
-			//renderingPipeline.getGraphicsPipeline();
-			// Create the pipeline layout that is used to generate the rendering pipelines that
-			// are based on this descriptor set layout
-			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
-					 .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
-					 .pNext(NULL)
-					 .pSetLayouts(null)
-					 .pPushConstantRanges(null);
+			PipelineLayout layout = new PipelineLayout(device);
 			 
-			LongBuffer pLayout = memAllocLong(1);
-			int err = vkCreatePipelineLayout(device, pipelineLayoutCreateInfo, null, pLayout);
-			validate(err, "Failed to create pipeline layout.");
-			
-			long layout = pLayout.get(0);
-			
-			memFree(pLayout);
-			pipelineLayoutCreateInfo.free();
-			 
-			GraphicsPipeline gp = new GraphicsPipeline(Application.getConfigAssets().getSubAsset("pipeline"), "pipeline.cfg", device, rpHandle, layout);
+			GraphicsPipeline gp = new GraphicsPipeline(Application.getConfigAssets().getSubAsset("pipeline"), "pipeline.cfg", device, renderPass.handle(), layout.getPipelineLayout());
 			
 			pipeline = gp.getPipelineHandle();
 		} catch (VulkanException | IOException | AssertionError e) {
