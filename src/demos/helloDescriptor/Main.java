@@ -13,6 +13,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
+		System.out.println("Running \"Hello Descriptor\" demo.");
+		
 		// Creates an engine object.
 		Engine engine = new Engine();
 		
