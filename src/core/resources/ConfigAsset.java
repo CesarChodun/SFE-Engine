@@ -103,6 +103,34 @@ public class ConfigAsset {
 	/**
 	 * Obtains flags with names from the configuration data.
 	 * Flags values are taken from the 'source' class.
+	 * 
+	 * @param source		Class for the flags integer values.
+	 * @param key			The key to the string with flag names.
+	 * 
+	 * @return		Combined flags(using or operator). If no flags are present '0' is returned.
+	 * 
+	 * @throws NoSuchFieldException			
+	 * 		If a field with the specified name is not found.SecurityException.
+	 * @throws SecurityException			
+	 * 		If a security manager, s, is present and the caller'sclass loader
+	 * 		is not the same as or an ancestor of the class loader for the current 
+	 * 		class and invocation of s.checkPackageAccess() denies access to the 
+	 * 		package of this class.IllegalArgumentException.
+	 * @throws IllegalArgumentException
+	 * 		If the specified object is not an instance of the class or interface 
+	 * 		declaring the underlying field (or a subclass or implementor thereof),
+	 * 		or if the field value cannot be converted to the type int by a widening.
+	 * @throws IllegalAccessException
+	 * 		If this Field object is enforcing Java language 
+	 * 		access control and the underlying field is inaccessible.
+	 */
+	public int getFlags(Class<?> source, String key) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		return getFlags(source, key, new ArrayList<String>());
+	}
+	
+	/**
+	 * Obtains flags with names from the configuration data.
+	 * Flags values are taken from the 'source' class.
 	 * And if the configuration data doesn't
 	 * contain any value for the key, the default value
 	 * is used instead.
