@@ -1,4 +1,4 @@
-package rendering.geometry;
+package rendering.engine.geometry;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;

@@ -61,7 +61,7 @@ import demos.util.RenderingTask;
 import rendering.config.Attachments;
 import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
-import rendering.geometry.MeshU2D;
+import rendering.engine.geometry.MeshU2D;
 import rendering.recording.RenderPass;
 
 public class InitializeRendering implements EngineTask, Destroyable {

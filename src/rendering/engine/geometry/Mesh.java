@@ -1,4 +1,4 @@
-package rendering.geometry;
+package rendering.engine.geometry;
 
 import core.resources.Destroyable;
 
