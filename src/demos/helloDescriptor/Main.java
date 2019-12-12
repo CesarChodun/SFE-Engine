@@ -30,7 +30,7 @@ public class Main {
 			engine.run();
 		}
 		catch (Exception e) {
-			System.err.println("Engine is shut down due to a problem:");
+			System.err.println("Engine was shut down due to a problem:");
 			e.printStackTrace();
 		}
 		finally {
