@@ -8,7 +8,7 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.IntBuffer;
 
-
+import org.joml.Vector4i;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkExtent2D;
 import org.lwjgl.vulkan.VkPhysicalDevice;
@@ -46,13 +46,13 @@ public class BasicSwapchainFactory implements SwapchainFactory{
      * @param capabilities - Surface capabilities.
      * @return
      */
-    private static int[] getSwapchainResolutionRange(VkSurfaceCapabilitiesKHR capabilities) {
-    	int[] out = new int[4];
+    private static Vector4i getSwapchainResolutionRange(VkSurfaceCapabilitiesKHR capabilities) {
+    	Vector4i out = new Vector4i();
     	
-    	out[0] = capabilities.minImageExtent().width();
-    	out[1] = capabilities.minImageExtent().height();
-    	out[2] = capabilities.maxImageExtent().width();
-    	out[3] = capabilities.maxImageExtent().height();
+    	out.x = capabilities.minImageExtent().width();
+    	out.y = capabilities.maxImageExtent().width();
+    	out.z = capabilities.minImageExtent().height();
+    	out.w = capabilities.maxImageExtent().height();
     	
     	return out;
     }
@@ -104,12 +104,19 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 			throw new AssertionError("Failed to obtain surface capabilities!");
 		}
     	
-//    	if(!checkResolution(this.width, this.height, getSwapchainResolutionRange(caps))) {
+		Vector4i range = getSwapchainResolutionRange(caps);
+    	if (range.x() > width || range.y() < width) {
+    		System.err.println("Wrong width!");
+    		width = range.x();
 //    		int[] range = getSwapchainResolutionRange(caps);
 //    		throw new IllegalStateException("Swapchain width and/or height are outside surface specific range. Current size: width = "
 //    				+ this.width + ", height = " + this.height + ". While the range is: width e <" + range[0] + "; " + range[2] + ">,"
 //    				+ "height e <" + range[1] + "; " + range[3] +  ">.");
-//    	}
+    	}
+    	if (range.z() > height || range.w() < height) {
+    		System.err.println("Wrong height!");
+    		height = range.z();
+    	}
     	
     	//Swapchain presentation mode:
     	int swapchainPresentMode;
