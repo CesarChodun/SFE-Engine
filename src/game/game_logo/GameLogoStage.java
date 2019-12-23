@@ -44,8 +44,8 @@ import core.rendering.Window;
 import core.rendering.factories.CommandBufferFactory;
 import core.result.VulkanException;
 import game.GameStage;
-import game.factories.BasicFramebufferFactory;
-import game.factories.BasicSwapchainFactory;
+import game.util.BasicFramebufferFactory;
+import game.util.BasicSwapchainFactory;
 import game.geometry.Mesh;
 import game.rendering.BasicPipeline;
 import game.rendering.GLFWTask;
@@ -69,7 +69,7 @@ public class GameLogoStage implements GameStage{
 	public static void initializeHardware() throws VulkanException, IOException {
 		
 		// Game data initialization(in the current folder)
-		Application.init(new File(""));
+		Application.init("game/windows");
 		
 		//Initialize hardware
 		HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());

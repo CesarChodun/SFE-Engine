@@ -92,6 +92,28 @@ public class Application {
 	}
 	
 	/**
+	 * Initializes the application and pools data from the config files.
+	 * 
+	 * @param appLocation				File containing the application.
+	 * 
+	 * @throws FileNotFoundException	When the asset wasn't found.
+	 */
+	public static void init(String configName) throws FileNotFoundException {
+		applicationLocation = new File("");
+		
+		appAssets = new Asset(new File(applicationLocation.getAbsolutePath() + "/" + CONFIG_FOLDER_NAME));
+		configAssets = appAssets.getSubAsset(configName);
+		if (configAssets == null)
+			throw new FileNotFoundException();
+
+		try {
+			createAppInfo(configAssets);
+		} catch (JSONException | IOException | AssertionError e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	/**
 	 * 
 	 * @return		Location of the application.
 	 */
