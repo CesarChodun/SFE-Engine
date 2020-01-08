@@ -252,6 +252,7 @@ public class GraphicsPipeline implements Pipeline{
 	private Asset asset;
 	private String configFile;
 	private VkDevice device;
+	private long layout;
 	
 	private long pipelineHandle;
 	
@@ -290,11 +291,12 @@ public class GraphicsPipeline implements Pipeline{
 		this.asset = asset;
 		this.configFile = configFile;
 		this.device = device;
+		this.layout = pipelineLayout;
 		
-		loadPipeline(renderPass, pipelineLayout);
+		loadPipeline(renderPass);
 	}
 	
-	private void loadPipeline(long renderPass, long layout) throws IOException, AssertionError, VulkanException {
+	private void loadPipeline(long renderPass) throws IOException, AssertionError, VulkanException {
 		pipelineCreateInfo = VkGraphicsPipelineCreateInfo.calloc(1);
 				
 		ConfigFile cfg = asset.getConfigFile(configFile);
@@ -564,5 +566,15 @@ public class GraphicsPipeline implements Pipeline{
 	@Override
 	public long handle() {
 		return pipelineHandle;
+	}
+
+	@Override
+	public int bindPoint() {
+		return VK_PIPELINE_BIND_POINT_GRAPHICS;
+	}
+
+	@Override
+	public long layout() {
+		return layout;
 	}
 }

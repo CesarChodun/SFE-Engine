@@ -14,8 +14,9 @@ public class ListDestroy implements Destroyable {
 	private List<Destroyable> toDestroy = new ArrayList<>();
 	
 	// Ands a new destroyable object.
-	public void add(Destroyable el) {
-		toDestroy.add(el);
+	public void add(Destroyable... descriptorSets) {
+		for (Destroyable d : descriptorSets)
+			toDestroy.add(d);
 	}
 	
 	@Override

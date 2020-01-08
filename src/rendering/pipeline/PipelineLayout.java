@@ -12,15 +12,16 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 
 import core.result.VulkanException;
+import rendering.engine.shader.DescriptorSetBlueprint;
 
 public class PipelineLayout {
 	
-	private long[] layouts;
+	private DescriptorSetBlueprint[] layouts;
 	private long pipelineLayout;
 	
 	private VkDevice device;
 	
-	public PipelineLayout(VkDevice device, long... layouts) {
+	public PipelineLayout(VkDevice device, DescriptorSetBlueprint... layouts) {
 		this.layouts = layouts;
 		this.device = device;
 		
@@ -44,7 +45,7 @@ public class PipelineLayout {
 		if (layouts.length != 0) {
 			pSetLayouts = memAllocLong(layouts.length);
 			for (int i = 0; i < layouts.length; i++)
-				pSetLayouts.put(i, layouts[i]);
+				pSetLayouts.put(i, layouts[i].getLayout());
 			
 			pPipelineLayoutCreateInfo.pSetLayouts(pSetLayouts);
 		}

@@ -5,6 +5,8 @@ import core.Engine;
 
 public class Main {
 	
+	public static final String DEMO_NAME = "helloDescriptor";
+	
 	/**
 	 * An example main method that starts the engine,
 	 * initializes it, and makes a simple report.

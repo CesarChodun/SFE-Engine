@@ -6,4 +6,7 @@ public interface Pipeline extends Destroyable{
 
 	public long handle();
 	
+	public int bindPoint();
+	
+	public long layout();
 }
