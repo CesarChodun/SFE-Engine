@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 import core.Application;
 import core.Engine;
 import core.resources.Asset;
-import demos.helloTriangle.rendering.*;
+import demos.helloDescriptor.rendering.*;
 
 public class WindowManager implements Runnable{
 	
@@ -28,6 +28,11 @@ public class WindowManager implements Runnable{
 			System.out.println("Window wait for semaphore interupted.");
 			e.printStackTrace();
 		}
+		
+		// Converting the assets
+//		System.out.println("Converting asset files.");
+//		AssetConversion converter = new AssetConversion(Application.getConfigAssets().getSubAsset("converters").getAssetLocation());
+//		converter.convert(source, dest);
 		
 		// Obtaining the asset folder for the window.
 		Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
