@@ -14,13 +14,21 @@ import core.resources.ConfigAsset;
 import core.resources.ConfigFile;
 import core.resources.Destroyable;
 import core.result.VulkanException;
-import rendering.engine.shader.DescriptorBlueprint;
 import rendering.engine.shader.DescriptorSetBlueprint;
 
+/**
+ * 
+ * Descriptor set blueprint with data loaded from a file.
+ * 
+ * @author Cezary Chodun
+ * @since 04.01.2020
+ */
 public class FileDescriptorSetBlueprint implements DescriptorSetBlueprint, Destroyable {
 	
+	/** Class specific logger. */
 	private final static Logger logger = Logger.getLogger(FileDescriptorSetBlueprint.class.getName());
 	
+	/** Keys for loading data from JSON files. */
 	private static final String 
 		BINDINGS_COUNT_KEY = "bindingsCount",
 		BINDINGS_KEY = "bindings",
@@ -30,23 +38,35 @@ public class FileDescriptorSetBlueprint implements DescriptorSetBlueprint, Destr
 		STAGE_FLAGS_KEY = "stages",
 		DEFAULT_DESCRIPTORS_TYPE = "VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER";
 	
+	/** Default values for descriptor set layout fields. */
 	private static final Integer 
 		DEFAULT_BINDINGS_COUNT = 0,
 		DEFAULT_DESCRIPTOR_COUNT = 0,
 		DEFAULT_BINDING = 0;
 	
 	private VkDevice device;
+	
 	private long descriptorLayout;
 	private int bindings;
 	VkDescriptorSetLayoutBinding.Buffer layoutBindings;
 	
-	
+	/**
+	 * Creates a descriptor set layout using the supplied configuration file.
+	 * 
+	 * @param device	Must be a valid Vulkan device.
+	 * @param cfg		Must be a valid configuration file.
+	 */
 	public FileDescriptorSetBlueprint(VkDevice device, ConfigFile cfg) {
 		this.device = device;
 		loadFromAsset(cfg);
 		cfg.close();
 	}
-	
+
+	/**
+	 * Loads the configuration data from a file(asset).
+	 * 
+	 * @param cfg
+	 */
 	private void loadFromAsset(ConfigAsset cfg) {
 		bindings = cfg.getInteger(BINDINGS_COUNT_KEY, DEFAULT_BINDINGS_COUNT);
 		layoutBindings = VkDescriptorSetLayoutBinding.calloc(bindings);

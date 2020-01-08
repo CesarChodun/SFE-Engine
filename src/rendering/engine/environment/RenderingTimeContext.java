@@ -28,7 +28,7 @@ public class RenderingTimeContext implements DescriptorBlueprint, Destroyable{
 	private void createDescriptorValues() {
 		data = new GeneralizedDescriptorValue[1];
 		
-		data[0] = new GeneralizedDescriptorValue(physicalDevice, device, descriptorSet, 0, UniformUsage.UNIFORM_USAGE_INT_16);
+		data[0] = new GeneralizedDescriptorValue(physicalDevice, device, descriptorSet, 0, "time", UniformUsage.UNIFORM_USAGE_INT_16);
 	}
 	
 
