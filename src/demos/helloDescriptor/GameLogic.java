@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import core.Engine;
 import core.EngineTask;
+import demos.helloDescriptor.initialization.AssetConversion;
 import demos.helloDescriptor.initialization.InitializeEngine;
 import demos.helloDescriptor.window.WindowManager;
 
@@ -30,6 +31,9 @@ public class GameLogic implements EngineTask {
 		
 		// Adding engine initialization task to the engine task queue
 		engine.addTask(new InitializeEngine(initialized));
+		
+		// Convert resources
+		AssetConversion.convertData();
 		
 		// Creating a thread that will wait until the engine is initialized and then
 		// it will create the window.
