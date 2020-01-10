@@ -1,6 +1,6 @@
-# Vulkan Game Engine
+# SFE - Sierra Fastigium Engine
 
-A small engine based on Vulkan(LWJGL3) and Java. Currently it contains mostly utilities for rendering but it should change as the project matures. 
+A small engine based on Vulkan(LWJGL3) and Java. With a goal to provide a highly multithreaded rendering engine that works natively on Vulkan API.
 
 <h2>Relevant links</h2>
 
@@ -49,3 +49,8 @@ It is required to add it to the build path.</p>
  
  <h3> Help with code! </h3>
   Of course there is the usual way to help with the project. And this is by adding new features to it! So if you found yourself quite comfortable with the project feel free to add some tweeks to it!
+  
+ <h2>Special thanks to:</h2>
+ 
+ * <a href="https://github.com/Spasi">Ioannis Tsakpinis(Spasi)</a>
+ * <a href="https://www.youtube.com/channel/UCo8zkw_12vD_G-we_fWrBDA/featured">Phoenix</a>
