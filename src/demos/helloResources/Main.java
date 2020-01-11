@@ -11,14 +11,25 @@ public class Main {
 	private static final File 
 		SOURCE_FILE = new File("res"),
 		STORAGE_FILE = new File("storage");
+	
+	private static void deleteContents(File file) {
+		for (File f : file.listFiles()) {
+			if(!f.isFile())
+				deleteContents(f);
+			f.delete();
+		}
+	}
 
 	public static void main(String[] args) {
+		
+		deleteContents(STORAGE_FILE);
 		
 		ConversionEngine cEngine = new ConversionEngine(2, 4);
 		cEngine.addConverter(new SPIRVConverter());
 		
 		Semaphore conversionComplete = new Semaphore(0);
 		int remaining = cEngine.convertFile(SOURCE_FILE, STORAGE_FILE, conversionComplete);
+		cEngine.shutDown();
 		
 		System.out.println("Waiting");
 		try {
@@ -27,9 +38,6 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.println("Done " + remaining);
-		
-		
-		cEngine.shutDown();
 	}
 
 }
