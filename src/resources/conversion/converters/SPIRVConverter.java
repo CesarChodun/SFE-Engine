@@ -11,8 +11,15 @@ import java.util.logging.Logger;
 
 import resources.conversion.Converter;
 
+/**
+ * Compiles SPIRV shader code to binaries.
+ * 
+ * @author Cezary Chodun
+ * @since 11.01.2020
+ */
 public class SPIRVConverter implements Converter{
 
+	/** Path to the GLSL validator executable. */
 	private static final String GLSLANG_VALIDATOR_LOCATION = "glslangValidator.exe";
 	private static final String[] EXT = {
 			"conf", 
@@ -34,15 +41,16 @@ public class SPIRVConverter implements Converter{
 			"hlsl"
 			};
 	
-
+	/** Class specific logger. */
 	private Logger logger = Logger.getLogger(SPIRVConverter.class.getName());	
 
 	@Override
 	public void convert(File from, File to) {
-		logger.log(Level.INFO, "Converting " + from.getPath() + " to SPIRV shader and saveing it to " + to.getPath());
+		File newOut = new File(to.getPath() + ".spv");
+		logger.log(Level.INFO, "Converting " + from.getPath() + " to SPIRV shader and saveing it to " + newOut.getPath());
 		File validator = new File(GLSLANG_VALIDATOR_LOCATION);
 		assert(validator.exists());
-		ProcessBuilder builder = new ProcessBuilder(validator.getAbsolutePath(), "-V100", "-o", to.getAbsolutePath(), from.getAbsolutePath());
+		ProcessBuilder builder = new ProcessBuilder(validator.getAbsolutePath(), "-V100", "-o", newOut.getAbsolutePath(), from.getAbsolutePath());
 		builder.directory(new File(System.getProperty("user.dir")));
         builder.redirectErrorStream(true);
         
@@ -61,9 +69,7 @@ public class SPIRVConverter implements Converter{
 		}
         
 	}
-
-
-
+	
 	@Override
 	public List<String> fileExtensionFrom() {
 		return Arrays.asList(EXT);
