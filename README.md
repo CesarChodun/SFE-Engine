@@ -10,11 +10,12 @@ A small engine based on Vulkan(LWJGL3) and Java. With a goal to provide a highly
 
  <h3>Prepare your IDE</h3>
  
-  * Download and install Vulkan from <a href="https://vulkan.lunarg.com/sdk/home">this</a> site.
+  * Download and install Vulkan SDK from <a href="https://vulkan.lunarg.com/sdk/home">this</a> site.
   * Download required libraries(see dependecies) and add them to the build path.
   * Create a new project in your IDE.
   * Add the Vulkan libraries to the project.
-  * Add <b>Vulkan Game Engine</b> package contents to the project and make sure that your IDE recognizes the source("src") package.
+  * Add glslangValidator executable to the project folder(from installed Vulkan SDK).
+  * Add <b>SFE Engine</b> package contents to the project and make sure that your IDE recognizes the source("src") package.
   * If you are using Mac OS you might have to add "-XstartOnTheFirstThread" to the VM arguments and then run the demo again.
   * You are ready to go!
   
