@@ -8,8 +8,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jdt.annotation.Nullable;
+import com.sun.istack.internal.Nullable;
 
 public class ConversionEngine {
 	

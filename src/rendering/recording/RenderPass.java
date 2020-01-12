@@ -4,8 +4,7 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.LongBuffer;
 
-import org.eclipse.jdt.annotation.Nullable;
-
+import com.sun.istack.internal.Nullable;
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -71,7 +70,7 @@ public class RenderPass implements Destroyable{
 	 * 
 	 * @throws VulkanException 	When failed to create the render pass.
 	 */
-	public RenderPass(VkDevice logicalDevice, Attachments attachments, VkSubpassDescription.Buffer subpasses, VkSubpassDependency.@Nullable Buffer dependencies) throws VulkanException {
+	public RenderPass(VkDevice logicalDevice, Attachments attachments, VkSubpassDescription.Buffer subpasses, @Nullable VkSubpassDependency.Buffer dependencies) throws VulkanException {
 		VkAttachmentDescription.Buffer buf = attachments.getBuffer();
 		
 		renderPassInfo

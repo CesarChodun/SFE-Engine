@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.eclipse.jdt.annotation.Nullable;
+import com.sun.istack.internal.Nullable;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkApplicationInfo;
