@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 
 import core.Engine;
 import core.EngineTask;
-import demos.helloDescriptor.initialization.AssetConversion;
 import demos.helloDescriptor.initialization.InitializeEngine;
 import demos.helloDescriptor.window.WindowManager;
+import demos.util.DefaultResourceConverter;
 
 public class GameLogic implements EngineTask {
 	
@@ -26,14 +26,18 @@ public class GameLogic implements EngineTask {
 	public void run() throws AssertionError {
 		redirectLoggers();
 		
+		//Convert resources
+		DefaultResourceConverter converter = new DefaultResourceConverter();
+		converter.runConversion();
+		
 		// Semaphore indicating initialization state
 		Semaphore initialized = new Semaphore(0);
 		
 		// Adding engine initialization task to the engine task queue
 		engine.addTask(new InitializeEngine(initialized));
 		
-		// Convert resources
-		AssetConversion.convertData();
+		// Awaits for conversion to complete
+		converter.await();
 		
 		// Creating a thread that will wait until the engine is initialized and then
 		// it will create the window.
