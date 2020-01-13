@@ -3,3 +3,4 @@
 .project
 glslangValidator.exe
 /storage/
+*.spv
