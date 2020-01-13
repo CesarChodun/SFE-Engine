@@ -18,13 +18,12 @@ public class TimeDescriptorUpdater extends TimerTask{
 	@Override
 	public void run() {
 		int state = ((int) (System.currentTimeMillis() / 250)) % 20;
-		System.out.println("State1: " +  state);
 		state -= 10;
-		System.out.println("State2: " +  state);
+		
 		if (state < 0)
 			state *= -1;
 		val.setUniform(0, state);
-		System.out.println("State3: " +  state);
+		
 		try {
 				val.update();
 		} catch (VulkanException e) {
