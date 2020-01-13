@@ -24,7 +24,7 @@
  
   <li>
     <a href="https://github.com/CesarChodun/SFE-Engine/tree/master/src/resources"> resources </a>
-    <p></p>
+    <p> Package with utilities for working with engine resources(shader code, OBJ, etc.) </p>
   </li>
  
  <li>
