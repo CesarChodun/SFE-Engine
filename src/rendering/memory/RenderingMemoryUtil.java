@@ -19,7 +19,12 @@ import org.lwjgl.vulkan.VkPhysicalDeviceMemoryProperties;
 import core.rendering.RenderUtil;
 import core.result.VulkanException;
 
-
+/**
+ * Memory utilities for rendering tasks.
+ * 
+ * @author Cezary
+ * @since 21.12.2019
+ */
 public class RenderingMemoryUtil {
 
 	/**
