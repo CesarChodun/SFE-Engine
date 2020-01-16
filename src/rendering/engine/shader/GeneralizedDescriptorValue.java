@@ -16,6 +16,8 @@ import static rendering.engine.shader.UniformUsage.UNIFORM_USAGE_VECTOR_3F;
 import static rendering.memory.RenderingMemoryUtil.*;
 
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -28,7 +30,13 @@ import org.lwjgl.vulkan.VkWriteDescriptorSet;
 import core.result.VulkanException;
 import rendering.memory.GPUBuffer;
 
+/**
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class GeneralizedDescriptorValue implements DescriptorValue{
+	
+	private static final Logger logger = Logger.getLogger(GeneralizedDescriptorValue.class.getName()); 
 	
 	protected UniformUsage[] slots;
 	private int[] prefTab;
@@ -78,33 +86,35 @@ public class GeneralizedDescriptorValue implements DescriptorValue{
 				.pNext(NULL)
 				.dstSet(descriptorSet)
 				.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
-				.descriptorCount(1)//TODO
+				.descriptorCount(1)
 				.pBufferInfo(bufferInfo)
 				.dstArrayElement(0)
-				.dstBinding(binding); //location
+				.dstBinding(binding);
 		
 		try {
 			bindBufferMemoryGPU(device, gpuBuffer, data);
 		} catch (VulkanException e) {
-			// TODO Auto-generated catch block
+			logger.log(Level.FINER, "Failed to bind buffer to the GPU memory.");
 			e.printStackTrace();
 		}
 	}
 	
-	public UniformUsage getDescriptorSlot(int index) {
-		if(index >= slots.length)
-			throw new Error("Array out of bounds: array size = " + slots.length + " quered index = " + index);
+	public UniformUsage getUniformUsage(int index) {
 		return slots[index];
 	}
 	
 	@Override
-	public void update() throws VulkanException {
+	public void update() {
 		if (upToDate == true)
 			return;
 		upToDate = true;
 		
-		copyToBufferMemoryGPU(device, gpuBuffer, data);
-//		bindBufferMemoryGPU(device, gpuBuffer, data);
+		try {
+			copyToBufferMemoryGPU(device, gpuBuffer, data);
+		} catch (VulkanException e) {
+			logger.log(Level.FINER, "Failed to copy buffer to the GPU memory", e);
+			e.printStackTrace();
+		}
 		vkUpdateDescriptorSets(device, write, null);
 	}
 	

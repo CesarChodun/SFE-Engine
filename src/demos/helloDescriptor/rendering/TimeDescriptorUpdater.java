@@ -1,8 +1,6 @@
 package demos.helloDescriptor.rendering;
 
 import java.util.TimerTask;
-
-import core.result.VulkanException;
 import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.GeneralizedDescriptorValue;
 
@@ -32,12 +30,7 @@ public class TimeDescriptorUpdater extends TimerTask{
 			state *= -1;
 		
 		val.setUniform(0, state);
-		try {
-			val.update();
-		} catch (VulkanException e) {
-			System.err.print("Failed to update descriptor.");
-			e.printStackTrace();
-		}
+		val.update();
 	}
 	
 }

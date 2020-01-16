@@ -44,6 +44,7 @@ import core.rendering.factories.CommandBufferFactory;
 import core.resources.Asset;
 import core.resources.Destroyable;
 import core.result.VulkanException;
+import demos.helloDescriptor.rendering.environment.EnvironmentDescriptorSet;
 import demos.util.BasicFramebufferFactory;
 import demos.util.BasicSwapchainFactory;
 import demos.util.RenderingTask;
@@ -51,7 +52,6 @@ import rendering.config.Attachments;
 import rendering.config.FileDescriptorSetBlueprint;
 import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
-import rendering.engine.environment.EnvironmentDescriptorSet;
 import rendering.engine.geometry.MeshU2D;
 import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.DescriptorSetBlueprint;
@@ -333,8 +333,8 @@ public class InitializeRendering implements EngineTask, Destroyable {
 	}
 	
 	/**
+	 *	Creates a descriptor set for "time" uniform from the //TODO
 	 *
-	 * //TODO:
 	 * @param device
 	 * @param dscBlueprint
 	 * @return
@@ -351,7 +351,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		DescriptorSet[] out = new DescriptorSet[dscs.length];
 		EnvironmentDescriptorSet env = new EnvironmentDescriptorSet(physicalDevice, device, dscs[0]);
 		TimeDescriptorUpdater timeUp = new TimeDescriptorUpdater(env);
-	    timer = new Timer("Time timer");//(timeUp, 10, 20);
+	    timer = new Timer("Time timer");
 	    timer.schedule(timeUp, 30, 10);
 	    
 		out[0] = env;
