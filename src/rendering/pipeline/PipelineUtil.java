@@ -19,7 +19,7 @@ import core.result.VulkanException;
  * Package with utility methods for pipeline management.
  * 
  * @author Cezary Chodun
- * @since 20.01.2020
+ * @since 20.12.2019
  */
 public class PipelineUtil {
 

@@ -14,6 +14,10 @@ import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 import core.result.VulkanException;
 import rendering.engine.shader.DescriptorSetBlueprint;
 
+/** 
+ * @author Cezary Chodun
+ * @since 20.12.2019
+ */
 public class PipelineLayout {
 	
 	private DescriptorSetBlueprint[] layouts;
@@ -21,6 +25,13 @@ public class PipelineLayout {
 	
 	private VkDevice device;
 	
+	/**
+	 * Creates a pipeline layout based on the 
+	 * descriptor set blueprints.
+	 * 
+	 * @param device	<b>must</b> be a valid logical device.
+	 * @param layouts	<b>must</b> be valid descriptor layouts.
+	 */
 	public PipelineLayout(VkDevice device, DescriptorSetBlueprint... layouts) {
 		this.layouts = layouts;
 		this.device = device;
@@ -28,6 +39,7 @@ public class PipelineLayout {
 		try {
 			createPipelineLayout();
 		} catch (VulkanException e) {
+			System.err.println("Failed to create pipeline layout.");
 			e.printStackTrace();
 		}
 	}
@@ -62,6 +74,11 @@ public class PipelineLayout {
 		pPipelineLayoutCreateInfo.free();
 	}
 
+	/**
+	 * Returns the vulkan pipeline layout.
+	 * 
+	 * @return handle to the layout.
+	 */
 	public long getPipelineLayout() {
 		return pipelineLayout;
 	}
