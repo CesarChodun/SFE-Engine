@@ -28,15 +28,14 @@ public class TimeDescriptorUpdater extends TimerTask{
 	public void run() {
 		int state = ((int) (System.currentTimeMillis() / 250)) % 20;
 		state -= 10;
-		
 		if (state < 0)
 			state *= -1;
-		val.setUniform(0, state);
 		
+		val.setUniform(0, state);
 		try {
-				val.update();
+			val.update();
 		} catch (VulkanException e) {
-			// TODO Auto-generated catch block
+			System.err.print("Failed to update descriptor.");
 			e.printStackTrace();
 		}
 	}
