@@ -21,8 +21,24 @@ import org.lwjgl.vulkan.VkDevice;
 
 import core.result.VulkanException;
 
+/**
+ * Factory for creating descriptor sets.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class DescriptorSetFactory {
 
+	/**
+	 * Creates descriptor sets.
+	 * 
+	 * @param device		<b>must</b> be a valid logical device.
+	 * @param blueprints	a list of descriptor set blueprints for
+	 * 		the descriptor sets that will be created.
+	 * 
+	 * @return	An array of descriptor set handles.
+	 * @throws VulkanException	if failed to create descriptor pool.
+	 */
 	public static long[] createDescriptorSets(VkDevice device, DescriptorSetBlueprint... blueprints) throws VulkanException {
 		int descriptors = 0;
 		for (int i = 0; i < blueprints.length; i++)
@@ -54,6 +70,15 @@ public class DescriptorSetFactory {
 		return dscs;
 	}
 	
+	/**
+	 * Creates a descriptor set using an existing pool.
+	 * 
+	 * @param device	<b>must</b> be a valid logical device.
+	 * @param descriptorPool	handle to the descriptor pool.
+	 * @param descriptorSetLayout	handle to the descriptor set layout.
+	 * 
+	 * @return	a handle to the created descriptor set.
+	 */
 	public static long createDescriptorSet(VkDevice device, long descriptorPool, long descriptorSetLayout) {
 		LongBuffer pDescriptorSetLayout = memAllocLong(1);
 		pDescriptorSetLayout.put(descriptorSetLayout);
