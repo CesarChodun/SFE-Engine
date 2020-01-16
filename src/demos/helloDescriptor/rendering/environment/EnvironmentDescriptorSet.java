@@ -1,9 +1,8 @@
-package rendering.engine.environment;
+package demos.helloDescriptor.rendering.environment;
 
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 
-import core.result.VulkanException;
 import rendering.engine.shader.Descriptor;
 import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.GeneralizedDescriptorValue;
@@ -27,12 +26,7 @@ public class EnvironmentDescriptorSet extends DescriptorSet{
 		GeneralizedDescriptorValue[] descVals = new GeneralizedDescriptorValue[1];
 		descVals[0] = new GeneralizedDescriptorValue(physicalDevice, device, getDescriptorSet(), 0, "miliTime", UniformUsage.UNIFORM_USAGE_INT_32);
 		descVals[0].setUniform(0, 5);
-		try {
-			descVals[0].update();
-		} catch (VulkanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		descVals[0].update();
 		addDescriptor("TimeData", new Descriptor(descVals[0]));
 	}
 	

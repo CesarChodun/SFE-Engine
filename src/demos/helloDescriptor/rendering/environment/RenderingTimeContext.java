@@ -1,4 +1,4 @@
-package rendering.engine.environment;
+package demos.helloDescriptor.rendering.environment;
 
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
