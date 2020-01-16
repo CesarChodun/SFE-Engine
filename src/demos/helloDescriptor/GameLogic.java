@@ -14,6 +14,12 @@ import demos.helloDescriptor.initialization.InitializeEngine;
 import demos.helloDescriptor.window.WindowManager;
 import demos.util.DefaultResourceConverter;
 
+/**
+ * Hello descriptor demo logic.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class GameLogic implements EngineTask {
 	
 	private Engine engine;
@@ -45,6 +51,11 @@ public class GameLogic implements EngineTask {
 		waitForConfig.start();
 	}
 
+	/**
+	 * Redirects supplied loggers to the console.
+	 * 
+	 * @param loggers	The loggers to be redirected.
+	 */
 	private static void redirectLoggersToConsole(List<Logger> loggers) {
 		Handler consoleLog = new ConsoleHandler();
 		consoleLog.setLevel(Level.ALL);
@@ -53,6 +64,9 @@ public class GameLogic implements EngineTask {
 			lg.addHandler(consoleLog);
 	}
 	
+	/**
+	 * Redirects loggers output
+	 */
 	private void redirectLoggers() {
 		List<Logger> loggers = new ArrayList<Logger>();
 		Logger logger = Logger.getLogger("");

@@ -12,6 +12,12 @@ import core.resources.Destroyable;
 import core.result.VulkanException;
 import util.window.WindowFactory;
 
+/**
+ * A simple window managed by the engine.
+ * 
+ * @author Cezary
+ * @since 10.01.2020
+ */
 public class TriangleWindow implements EngineTask {
 
 	private Window window;

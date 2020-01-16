@@ -9,6 +9,12 @@ import core.EngineTask;
 import core.HardwareManager;
 import core.result.VulkanException;
 
+/**
+ * Initializes engine resources for the demo.
+ * 
+ * @author Cezary
+ * @since 10.01.2020
+ */
 public class InitializeEngine implements EngineTask {
 	
 	final static String CONFIG_FILE = "demos/hellodescriptor";
@@ -31,11 +37,9 @@ public class InitializeEngine implements EngineTask {
 		try {
 			// Initializing application
 			Application.init(CONFIG_FILE);
-			
 			System.out.println("Application data succesfully initialized!");
 			
 		} catch (FileNotFoundException e) {
-			
 			System.err.println("Failed to find the configuration file(\"" + CONFIG_FILE + "\")");
 			e.printStackTrace();
 		}
@@ -45,11 +49,9 @@ public class InitializeEngine implements EngineTask {
 			HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());
 			System.out.println("Hardware succesfully initialized!");			
 		} catch (VulkanException e) {
-			
 			System.err.println("Failed to initialize hardware due to a vulkan problem.");
 			e.printStackTrace();
 		} catch (IOException e) {
-			
 			System.err.println("Failed to initialize hardware due to an input(or output) error.");
 			e.printStackTrace();
 		} 

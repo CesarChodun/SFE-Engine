@@ -5,7 +5,14 @@ import core.EngineTask;
 import core.rendering.Window;
 import core.resources.Destroyable;
 
-public class WindowShutDown  implements WindowTickTask.WindowCloseCallback {
+/**
+ * Callback that will close all initialized window 
+ * resources on the window shutdown.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
+public class WindowShutDown implements WindowTickTask.WindowCloseCallback {
 
 	private Engine engine;
 	private Window window;

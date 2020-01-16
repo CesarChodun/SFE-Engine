@@ -7,6 +7,12 @@ import core.Engine;
 import core.resources.Asset;
 import demos.helloDescriptor.rendering.*;
 
+/**
+ * Creates a window and initializes the rendering layer for it.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class WindowManager implements Runnable{
 	
 	private Engine engine;
@@ -28,11 +34,6 @@ public class WindowManager implements Runnable{
 			System.out.println("Window wait for semaphore interupted.");
 			e.printStackTrace();
 		}
-		
-		// Converting the assets
-//		System.out.println("Converting asset files.");
-//		AssetConversion converter = new AssetConversion(Application.getConfigAssets().getSubAsset("converters").getAssetLocation());
-//		converter.convert(source, dest);
 		
 		// Obtaining the asset folder for the window.
 		Asset windowAsset = Application.getConfigAssets().getSubAsset("window");

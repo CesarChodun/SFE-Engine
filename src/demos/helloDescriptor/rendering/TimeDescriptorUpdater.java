@@ -6,11 +6,20 @@ import core.result.VulkanException;
 import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.GeneralizedDescriptorValue;
 
+/**
+ * Updates the time descriptor.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class TimeDescriptorUpdater extends TimerTask{
 	
 	private GeneralizedDescriptorValue val;
 	Integer timeDescriptorIndex;
 
+	/**
+	 * @param set the descriptor to be updated.
+	 */
 	public TimeDescriptorUpdater(DescriptorSet set) {
 		val = (GeneralizedDescriptorValue)set.get("TimeData").getValue("miliTime");
 	}

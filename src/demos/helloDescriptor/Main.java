@@ -3,6 +3,12 @@ package demos.helloDescriptor;
 import core.Application;
 import core.Engine;
 
+/**
+ * Main class of the hello descriptors demo.
+ * 
+ * @author Cezary Chodun
+ *
+ */
 public class Main {
 	
 	public static final String DEMO_NAME = "helloDescriptor";

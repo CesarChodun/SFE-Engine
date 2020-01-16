@@ -5,6 +5,12 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import core.EngineTask;
 
+/**
+ * GLFW window task monitoring window events.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class WindowTickTask implements EngineTask{
 	
 	public static interface WindowCloseCallback {
