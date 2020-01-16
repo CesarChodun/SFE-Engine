@@ -1,4 +1,4 @@
-package rendering.geometry;
+package rendering.engine.geometry;
 
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;

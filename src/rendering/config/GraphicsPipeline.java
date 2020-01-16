@@ -32,9 +32,9 @@ import org.lwjgl.vulkan.VkVertexInputBindingDescription;
 import core.resources.Asset;
 import core.resources.ConfigAsset;
 import core.resources.ConfigFile;
-import core.resources.Destroyable;
 import core.resources.ResourceUtil;
 import core.result.VulkanException;
+import rendering.pipeline.Pipeline;
 
 /**
  * Vulkan graphics pipeline created from file.
@@ -42,7 +42,7 @@ import core.result.VulkanException;
  * @author Cezary Chodun
  * @since 23.11.2019
  */
-public class GraphicsPipeline implements Destroyable{
+public class GraphicsPipeline implements Pipeline{
 	
 	private static final String 
 		VERTEX_INPUT_STATE_KEY = "pVertexInputState",
@@ -252,6 +252,7 @@ public class GraphicsPipeline implements Destroyable{
 	private Asset asset;
 	private String configFile;
 	private VkDevice device;
+	private long layout;
 	
 	private long pipelineHandle;
 	
@@ -290,11 +291,12 @@ public class GraphicsPipeline implements Destroyable{
 		this.asset = asset;
 		this.configFile = configFile;
 		this.device = device;
+		this.layout = pipelineLayout;
 		
-		loadPipeline(renderPass, pipelineLayout);
+		loadPipeline(renderPass);
 	}
 	
-	private void loadPipeline(long renderPass, long layout) throws IOException, AssertionError, VulkanException {
+	private void loadPipeline(long renderPass) throws IOException, AssertionError, VulkanException {
 		pipelineCreateInfo = VkGraphicsPipelineCreateInfo.calloc(1);
 				
 		ConfigFile cfg = asset.getConfigFile(configFile);
@@ -378,6 +380,7 @@ public class GraphicsPipeline implements Destroyable{
 	 * Returns handle of the pipeline.
 	 * 
 	 * @return
+	 * @Deprecated
 	 */
 	public long getPipelineHandle() {
 		return pipelineHandle;
@@ -558,5 +561,20 @@ public class GraphicsPipeline implements Destroyable{
 	@Override
 	public void destroy() {
 		vkDestroyPipeline(device, pipelineHandle, null);
+	}
+
+	@Override
+	public long handle() {
+		return pipelineHandle;
+	}
+
+	@Override
+	public int bindPoint() {
+		return VK_PIPELINE_BIND_POINT_GRAPHICS;
+	}
+
+	@Override
+	public long layout() {
+		return layout;
 	}
 }

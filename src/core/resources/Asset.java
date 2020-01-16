@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -67,7 +68,14 @@ public class Asset {
 		File file = get(path);
 		
 		FileReader fileReader = new FileReader(file);
-		JSONObject out = new JSONObject(new JSONTokener(fileReader));
+		JSONObject out = null;
+		try {
+			out = new JSONObject(new JSONTokener(fileReader));
+		}
+		catch(JSONException e) {
+			System.err.println("Failed to load JSON object: \"" + path + "\" at location: " + location.getPath().toString());
+			e.printStackTrace();
+		}
 		fileReader.close();
 		
 		return out;

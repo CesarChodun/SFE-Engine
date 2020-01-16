@@ -48,6 +48,7 @@ public class DefaultResourceConverter {
 		if (sem != null)
 			throw new AssertionError("This conversion can only be run once!");
 
+		STORAGE_FILE.mkdir();
 		deleteContents(STORAGE_FILE);
 		
 		ConversionEngine cEngine = new ConversionEngine(THREADS, MAX_THREADS);

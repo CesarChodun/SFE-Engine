@@ -1,4 +1,4 @@
-package rendering.geometry;
+package rendering.engine.geometry;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
@@ -14,10 +14,10 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
 import core.result.VulkanException;
 
 /**
- * Unindexed 2D mesh.
+ * Mesh with 2D vertices and without indices.
  * 
  * @author Cezary Chodun
- *
+ * @since 28.11.2019
  */
 public class MeshU2D implements Mesh {
 	

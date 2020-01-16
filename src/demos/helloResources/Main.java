@@ -21,7 +21,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		
+
+		STORAGE_FILE.mkdir();
 		deleteContents(STORAGE_FILE);
 		
 		ConversionEngine cEngine = new ConversionEngine(2, 4);

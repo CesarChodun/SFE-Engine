@@ -1,4 +1,4 @@
-package demos.helloTriangle.rendering;
+package demos.helloDescriptor.rendering;
 
 import static core.rendering.RenderUtil.createLogicalDevice;
 import static core.rendering.RenderUtil.getDeviceQueue;
@@ -6,22 +6,10 @@ import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
-import static org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
-import static org.lwjgl.vulkan.VK10.VK_FORMAT_B8G8R8A8_UNORM;
-import static org.lwjgl.vulkan.VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-import static org.lwjgl.vulkan.VK10.VK_NULL_HANDLE;
-import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
-import static org.lwjgl.vulkan.VK10.VK_PIPELINE_BIND_POINT_GRAPHICS;
-import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-import static org.lwjgl.vulkan.VK10.VK_TRUE;
-import static org.lwjgl.vulkan.VK10.vkCmdBindPipeline;
-import static org.lwjgl.vulkan.VK10.vkCmdBindVertexBuffers;
-import static org.lwjgl.vulkan.VK10.vkCmdDraw;
-import static org.lwjgl.vulkan.VK10.vkCmdSetScissor;
-import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
-import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
-import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
+import static org.lwjgl.vulkan.KHRSwapchain.*;
+import static org.lwjgl.vulkan.VK10.*;
+
+import  org.lwjgl.vulkan.EXTDescriptorIndexing;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -29,6 +17,7 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 import org.joml.Vector2f;
 import org.lwjgl.vulkan.VkAttachmentReference;
@@ -36,7 +25,6 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
-import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
@@ -53,15 +41,23 @@ import core.rendering.RenderUtil;
 import core.rendering.Renderer;
 import core.rendering.Window;
 import core.rendering.factories.CommandBufferFactory;
+import core.resources.Asset;
 import core.resources.Destroyable;
 import core.result.VulkanException;
+import demos.helloDescriptor.rendering.environment.EnvironmentDescriptorSet;
 import demos.util.BasicFramebufferFactory;
 import demos.util.BasicSwapchainFactory;
 import demos.util.RenderingTask;
 import rendering.config.Attachments;
+import rendering.config.FileDescriptorSetBlueprint;
 import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
 import rendering.engine.geometry.MeshU2D;
+import rendering.engine.shader.DescriptorSet;
+import rendering.engine.shader.DescriptorSetBlueprint;
+import rendering.engine.shader.DescriptorSetFactory;
+import rendering.pipeline.Pipeline;
+import rendering.pipeline.PipelineLayout;
 import rendering.recording.RenderPass;
 
 public class InitializeRendering implements EngineTask, Destroyable {
@@ -74,6 +70,8 @@ public class InitializeRendering implements EngineTask, Destroyable {
 	
 	private VkViewport.Buffer viewport;
 	private VkRect2D.Buffer scissor;
+	LongBuffer pDesc;
+	Timer timer;
 	
 	public InitializeRendering(Engine engine, Window window) {
 		this.engine = engine;
@@ -95,10 +93,18 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		
 		RenderPass renderPass = createRenderPass(device, colorFormat.colorFormat);
 		destroy.add(renderPass);
-		long pipeline = createPipeline(physicalDevice, device, renderPass);
+		DescriptorSetBlueprint[] dscBlueprint = createDscBlueprints(device, Application.getConfigAssets().getSubAsset("descriptors"), destroy);
+		Pipeline pipeline = createPipeline(physicalDevice, device, renderPass, dscBlueprint);
+		
+		DescriptorSet[] descriptorSets = createDescriptorSets(physicalDevice, device, dscBlueprint);
+		destroy.add(descriptorSets);
+		pDesc = memAllocLong(descriptorSets.length);
+		for (DescriptorSet dsc : descriptorSets)
+			pDesc.put(dsc.getDescriptorSet());
+		pDesc.flip();
 		
 		Recordable cmdPreset = makePreset(window);
-		Recordable cmdWork = makeWorkRecordable(physicalDevice, device, pipeline);
+		Recordable cmdWork = makeWorkRecordable(physicalDevice, device, pipeline, pDesc);
 		renderPass.setPreset(cmdPreset);
 		renderPass.setWork(cmdWork);
 		
@@ -122,11 +128,14 @@ public class InitializeRendering implements EngineTask, Destroyable {
 	
 	@Override
 	public void destroy() {
+		timer.cancel();
+		
 		for (EngineTask task : tickTasks)
 			engine.removeTickTask(task);
 		
 		viewport.free();
 		scissor.free();
+		memFree(pDesc);
 		
 		destroy.destroy();
 	}
@@ -218,6 +227,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		
 		List<String> extensions = new ArrayList<String>();
 		extensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+		extensions.add(EXTDescriptorIndexing.VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 
 		VkDevice device = null;
 		
@@ -289,6 +299,20 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		return renderPass;
 	}
 	
+	private static DescriptorSetBlueprint[] createDscBlueprints(VkDevice device, Asset asset, ListDestroy destroy) {
+		DescriptorSetBlueprint[] out = new FileDescriptorSetBlueprint[1];
+		
+		try {
+			FileDescriptorSetBlueprint dscb = new FileDescriptorSetBlueprint(device, asset.getConfigFile("general.cfg"));
+			destroy.add(dscb);
+			out[0] = dscb;
+		} catch (Exception e) {
+			throw new AssertionError("Failed to create shader ");
+		}
+		
+		return out;
+	}
+	
 	/**
 	 * Creates a basic pipeline.
 	 * 
@@ -297,39 +321,42 @@ public class InitializeRendering implements EngineTask, Destroyable {
 	 * @param renderPass
 	 * @return
 	 */
-	private static long createPipeline(VkPhysicalDevice physicalDevice, VkDevice device, RenderPass renderPass) {
-		long pipeline = VK_NULL_HANDLE;
-
+	private static Pipeline createPipeline(VkPhysicalDevice physicalDevice, VkDevice device, RenderPass renderPass, DescriptorSetBlueprint...descriptorBlueprints) {
 		try {
-			long rpHandle = renderPass.handle();
-			
-			//renderingPipeline.getGraphicsPipeline();
-			// Create the pipeline layout that is used to generate the rendering pipelines that
-			// are based on this descriptor set layout
-			VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.calloc()
-					 .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
-					 .pNext(NULL)
-					 .pSetLayouts(null)
-					 .pPushConstantRanges(null);
+			PipelineLayout layout = new PipelineLayout(device, descriptorBlueprints);
 			 
-			LongBuffer pLayout = memAllocLong(1);
-			int err = vkCreatePipelineLayout(device, pipelineLayoutCreateInfo, null, pLayout);
-			validate(err, "Failed to create pipeline layout.");
-			
-			long layout = pLayout.get(0);
-			
-			memFree(pLayout);
-			pipelineLayoutCreateInfo.free();
-			 
-			GraphicsPipeline gp = new GraphicsPipeline(Application.getConfigAssets().getSubAsset("pipeline"), "pipeline.cfg", device, rpHandle, layout);
-			
-			pipeline = gp.getPipelineHandle();
+			return new GraphicsPipeline(Application.getConfigAssets().getSubAsset("pipeline"), "pipeline.cfg", device, renderPass.handle(), layout.getPipelineLayout());
 		} catch (VulkanException | IOException | AssertionError e) {
 			e.printStackTrace();
 			throw new AssertionError("Failed to create pipeline.");
 		}
+	}
+	
+	/**
+	 *	Creates a descriptor set for "time" uniform from the //TODO
+	 *
+	 * @param device
+	 * @param dscBlueprint
+	 * @return
+	 */
+	private DescriptorSet[] createDescriptorSets(VkPhysicalDevice physicalDevice, VkDevice device, DescriptorSetBlueprint... dscBlueprint) {
+		long[] dscs = new long[0];
+		try {
+			dscs = DescriptorSetFactory.createDescriptorSets(device, dscBlueprint);
+		} catch (VulkanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return pipeline;
+		DescriptorSet[] out = new DescriptorSet[dscs.length];
+		EnvironmentDescriptorSet env = new EnvironmentDescriptorSet(physicalDevice, device, dscs[0]);
+		TimeDescriptorUpdater timeUp = new TimeDescriptorUpdater(env);
+	    timer = new Timer("Time timer");
+	    timer.schedule(timeUp, 30, 10);
+	    
+		out[0] = env;
+		
+		return out;
 	}
 	
 	/**
@@ -376,7 +403,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 	 * @param pipeline
 	 * @return
 	 */
-	private static Recordable makeWorkRecordable(VkPhysicalDevice physicalDevice, VkDevice device, Long pipeline) {
+	private static Recordable makeWorkRecordable(VkPhysicalDevice physicalDevice, VkDevice device, Pipeline pipeline, LongBuffer pDesc) {
 		
 		List<Vector2f> vert = new ArrayList<Vector2f>();
 		vert.add(new Vector2f(-0.5f, -0.5f));
@@ -397,7 +424,10 @@ public class InitializeRendering implements EngineTask, Destroyable {
 			public void record(VkCommandBuffer buffer) {
 				
 				//Bind the rendering pipeline (including the shaders)
-				vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+				vkCmdBindPipeline(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle());
+
+				// Bind descriptor sets
+				vkCmdBindDescriptorSets(buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.layout(), 0, pDesc, null);
 				
 				// Bind triangle vertices
 				LongBuffer offsets = memAllocLong(1);
