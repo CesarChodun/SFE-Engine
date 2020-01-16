@@ -7,7 +7,7 @@ import core.Engine;
  * Main class of the hello descriptors demo.
  * 
  * @author Cezary Chodun
- *
+ * @since 10.01.2020
  */
 public class Main {
 	
