@@ -1,7 +1,13 @@
 package rendering.engine.shader;
 
+/**
+ * Types of the uniforms used in shaders.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public enum UniformUsage {
-	UNIFORM_USAGE_UNDEFINED{
+	UNIFORM_USAGE_UNDEFINED {
 		@Override
 		public int sizeOf() {
 			return 0;
@@ -18,7 +24,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_INT_16{
+	, UNIFORM_USAGE_INT_16 {
 		@Override
 		public int sizeOf() {
 			return Short.BYTES;
@@ -35,7 +41,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_INT_32{
+	, UNIFORM_USAGE_INT_32 {
 		@Override
 		public int sizeOf() {
 			return Integer.BYTES;
@@ -52,7 +58,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_INT_64{
+	, UNIFORM_USAGE_INT_64 {
 		@Override
 		public int sizeOf() {
 			return Long.BYTES;
@@ -69,7 +75,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_FLOAT{
+	, UNIFORM_USAGE_FLOAT {
 		@Override
 		public int sizeOf() {
 			return Float.BYTES;
@@ -86,7 +92,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_DOUBLE{
+	, UNIFORM_USAGE_DOUBLE {
 		@Override
 		public int sizeOf() {
 			return Double.BYTES;
@@ -103,7 +109,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_VECTOR_3F{
+	, UNIFORM_USAGE_VECTOR_3F {
 		@Override
 		public int sizeOf() {
 			return 3*Float.BYTES;
@@ -120,7 +126,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_VECTOR_4F{
+	, UNIFORM_USAGE_VECTOR_4F {
 		@Override
 		public int sizeOf() {
 			return 4*Float.BYTES;
@@ -137,7 +143,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_MATRIX_4F{
+	, UNIFORM_USAGE_MATRIX_4F {
 		@Override
 		public int sizeOf() {
 			return 4*4*Float.BYTES;
@@ -154,7 +160,7 @@ public enum UniformUsage {
 		}
 	}
 
-	, UNIFORM_USAGE_WORLD_TRANSFORM{
+	, UNIFORM_USAGE_WORLD_TRANSFORM {
 		@Override
 		public int sizeOf() {
 			return 4*4*Float.BYTES;
@@ -187,7 +193,7 @@ public enum UniformUsage {
 			return UNIFORM_USAGE_MATRIX_4F;
 		}
 	}
-	, UNIFORM_USAGE_MODEL_TRANSFORM{
+	, UNIFORM_USAGE_MODEL_TRANSFORM {
 		@Override
 		public int sizeOf() {
 			return 4*4*Float.BYTES;
@@ -204,7 +210,7 @@ public enum UniformUsage {
 		}
 	}
 
-	, UNIFORM_USAGE_COLOR_3F{
+	, UNIFORM_USAGE_COLOR_3F {
 		@Override
 		public int sizeOf() {
 			return 3*Float.BYTES;
@@ -221,7 +227,7 @@ public enum UniformUsage {
 		}
 	}
 	
-	, UNIFORM_USAGE_POSITION_3F{
+	, UNIFORM_USAGE_POSITION_3F {
 		@Override
 		public int sizeOf() {
 			return 3*Float.BYTES;
@@ -238,7 +244,20 @@ public enum UniformUsage {
 		}
 	};
 	
+	/**
+	 * The byte size of the value.
+	 * 
+	 * @return the byte size of the value.
+	 */
 	public abstract int sizeOf();
-	public abstract String toString();
+	
+	/**
+	 * Returns the extended data type or this.
+	 * 
+	 * @return extended data type or this.
+	 */
 	public abstract UniformUsage dataType();
+	
+	@Override
+	public abstract String toString();
 }

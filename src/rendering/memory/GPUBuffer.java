@@ -1,5 +1,11 @@
 package rendering.memory;
 
+/**
+ * GPU memory buffer data.
+ * 
+ * @author Cezary
+ * @since 10.01.2020
+ */
 public class GPUBuffer {
 	public long buffer;
 	public long memory;
