@@ -15,17 +15,16 @@ import org.lwjgl.vulkan.VkDevice;
 
 import core.result.VulkanException;
 
-
 /**
  * Package with utility methods for pipeline management.
  * 
  * @author Cezary Chodun
- *
+ * @since 20.01.2020
  */
 public class PipelineUtil {
 
 	/**
-	 * 		reates descriptor set layout.
+	 * Creates a descriptor set layout.
 	 * 
 	 * @param device		- Logical device
 	 * @param layoutBinding	- Layout binding
@@ -61,5 +60,4 @@ public class PipelineUtil {
 		
 		return ans;
 	}
-	
 }
