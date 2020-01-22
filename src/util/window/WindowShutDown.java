@@ -1,4 +1,4 @@
-package demos.helloDescriptor.window;
+package util.window;
 
 import core.Engine;
 import core.EngineTask;

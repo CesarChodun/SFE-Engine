@@ -11,6 +11,8 @@ import core.resources.Asset;
 import core.resources.Destroyable;
 import core.result.VulkanException;
 import util.window.WindowFactory;
+import util.window.WindowShutDown;
+import util.window.WindowTickTask;
 
 /**
  * A simple window managed by the engine.
