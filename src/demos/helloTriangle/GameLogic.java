@@ -4,12 +4,13 @@ import java.util.concurrent.Semaphore;
 
 import core.Engine;
 import core.EngineTask;
-import demos.helloTriangle.initialization.InitializeEngine;
 import demos.helloTriangle.window.WindowManager;
 import demos.util.DefaultResourceConverter;
+import util.hardware.EngineInitializationTask;
 
 public class GameLogic implements EngineTask {
 	
+	private static final String CONFIG_FILE = "demos/hellotriangle";
 	private Engine engine;
 	
 	public GameLogic(Engine engine) {
@@ -29,7 +30,7 @@ public class GameLogic implements EngineTask {
 		Semaphore initialized = new Semaphore(0);
 		
 		// Adding engine initialization task to the engine task queue
-		engine.addTask(new InitializeEngine(initialized));
+		engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
 		
 		// Awaiting for the asset conversion
 		converter.await();

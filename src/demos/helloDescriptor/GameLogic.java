@@ -10,9 +10,9 @@ import java.util.logging.Logger;
 
 import core.Engine;
 import core.EngineTask;
-import demos.helloDescriptor.initialization.InitializeEngine;
 import demos.helloDescriptor.window.WindowManager;
 import demos.util.DefaultResourceConverter;
+import util.hardware.EngineInitializationTask;
 
 /**
  * Hello descriptor demo logic.
@@ -22,6 +22,7 @@ import demos.util.DefaultResourceConverter;
  */
 public class GameLogic implements EngineTask {
 	
+	private static final String CONFIG_FILE = "demos/hellodescriptor";
 	private Engine engine;
 	
 	public GameLogic(Engine engine) {
@@ -40,7 +41,7 @@ public class GameLogic implements EngineTask {
 		Semaphore initialized = new Semaphore(0);
 		
 		// Adding engine initialization task to the engine task queue
-		engine.addTask(new InitializeEngine(initialized));
+		engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
 		
 		// Awaits for conversion to complete
 		converter.await();
