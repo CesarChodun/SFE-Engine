@@ -59,13 +59,14 @@ import rendering.engine.shader.DescriptorSetFactory;
 import rendering.pipeline.Pipeline;
 import rendering.pipeline.PipelineLayout;
 import rendering.recording.RenderPass;
+import resources.memory.MemoryBin;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 	
 	private Engine engine;
 	private Window window;
 	
-	private ListDestroy destroy = new ListDestroy();
+	private MemoryBin destroy = new MemoryBin();
 	private List<EngineTask> tickTasks = new ArrayList<EngineTask>();
 	
 	private VkViewport.Buffer viewport;
@@ -299,7 +300,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 		return renderPass;
 	}
 	
-	private static DescriptorSetBlueprint[] createDscBlueprints(VkDevice device, Asset asset, ListDestroy destroy) {
+	private static DescriptorSetBlueprint[] createDscBlueprints(VkDevice device, Asset asset, MemoryBin destroy) {
 		DescriptorSetBlueprint[] out = new FileDescriptorSetBlueprint[1];
 		
 		try {

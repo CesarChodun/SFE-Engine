@@ -6,6 +6,7 @@ import core.Application;
 import core.Engine;
 import core.resources.Asset;
 import demos.helloDescriptor.rendering.*;
+import resources.memory.MemoryBin;
 
 /**
  * Creates a window and initializes the rendering layer for it.
@@ -25,7 +26,7 @@ public class WindowManager implements Runnable{
 	
 	@Override
 	public void run() {
-		ListDestroy toDestroy = new ListDestroy();
+		MemoryBin toDestroy = new MemoryBin();
 		
 		Semaphore windowCreated = new Semaphore(0);
 		try {
