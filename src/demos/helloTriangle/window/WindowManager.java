@@ -6,6 +6,7 @@ import core.Application;
 import core.Engine;
 import core.resources.Asset;
 import demos.helloTriangle.rendering.*;
+import resources.memory.MemoryBin;
 
 public class WindowManager implements Runnable{
 	
@@ -19,7 +20,7 @@ public class WindowManager implements Runnable{
 	
 	@Override
 	public void run() {
-		ListDestroy toDestroy = new ListDestroy();
+		MemoryBin toDestroy = new MemoryBin();
 		
 		Semaphore windowCreated = new Semaphore(0);
 		try {

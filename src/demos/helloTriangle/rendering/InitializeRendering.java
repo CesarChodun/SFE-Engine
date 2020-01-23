@@ -63,13 +63,14 @@ import rendering.config.GraphicsPipeline;
 import rendering.config.ImageViewCreateInfo;
 import rendering.engine.geometry.MeshU2D;
 import rendering.recording.RenderPass;
+import resources.memory.MemoryBin;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 	
 	private Engine engine;
 	private Window window;
 	
-	private ListDestroy destroy = new ListDestroy();
+	private MemoryBin destroy = new MemoryBin();
 	private List<EngineTask> tickTasks = new ArrayList<EngineTask>();
 	
 	private VkViewport.Buffer viewport;
