@@ -7,6 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import core.resources.Destroyable;
 
 /**
  * Class for scheduling the game engine tasks.
@@ -15,12 +20,14 @@ import java.util.Set;
  * @author Cezary Chodun
  * @since 26.09.2019
  */
-public class Engine implements Runnable{
+public class Engine implements Runnable, Destroyable{
 	
 	/** A minimal amount of tasks to be performed per tick. */
 	private static final int MINIMUM_TASKS_PER_TICK = 5;
 	/** A percentage of tasks that will be executed per tick(from queue). */
 	private static final float TASKS_PER_TICK_SCALING = 0.5f;
+	
+	private ThreadPoolExecutor configPool, fastPool, slowPool;
 
 	/** A list of tasks that should be executed once per engine tick. */
 	private Set<EngineTask> tickTasks = Collections.synchronizedSet(new HashSet<EngineTask>());
@@ -30,7 +37,12 @@ public class Engine implements Runnable{
 	private volatile boolean running = false;
 	
 	public Engine() {
-		
+		configPool = new ThreadPoolExecutor(1, 4, 5, 
+				TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(128));
+		fastPool = new ThreadPoolExecutor(2, 4, 30, 
+				TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(64));
+		slowPool = new ThreadPoolExecutor(1, 16, 20, 
+				TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(32));
 	}
 
 	@Override
@@ -106,5 +118,42 @@ public class Engine implements Runnable{
 	 */
 	public boolean isRunning() {
 		return running;
+	}
+
+	/**
+	 * Returns publicly available thread pool
+	 * for configuration related tasks.
+	 * 
+	 * @return
+	 */
+	public ThreadPoolExecutor getConfigPool() {
+		return configPool;
+	}
+
+	/**
+	 * Returns publicly available thread pool
+	 * for time sensitive tasks.
+	 * 
+	 * @return
+	 */
+	public ThreadPoolExecutor getFastPool() {
+		return fastPool;
+	}
+
+	/**
+	 * Returns publicly available thread pool
+	 * for large tasks(eg. large IO).
+	 * 
+	 * @return
+	 */
+	public ThreadPoolExecutor getSlowPool() {
+		return slowPool;
+	}
+
+	@Override
+	public void destroy() {
+		configPool.shutdown();
+		fastPool.shutdown();
+		slowPool.shutdown();
 	}
 }
