@@ -2,7 +2,6 @@ package util.window;
 
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,20 +53,42 @@ public class CFrame {
 			this.destroyAtShutDown = destroyAtShutDown;
 		}
 		
+		private Semaphore created;
+		private Window window;
 		
 		@Override
 		public void run() throws AssertionError {		
-			Window window = null;
+//			Window window = null;
+			
+			created = new Semaphore(0);
+			
+			// Creating a window object.
+			engine.addTask(() -> {
+				try {
+					window = new Window(HardwareManager.getInstance());
+				
+					created.release();
+				} catch (VulkanException e) {
+					logger.log(Level.FINE, "Failed to create window.", e);
+					e.printStackTrace();
+				}
+			} );
 			
 			try {
-				// Creating a window object.
-				window = new Window(HardwareManager.getInstance());
-				// Setting the window data to the values from the file.
-				WindowFactory.loadFromFile(window, asset.getConfigFile(WINDOW_CFG_FILE));
-			} catch (VulkanException | IOException e) {
-				logger.log(Level.FINE, "Failed to create window.");
+				created.acquire();
+			} catch (InterruptedException e) {
+				logger.log(Level.FINE, "Failed to create window(sem).", e);
 				e.printStackTrace();
 			}
+			
+			
+			// Setting the window data to the values from the file.
+			try {
+				WindowFactory.loadFromFileC(engine, window, asset.getConfigFile(WINDOW_CFG_FILE));
+			} catch (IOException | AssertionError e) {
+				logger.log(Level.FINE, "Failed to create window.", e);
+				e.printStackTrace();
+			}			
 			
 			// Creating a window task that will monitor the window events.
 			WindowTickTask wt = new WindowTickTask(window.getWindowID());
@@ -77,6 +98,9 @@ public class CFrame {
 				wt.setCloseCall(new WindowShutDown(engine, window, wt, destroyAtShutDown));
 			else
 				wt.setCloseCall(new WindowShutDown(engine, window, wt));
+
+			if (window != null)
+				setWindow(window);
 			
 			// Adding window tick task to the engine
 			engine.addTickTask(wt);
@@ -88,27 +112,26 @@ public class CFrame {
 			// Showing the window.
 			if (showWindow == true)
 				window.setVisible(true);
-			
-			if (window != null)
-				setWindow(window);
 		}
 	}
 	
 	/**
-	 * In contrary to other constructors this one
-	 * creates the window using the current thread.
-	 * And it shouldn't be invoked from busy threads.
+	 * Creates a window using the given thread engine.getConfigPool().
+	 * It is not required to invoke the constructor
+	 * from the first thread, however the window
+	 * won't be created until the engine starts running.
 	 * 
 	 * @param engine
 	 * @param asset		The asset containing the window
 	 * 		configuration file.
+	 * @param engine.getConfigPool()		A thread engine.getConfigPool() that will handle IO work.
 	 */
 	public CFrame(Engine engine, Asset asset) {
-		(new CreateCFrameTask(engine, asset)).run();
+		engine.getConfigPool().execute(new CreateCFrameTask(engine, asset));
 	}
 	
 	/**
-	 * Creates a window using the given thread pool.
+	 * Creates a window using the given thread engine.getConfigPool().
 	 * It is not required to invoke the constructor
 	 * from the first thread, however the window
 	 * won't be created until the engine starts running.
@@ -116,31 +139,16 @@ public class CFrame {
 	 * @param engine
 	 * @param asset		The asset containing the window
 	 * 		configuration file.
-	 * @param pool		A thread pool that will handle IO work.
-	 */
-	public CFrame(Engine engine, Asset asset, ThreadPoolExecutor pool) {
-		pool.execute(new CreateCFrameTask(engine, asset));
-	}
-	
-	/**
-	 * Creates a window using the given thread pool.
-	 * It is not required to invoke the constructor
-	 * from the first thread, however the window
-	 * won't be created until the engine starts running.
-	 * 
-	 * @param engine
-	 * @param asset		The asset containing the window
-	 * 		configuration file.
-	 * @param pool		A thread pool that will handle IO work.
+	 * @param engine.getConfigPool()		A thread engine.getConfigPool() that will handle IO work.
 	 * @param workDone	A semaphore that will indicate that the window
 	 * 		creation process have finished.
 	 */
-	public CFrame(Engine engine, Asset asset, ThreadPoolExecutor pool, Semaphore workDone) {
-		pool.execute(new CreateCFrameTask(engine, asset, false, workDone, null));
+	public CFrame(Engine engine, Asset asset, Semaphore workDone) {
+		engine.getConfigPool().execute(new CreateCFrameTask(engine, asset, false, workDone, null));
 	}
 	
 	/**
-	 * Creates a window using the given thread pool.
+	 * Creates a window using the given thread engine.getConfigPool().
 	 * It is not required to invoke the constructor
 	 * from the first thread, however the window
 	 * won't be created until the engine starts running.
@@ -148,18 +156,18 @@ public class CFrame {
 	 * @param engine
 	 * @param asset		The asset containing the window
 	 * 		configuration file.
-	 * @param pool		A thread pool that will handle IO work.
+	 * @param engine.getConfigPool()		A thread engine.getConfigPool() that will handle IO work.
 	 * @param showWindow	Set to true if you want the window to
 	 * 		be displayed as soon as created.
 	 * @param workDone	A semaphore that will indicate that the window
 	 * 		creation process have finished.
 	 */
-	public CFrame(Engine engine, Asset asset, ThreadPoolExecutor pool, boolean showWindow, Semaphore workDone) {
-		pool.execute(new CreateCFrameTask(engine, asset, showWindow, workDone, null));
+	public CFrame(Engine engine, Asset asset, boolean showWindow, Semaphore workDone) {
+		engine.getConfigPool().execute(new CreateCFrameTask(engine, asset, showWindow, workDone, null));
 	}
 	
 	/**
-	 * Creates a window using the given thread pool.
+	 * Creates a window using the given thread engine.getConfigPool().
 	 * It is not required to invoke the constructor
 	 * from the first thread, however the window
 	 * won't be created until the engine starts running.
@@ -167,18 +175,18 @@ public class CFrame {
 	 * @param engine
 	 * @param asset		The asset containing the window
 	 * 		configuration file.
-	 * @param pool		A thread pool that will handle IO work.
+	 * @param engine.getConfigPool()		A thread engine.getConfigPool() that will handle IO work.
 	 * @param workDone	A semaphore that will indicate that the window
 	 * 		creation process have finished.
 	 * @param destroyAtShutDown	A destroyable object that will be invoked 
 	 * 		after the window was shut down.
 	 */
-	public CFrame(Engine engine, Asset asset, ThreadPoolExecutor pool, Semaphore workDone, Destroyable destroyAtShutDown) {
-		pool.execute(new CreateCFrameTask(engine, asset, false, workDone, destroyAtShutDown));
+	public CFrame(Engine engine, Asset asset, Semaphore workDone, Destroyable destroyAtShutDown) {
+		engine.getConfigPool().execute(new CreateCFrameTask(engine, asset, false, workDone, destroyAtShutDown));
 	}
 	
 	/**
-	 * Creates a window using the given thread pool.
+	 * Creates a window using the given thread engine.getConfigPool().
 	 * It is not required to invoke the constructor
 	 * from the first thread, however the window
 	 * won't be created until the engine starts running.
@@ -186,7 +194,7 @@ public class CFrame {
 	 * @param engine
 	 * @param asset		The asset containing the window
 	 * 		configuration file.
-	 * @param pool		A thread pool that will handle IO work.
+	 * @param engine.getConfigPool()		A thread engine.getConfigPool() that will handle IO work.
 	 * @param showWindow	Set to true if you want the window to
 	 * 		be displayed as soon as created.
 	 * @param workDone	A semaphore that will indicate that the window
@@ -194,8 +202,8 @@ public class CFrame {
 	 * @param destroyAtShutDown	A destroyable object that will be invoked 
 	 * 		after the window was shut down.
 	 */
-	public CFrame(Engine engine, Asset asset, ThreadPoolExecutor pool, boolean showWindow, Semaphore workDone, Destroyable destroyAtShutDown) {
-		pool.execute(new CreateCFrameTask(engine, asset, showWindow, workDone, destroyAtShutDown));
+	public CFrame(Engine engine, Asset asset, boolean showWindow, Semaphore workDone, Destroyable destroyAtShutDown) {
+		engine.getConfigPool().execute(new CreateCFrameTask(engine, asset, showWindow, workDone, destroyAtShutDown));
 	}
 	
 	/**

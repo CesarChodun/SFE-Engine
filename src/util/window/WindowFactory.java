@@ -1,5 +1,11 @@
 package util.window;
 
+import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import core.Engine;
+import core.EngineTask;
 import core.HardwareManager;
 import core.hardware.Monitor;
 import core.rendering.Window;
@@ -8,6 +14,8 @@ import core.resources.ResourceUtil;
 import core.result.VulkanException;
 
 public class WindowFactory {
+	
+	private static final Logger logger = Logger.getLogger(WindowFactory.class.getName());
 	
 	protected static final String 
 		WINDOW_NAME_KEY = "WINDOW_NAME",
@@ -25,7 +33,7 @@ public class WindowFactory {
 		DEFAULT_POSY = "0";
 	protected static final Boolean
 		DEFAULT_FULLSCREEN = false;
-
+	
 	public static void loadFromFile(Window window, ConfigFile config) throws VulkanException {		
 		Monitor monitor = HardwareManager.getPrimaryMonitor();
 		int width = ResourceUtil.toPx(config.getString(WIDTH_KEY, DEFAULT_WIDTH), monitor.getWidth());
@@ -39,6 +47,40 @@ public class WindowFactory {
 		window.setFullScreen(fullscreen);
 		
 		config.close();
+	}
+	
+	public static void loadFromFileC(Engine engine, Window window, ConfigFile config, Semaphore sem) {
+		Monitor monitor = HardwareManager.getPrimaryMonitor();
+		int width = ResourceUtil.toPx(config.getString(WIDTH_KEY, DEFAULT_WIDTH), monitor.getWidth());
+		int height = ResourceUtil.toPx(config.getString(HEIGHT_KEY, DEFAULT_HEIGHT), monitor.getHeight());
+		int x = ResourceUtil.toPx(config.getString(POSX_KEY, DEFAULT_POSX), monitor.getWidth());
+		int y = ResourceUtil.toPx(config.getString(POSY_KEY, DEFAULT_POSY), monitor.getHeight());
+		boolean fullscreen = config.getBoolean(FULLSCREEN_KEY, DEFAULT_FULLSCREEN);
+		String name = config.getString(WINDOW_NAME_KEY, DEFAULT_WINDOW_NAME);
+		config.close();
+		
+		engine.addTask(new EngineTask() {
+			@Override
+			public void run() {
+				window.setBounds(x, y, width, height);
+				window.setName(name);
+				window.setFullScreen(fullscreen);
+				
+				sem.release();
+			}
+		});
+	}
+	
+	public static void loadFromFileC(Engine engine, Window window, ConfigFile config) {
+		Semaphore sem = new Semaphore(0);
+		loadFromFileC(engine, window, config, sem);
+		
+		try {
+			sem.acquire();
+		} catch (InterruptedException e) {
+			logger.log(Level.FINE, "Failed to acquire semaphore for the window update.", e);
+			e.printStackTrace();
+		}
 	}
 	
 }
