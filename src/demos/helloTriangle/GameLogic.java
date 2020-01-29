@@ -3,12 +3,10 @@ package demos.helloTriangle;
 import java.util.concurrent.Semaphore;
 
 import core.Engine;
-import core.EngineTask;
-import demos.helloTriangle.window.WindowManager;
 import demos.util.DefaultResourceConverter;
 import util.hardware.EngineInitializationTask;
 
-public class GameLogic implements EngineTask {
+public class GameLogic implements Runnable {
 	
 	private static final String CONFIG_FILE = "demos/hellotriangle";
 	private Engine engine;

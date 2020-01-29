@@ -63,6 +63,7 @@ private static class ExampleClass implements Runnable, EngineTask {
 			e.printStackTrace();
 		}
 		finally {
+			engine.destroy();
 			System.out.println("Engine successfully shut down.");
 		}
 		

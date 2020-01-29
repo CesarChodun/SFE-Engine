@@ -21,7 +21,7 @@ public class Main {
 		
 		// Adds the task to the engine queue.
 		// It will be invoked on the first thread.
-		engine.addTask(logicTask);
+		engine.getConfigPool().execute(logicTask);
 		
 		try {
 			//Starts the engine(on this thread).
@@ -33,6 +33,7 @@ public class Main {
 		}
 		finally {
 			// Frees the application data
+			engine.destroy();
 			Application.destroy();
 			System.out.println("Engine successfully shut down.");
 		}

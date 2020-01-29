@@ -19,9 +19,8 @@ public class Main {
 		// Creates a task that will perform the game functionality.
 		GameLogic logicTask = new GameLogic(engine);
 		
-		// Adds the task to the engine queue.
-		// It will be invoked on the first thread.
-		engine.addTask(logicTask);
+		// Adds the game logic task to the configuration pool.
+		engine.getConfigPool().execute(logicTask);
 		
 		try {
 			//Starts the engine(on this thread).
@@ -33,6 +32,7 @@ public class Main {
 		}
 		finally {
 			// Frees the application data
+			engine.destroy();
 			Application.destroy();
 			System.out.println("Engine successfully shut down.");
 		}

@@ -33,6 +33,7 @@ public class Main {
 		}
 		finally {
 			// Frees the application data
+			engine.destroy();
 			Application.destroy();
 			System.out.println("Engine successfully shut down.");
 		}
