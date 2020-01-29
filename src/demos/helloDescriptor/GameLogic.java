@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import core.Engine;
 import core.EngineTask;
-import demos.helloDescriptor.window.WindowManager;
 import demos.util.DefaultResourceConverter;
 import util.hardware.EngineInitializationTask;
 

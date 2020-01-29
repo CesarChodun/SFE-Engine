@@ -1,4 +1,4 @@
-package demos.helloTriangle.rendering;
+package demos.helloTriangle;
 
 import static core.rendering.RenderUtil.createLogicalDevice;
 import static core.rendering.RenderUtil.getDeviceQueue;

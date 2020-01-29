@@ -1,13 +1,20 @@
-package demos.helloTriangle.window;
+package demos.helloDescriptor;
 
 import java.util.concurrent.Semaphore;
 
 import core.Application;
 import core.Engine;
 import core.resources.Asset;
-import demos.helloTriangle.rendering.*;
+import demos.helloDescriptor.rendering.*;
 import resources.memory.MemoryBin;
+import util.window.CFrame;
 
+/**
+ * Creates a window and initializes the rendering layer for it.
+ * 
+ * @author Cezary Chodun
+ * @since 10.01.2020
+ */
 public class WindowManager implements Runnable{
 	
 	private Engine engine;
@@ -34,8 +41,9 @@ public class WindowManager implements Runnable{
 		Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
 		
 		// Creating a task that will create the window.
-		TriangleWindow cwt = new TriangleWindow(engine, windowAsset, false, windowCreated, toDestroy);
-		engine.addTask(cwt);
+		CFrame frame = new CFrame(engine, windowAsset, false, windowCreated, toDestroy);
+//		TriangleWindow cwt = new TriangleWindow(engine, windowAsset, false, windowCreated, toDestroy);
+//		engine.addTask(cwt);
 		
 		try {
 			// Waiting for the window to be created.
@@ -46,7 +54,7 @@ public class WindowManager implements Runnable{
 		}
 		
 		// Creating the rendering task.
-		InitializeRendering rendTask = new InitializeRendering(engine, cwt.getWindow());
+		InitializeRendering rendTask = new InitializeRendering(engine, frame.getWindow());
 		toDestroy.add(rendTask);
 		engine.addTask(rendTask);
 	}
