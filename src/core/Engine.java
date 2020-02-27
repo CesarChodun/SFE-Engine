@@ -12,6 +12,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import core.resources.Destroyable;
+import core.synchronization.Dependency;
+import core.synchronization.SmartWaitQueue;
+import core.synchronization.ThreadPoolSyncTask;
 
 /**
  * Class for scheduling the game engine tasks.
@@ -28,6 +31,8 @@ public class Engine implements Runnable, Destroyable{
 	private static final float TASKS_PER_TICK_SCALING = 0.5f;
 	
 	private ThreadPoolExecutor configPool, fastPool, slowPool;
+	
+	private SmartWaitQueue smartQueue;
 
 	/** A list of tasks that should be executed once per engine tick. */
 	private Set<EngineTask> tickTasks = Collections.synchronizedSet(new HashSet<EngineTask>());
@@ -43,6 +48,8 @@ public class Engine implements Runnable, Destroyable{
 				TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(64));
 		slowPool = new ThreadPoolExecutor(1, 16, 20, 
 				TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(32));
+		
+		smartQueue = new SmartWaitQueue();
 	}
 
 	@Override
@@ -148,6 +155,18 @@ public class Engine implements Runnable, Destroyable{
 	 */
 	public ThreadPoolExecutor getSlowPool() {
 		return slowPool;
+	}
+	
+	public void addConfigSMQ(Runnable run, Dependency...deps) {
+		smartQueue.addTask(new ThreadPoolSyncTask(configPool, run, deps));
+	}
+	
+	public void addFastSMQ(Runnable run, Dependency...deps) {
+		smartQueue.addTask(new ThreadPoolSyncTask(fastPool, run, deps));
+	}
+	
+	public void addSlowSMQ(Runnable run, Dependency...deps) {
+		smartQueue.addTask(new ThreadPoolSyncTask(slowPool, run, deps));
 	}
 
 	@Override

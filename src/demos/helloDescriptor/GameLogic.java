@@ -2,14 +2,13 @@ package demos.helloDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import core.Engine;
-import core.EngineTask;
+import core.synchronization.DependencyFence;
 import demos.util.DefaultResourceConverter;
 import util.hardware.EngineInitializationTask;
 
@@ -19,7 +18,7 @@ import util.hardware.EngineInitializationTask;
  * @author Cezary Chodun
  * @since 10.01.2020
  */
-public class GameLogic implements EngineTask {
+public class GameLogic implements Runnable {
 	
 	private static final String CONFIG_FILE = "demos/hellodescriptor";
 	private Engine engine;
@@ -37,7 +36,7 @@ public class GameLogic implements EngineTask {
 		converter.runConversion();
 		
 		// Semaphore indicating initialization state
-		Semaphore initialized = new Semaphore(0);
+		DependencyFence initialized = new DependencyFence(0);
 		
 		// Adding engine initialization task to the engine task queue
 		engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
@@ -47,8 +46,12 @@ public class GameLogic implements EngineTask {
 		
 		// Creating a thread that will wait until the engine is initialized and then
 		// it will create the window.
-		Thread waitForConfig = new Thread(new WindowManager(engine, initialized));
-		waitForConfig.start();
+//		for (int i = 0; i < 100; i++) {
+		engine.addConfigSMQ(new WindowManager(engine, initialized));
+//			engine.getConfigPool().execute(new WindowManager(engine, initialized));
+//			Thread waitForConfig = new Thread(new WindowManager(engine, initialized));
+//			waitForConfig.start();
+//		}
 	}
 
 	/**

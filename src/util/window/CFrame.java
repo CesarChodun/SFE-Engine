@@ -13,6 +13,7 @@ import core.rendering.Window;
 import core.resources.Asset;
 import core.resources.Destroyable;
 import core.result.VulkanException;
+import core.synchronization.DependencyFence;
 
 /**
  * Generalized(JFrame like) window.
@@ -53,65 +54,69 @@ public class CFrame {
 			this.destroyAtShutDown = destroyAtShutDown;
 		}
 		
-		private Semaphore created;
-		private Window window;
+		private DependencyFence created;
+		private DependencyFence loaded;
+		private volatile Window window;
 		
 		@Override
 		public void run() throws AssertionError {		
 //			Window window = null;
 			
-			created = new Semaphore(0);
+			created = new DependencyFence(0);
+			loaded = new DependencyFence(0);
 			
 			// Creating a window object.
 			engine.addTask(() -> {
 				try {
 					window = new Window(HardwareManager.getInstance());
 				
+					System.err.println("Window created!");
+					
 					created.release();
 				} catch (VulkanException e) {
 					logger.log(Level.FINE, "Failed to create window.", e);
 					e.printStackTrace();
 				}
-			} );
+			} );			
 			
-			try {
-				created.acquire();
-			} catch (InterruptedException e) {
-				logger.log(Level.FINE, "Failed to create window(sem).", e);
-				e.printStackTrace();
-			}
-			
-			
-			// Setting the window data to the values from the file.
-			try {
-				WindowFactory.loadFromFileC(engine, window, asset.getConfigFile(WINDOW_CFG_FILE));
-			} catch (IOException | AssertionError e) {
-				logger.log(Level.FINE, "Failed to create window.", e);
-				e.printStackTrace();
-			}			
-			
-			// Creating a window task that will monitor the window events.
-			WindowTickTask wt = new WindowTickTask(window.getWindowID());
-			
-			// Setting window close callback.
-			if (destroyAtShutDown != null)
-				wt.setCloseCall(new WindowShutDown(engine, window, wt, destroyAtShutDown));
-			else
-				wt.setCloseCall(new WindowShutDown(engine, window, wt));
+			engine.addFastSMQ(() -> {
+				// Setting the window data to the values from the file.
+				try {
+					WindowFactory.loadFromFileC(engine, window, asset.getConfigFile(WINDOW_CFG_FILE), loaded);
 
-			if (window != null)
-				setWindow(window);
+					System.err.println("Window loaded!");
+				} catch (IOException | AssertionError e) {
+					logger.log(Level.FINE, "Failed to create window.", e);
+					e.printStackTrace();
+				}						
+			}, created);
 			
-			// Adding window tick task to the engine
-			engine.addTickTask(wt);
-			
-			// Releasing the work done semaphore
-			if (workDone != null)
-				workDone.release();
-			
-			// Showing the window.
-			if (showWindow == true)
-				window.setVisible(true);
+			engine.addConfigSMQ(() -> {
+				if (window == null)
+					throw new AssertionError("Window is null!");
+				// Creating a window task that will monitor the window events.
+				WindowTickTask wt = new WindowTickTask(window.getWindowID());
+				
+				// Setting window close callback.
+				if (destroyAtShutDown != null)
+					wt.setCloseCall(new WindowShutDown(engine, window, wt, destroyAtShutDown));
+				else
+					wt.setCloseCall(new WindowShutDown(engine, window, wt));
+
+				if (window != null)
+					setWindow(window);
+				
+				// Adding window tick task to the engine
+				engine.addTickTask(wt);
+				
+				// Releasing the work done semaphore
+				if (workDone != null)
+					workDone.release();
+				
+				// Showing the window.
+				if (showWindow == true)
+					window.setVisible(true);				
+			}, loaded);
 		}
 	}
 	

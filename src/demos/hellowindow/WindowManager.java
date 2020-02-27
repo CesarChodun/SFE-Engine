@@ -12,7 +12,7 @@ import core.resources.Asset;
 import core.result.VulkanException;
 import util.window.WindowFactory;
 
-public class WindowManager implements EngineTask{
+public class WindowManager implements EngineTask {
 
 	/**
 	 * A class that will perform the window(and engine)
