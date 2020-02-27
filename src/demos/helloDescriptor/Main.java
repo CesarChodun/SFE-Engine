@@ -20,7 +20,6 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
 		System.out.println("Running \"Hello Descriptor\" demo.");
 		
 		// Creates an engine object.
@@ -29,9 +28,9 @@ public class Main {
 		// Creates a task that will perform the game functionality.
 		GameLogic logicTask = new GameLogic(engine);
 		
-		// Adds the task to the engine queue.
-		// It will be invoked on the first thread.
-		engine.getConfigPool().execute(logicTask);
+		// Creates a separate thread for the game logic.
+		Thread logic = new Thread(logicTask);
+		logic.start();
 		
 		try {
 			//Starts the engine(on this thread).
