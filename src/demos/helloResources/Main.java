@@ -21,6 +21,8 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
+		
+		long time = System.nanoTime();
 
 		STORAGE_FILE.mkdir();
 		deleteContents(STORAGE_FILE);
@@ -39,6 +41,10 @@ public class Main {
 			e.printStackTrace();
 		}
 		System.out.println("Done " + remaining);
+		
+		long end_time = System.nanoTime();
+		
+		System.out.println("Conversion took: " + (double)(end_time - time)/1000000 + "ms");
 	}
 
 }
