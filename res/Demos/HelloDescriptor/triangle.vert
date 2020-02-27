@@ -9,7 +9,7 @@ layout(set = 0, binding = 0) uniform Time {
 
 void main() {
     outColor = vec3(clamp(0.0, 1.0, -position.x), max(0.0, position.x), max(0.0, position.y));
-    float factor = 0.1 * myTime.time;
+    float factor = myTime.time * 0.1;
     outColor *= factor;
     gl_Position = vec4(position * (max(factor, 0.025)) * 2, 0.0, 1.0);
 }
