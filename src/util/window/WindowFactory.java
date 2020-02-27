@@ -1,7 +1,6 @@
 package util.window;
 
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import core.Engine;
@@ -15,6 +14,7 @@ import core.result.VulkanException;
 
 public class WindowFactory {
 	
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(WindowFactory.class.getName());
 	
 	protected static final String 
@@ -49,7 +49,7 @@ public class WindowFactory {
 		config.close();
 	}
 	
-	public static void loadFromFileC(Engine engine, Window window, ConfigFile config, Semaphore sem) {
+	public static void loadFromFileC(Engine engine, Window window, ConfigFile config, Semaphore workDone) {
 		Monitor monitor = HardwareManager.getPrimaryMonitor();
 		int width = ResourceUtil.toPx(config.getString(WIDTH_KEY, DEFAULT_WIDTH), monitor.getWidth());
 		int height = ResourceUtil.toPx(config.getString(HEIGHT_KEY, DEFAULT_HEIGHT), monitor.getHeight());
@@ -66,21 +66,9 @@ public class WindowFactory {
 				window.setName(name);
 				window.setFullScreen(fullscreen);
 				
-				sem.release();
+				if (workDone != null)
+					workDone.release();
 			}
 		});
-	}
-	
-	public static void loadFromFileC(Engine engine, Window window, ConfigFile config) {
-		Semaphore sem = new Semaphore(0);
-		loadFromFileC(engine, window, config, sem);
-		
-		try {
-			sem.acquire();
-		} catch (InterruptedException e) {
-			logger.log(Level.FINE, "Failed to acquire semaphore for the window update.", e);
-			e.printStackTrace();
-		}
-	}
-	
+	}	
 }
