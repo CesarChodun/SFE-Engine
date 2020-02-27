@@ -4,3 +4,4 @@
 glslangValidator.exe
 /storage/
 *.spv
+*.log
