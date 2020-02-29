@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+	<property name="lwjgl.version" value="3.2.3"/>
+	<property name="joml.version" value="1.9.20"/>
+	<property name="lwjgl.natives" value="natives-windows"/>
+
+	<settings defaultResolver="mainchain" />
+	<resolvers>
+		<chain name="mainchain">
+			<ibiblio name="main" m2compatible="true" />
+		</chain>
+		<ibiblio name="maven2" m2compatible="true"/>
+	</resolvers>
+</ivysettings>

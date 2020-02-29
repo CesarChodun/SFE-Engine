@@ -1,0 +1,45 @@
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+    <info organisation="" module="" />
+    
+    
+	<!-- <property name="lwjgl.version" value="3.2.3"/>
+	<property name="lwjgl.natives" value="natives-windows"/> -->
+    
+    <configurations>
+        <conf name="binaries" />
+    </configurations>
+    
+    <dependencies>
+    	<dependency org="org.jetbrains" name="annotations" rev="13.0"/>
+    
+    	<dependency org="org.json" name="json" rev="20190722"/>
+    	
+    	<dependency org="org.lwjgl" name="lwjgl" rev="${lwjgl.version}">
+			<artifact name="lwjgl" type="jar"/>
+			<artifact name="lwjgl" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-assimp" rev="${lwjgl.version}">
+			<artifact name="lwjgl-assimp" type="jar"/>
+			<artifact name="lwjgl-assimp" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-glfw" rev="${lwjgl.version}">
+			<artifact name="lwjgl-glfw" type="jar"/>
+			<artifact name="lwjgl-glfw" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-openal" rev="${lwjgl.version}">
+			<artifact name="lwjgl-openal" type="jar"/>
+			<artifact name="lwjgl-openal" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-stb" rev="${lwjgl.version}">
+			<artifact name="lwjgl-stb" type="jar"/>
+			<artifact name="lwjgl-stb" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-vma" rev="${lwjgl.version}">
+			<artifact name="lwjgl-vma" type="jar"/>
+			<artifact name="lwjgl-vma" type="jar" m:classifier="${lwjgl.natives}"/>
+		</dependency>
+		<dependency org="org.lwjgl" name="lwjgl-vulkan" rev="${lwjgl.version}"/>
+		<dependency org="org.joml" name="joml" rev="${joml.version}"/>
+        <dependency org="junit" name="junit" rev="4.12" conf="binaries->default" />
+    </dependencies>
+</ivy-module>

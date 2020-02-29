@@ -24,8 +24,10 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class Application {
 
+	/** Tells whether the application is run in release mode. */
+	public static final boolean RELEASE = Boolean.valueOf(System.getProperty("application_release", "true"));
 	/** Application debug mode(provides extra logging information). */
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = Boolean.valueOf(System.getProperty("application_debug", "false"));
 	/** Location of the configuration file. */
 	public static final String CONFIG_FOLDER_NAME = "config"; 
 	/** Location of the file containing basic information about an application. */

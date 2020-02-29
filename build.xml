@@ -1,0 +1,182 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="SF-Engine" default="debug-hardware-init">
+	
+	<!-- General settings -->
+	<property name="app.classes.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="lib.dir" value="${build.dir}/lib" />
+	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="app.jar.dir" value="${build.dir}/app" />
+	
+	<property name="resources.dir" value="res" />
+	<property name="config.dir" value="config" />
+	
+	<!-- Demos settings -->
+	<property name="app.demos.dir" value="demos" />
+	<property name="app.demos.src.dir" value="${app.classes.dir}/demos" />
+	<property name="app.demos.jar.dir" value="${build.dir}/demos" />
+
+	<!-- Ivy-related settings -->
+	<property name="ivy.install.version" value="2.4.0" />
+	<condition property="ivy.home" value="${env.IVY_HOME}">
+	    <isset property="env.IVY_HOME" />
+	</condition>
+	<property name="ivy.home" value="${user.home}/.ant" />
+	<property name="ivy.jar.dir" value="${ivy.home}/lib" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar" />
+	
+	<!-- General purpose targets -->
+
+	<!-- new target to get dependencies, after first obtaining Ivy -->
+	<target name="get-dependencies" depends="init-ivy">
+	    <ivy:retrieve conf="binaries" pattern="${build.dir}/lib/[artifact](-[classifier]).[ext]" />
+	</target>
+
+	<!-- Try to load Ivy from either the local lib dir or Ant's lib dir -->
+	<target name="init-ivy" depends="download-ivy">
+	    <path id="ivy.lib.path">
+	        <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+	    </path>
+	    <taskdef resource="org/apache/ivy/ant/antlib.xml"
+	             uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+	</target>
+
+	<!-- new target to download Ivy if necessary, considering desired
+	     version, file timestamp, and whether the 'net can be reached -->
+	<target name="download-ivy" unless="offline">
+		<mkdir dir="${ivy.jar.dir}" />
+		    <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+		         dest="${ivy.jar.file}" usetimestamp="true" />
+	</target>
+	
+	<!-- Libraries to be included -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+	</path>
+	
+	<!-- the existing "build" target has a new dependency -->
+	<target name="build" depends="get-dependencies">
+		<mkdir dir="${app.classes.dir}" />
+        <mkdir dir="${app.jar.dir}" />
+		<mkdir dir="${lib.dir}"/>
+	</target>
+
+	<!-- new target which cleans the Ivy cache as well as existing build objects -->
+	<target name="clean-all" depends="clean" description="clean ivy cache">
+	    <ivy:cleancache />
+	</target>
+	
+	<target name="make-demo-jar">	
+			<jar destfile="${app.demos.jar.dir}/${jarName}.jar" basedir="${build.classes.dir}">
+				<zipgroupfileset dir="${lib.dir}">
+					<include name="**/*.jar" />
+				</zipgroupfileset>
+				<manifest>
+		            <attribute name="Main-Class" value="${app.demos.dir}.${mainFolder}.Main" />
+		        </manifest>
+		    </jar>
+	</target>
+	
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+	
+    <target name="resolve" depends="init-ivy" description="--> retrieve dependencies with Ivy">
+    	<ivy:resolve/>
+    	<ivy:cachepath pathid="compile.path"/>
+    </target>
+	
+    <target name="compile" depends="resolve,build">
+        <mkdir dir="${build.classes.dir}" />
+        <javac classpathref="classpath" destdir="${build.classes.dir}" srcdir="src" debug="true" />
+    </target>
+
+
+	<target name="debug" depends="make-demos">
+	    <java jar="build/demos/${debugJarName}.jar" fork="true">
+	        <sysproperty key="org.lwjgl.util.DebugAllocator" value="true"/>
+	        <sysproperty key="org.lwjgl.util.DebugLoader" value="true"/>
+	        <sysproperty key="application_debug" value="true"/>
+	        <sysproperty key="application_release" value="false"/>
+	    </java>
+	</target>
+	
+	<target name="release" depends="make-demos">
+		<java jar="build/demos/${releaseJarName}.jar" fork="true">
+	        <sysproperty key="application_debug" value="false"/>
+	        <sysproperty key="application_release" value="true"/>
+	    </java>
+	</target>
+	
+	<!-- Specific targets -->
+	
+	<target name="make-demos" depends="compile">
+		<pathconvert property="classpathInName" refid="classpath" />
+		<mkdir dir="${app.demos.jar.dir}"/>
+		
+		<copy todir="${app.demos.jar.dir}/res" >  
+		    <fileset dir="${resources.dir}" includes="**"/>  
+		</copy> 
+		<copy todir="${app.demos.jar.dir}/config" >  
+		    <fileset dir="${config.dir}" includes="**"/>  
+		</copy>
+		
+		<parallel>
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HardwareInit"/>
+			    <param name="mainFolder" value="hardwareinit"/>
+			</antcall>
+			</sequential>
+			
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloDescriptor"/>
+			    <param name="mainFolder" value="helloDescriptor"/>
+			</antcall>
+			</sequential>	
+			
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloResources"/>
+			    <param name="mainFolder" value="helloResources"/>
+			</antcall>
+			</sequential>	
+			
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloTriangle"/>
+			    <param name="mainFolder" value="helloTriangle"/>
+			</antcall>
+			</sequential>
+			
+
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloWindow"/>
+			    <param name="mainFolder" value="hellowindow"/>
+			</antcall>
+			</sequential>
+			
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloWorld"/>
+			    <param name="mainFolder" value="helloworld"/>
+			</antcall>
+			</sequential>
+
+		</parallel>
+	</target>
+	
+	<target name="debug-hardware-init">
+		<antcall target="debug">
+		    <param name="debugJarName" value="HardwareInit"/>
+		</antcall>
+	</target>
+	
+	<target name="release-hardware-init">
+		<antcall target="release">
+		    <param name="releaseJarName" value="HardwareInit"/>
+		</antcall>
+	</target>
+
+</project>
