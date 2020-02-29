@@ -4,10 +4,10 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.LongBuffer;
 
-import com.sun.istack.internal.Nullable;
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
