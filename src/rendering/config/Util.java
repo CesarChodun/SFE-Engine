@@ -24,103 +24,103 @@ import core.result.VulkanException;
 
 public class Util {
 
-	/**
-	 * 
-	 * <p>
-	 * 		Converts file content to byte buffer.
-	 * </p>
-	 * @param file
-	 * @return
-	 */
-	public static ByteBuffer fileToByteBuffer(File file) {
-		 if(file.isDirectory())
-			 return null;
-		 
-		 ByteBuffer buffer = null; 
-		 
-		 try {
-			 FileInputStream fis = new FileInputStream(file);
-			 FileChannel fc = fis.getChannel();
-			 buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-			 fc.close();
-			 fis.close();
+    /**
+     * 
+     * <p>
+     *         Converts file content to byte buffer.
+     * </p>
+     * @param file
+     * @return
+     */
+    public static ByteBuffer fileToByteBuffer(File file) {
+         if(file.isDirectory())
+             return null;
+         
+         ByteBuffer buffer = null; 
+         
+         try {
+             FileInputStream fis = new FileInputStream(file);
+             FileChannel fc = fis.getChannel();
+             buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+             fc.close();
+             fis.close();
 
-		 } catch (IOException e) {
-			 e.printStackTrace();
-		 }
-		 
-		 return buffer;
-	 }
-	
-	/**
-	 * 
-	 * <p>
-	 * 		Creates shader stage.
-	 * </p>
-	 * @param shaderModule	- Shader module.
-	 * @param stage			- Shader stage.
-	 * @param invokeName	- Name of the method to be invoked.
-	 * @return
-	 */
-	public static VkPipelineShaderStageCreateInfo createShaderStage(long shaderModule, int stage, String invokeName) {
-		 VkPipelineShaderStageCreateInfo shaderStage = VkPipelineShaderStageCreateInfo.calloc()
-				 .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
-				 .pNext(NULL)
-				 .stage(stage)
-				 .module(shaderModule)
-				 .pName(memUTF8(invokeName));
-		 return shaderStage;
-	 }
-	
-	/**
-	 * 
-	 * @param info			- Info that will be filled
-	 * @param shaderModule	- Shader module.
-	 * @param stage			- Shader stage.
-	 * @param invokeName	- Name of the method to be invoked.
-	 */
-	public static void fillShaderStage(
-			VkPipelineShaderStageCreateInfo info, 
-			long shaderModule, 
-			int stage, 
-			String invokeName
-			) {
-		 info
-			 .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
-			 .pNext(NULL)
-			 .stage(stage)
-			 .module(shaderModule)
-			 .pName(memUTF8(invokeName));
-	 }
-	
-	/**
-	 * 
-	 * <p>
-	 * 		Creates a shader module.
-	 * </p>
-	 * @param logicalDevice
-	 * @param file
-	 * @return
-	 * @throws VulkanException 
-	 */
-	public static long createShaderModule(VkDevice logicalDevice, File file) throws VulkanException {
-		ByteBuffer shaderData = fileToByteBuffer(file);
-	 
-		VkShaderModuleCreateInfo moduleCreateInfo  = VkShaderModuleCreateInfo.calloc()
-				 .sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
-				 .flags(0)
-				 .pNext(NULL)
-				 .pCode(shaderData);
-		 
-		LongBuffer pShaderModule = memAllocLong(1);
-		int err = vkCreateShaderModule(logicalDevice, moduleCreateInfo, null, pShaderModule);
-		validate(err, "Failed to create shader module!");
-		long handle = pShaderModule.get(0);
-		 
-		memFree(pShaderModule);
-		moduleCreateInfo.free();
-		
-		return handle;
-	 }
-	
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+         
+         return buffer;
+     }
+    
+    /**
+     * 
+     * <p>
+     *         Creates shader stage.
+     * </p>
+     * @param shaderModule    - Shader module.
+     * @param stage            - Shader stage.
+     * @param invokeName    - Name of the method to be invoked.
+     * @return
+     */
+    public static VkPipelineShaderStageCreateInfo createShaderStage(long shaderModule, int stage, String invokeName) {
+         VkPipelineShaderStageCreateInfo shaderStage = VkPipelineShaderStageCreateInfo.calloc()
+                 .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+                 .pNext(NULL)
+                 .stage(stage)
+                 .module(shaderModule)
+                 .pName(memUTF8(invokeName));
+         return shaderStage;
+     }
+    
+    /**
+     * 
+     * @param info            - Info that will be filled
+     * @param shaderModule    - Shader module.
+     * @param stage            - Shader stage.
+     * @param invokeName    - Name of the method to be invoked.
+     */
+    public static void fillShaderStage(
+            VkPipelineShaderStageCreateInfo info, 
+            long shaderModule, 
+            int stage, 
+            String invokeName
+            ) {
+         info
+             .sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+             .pNext(NULL)
+             .stage(stage)
+             .module(shaderModule)
+             .pName(memUTF8(invokeName));
+     }
+    
+    /**
+     * 
+     * <p>
+     *         Creates a shader module.
+     * </p>
+     * @param logicalDevice
+     * @param file
+     * @return
+     * @throws VulkanException 
+     */
+    public static long createShaderModule(VkDevice logicalDevice, File file) throws VulkanException {
+        ByteBuffer shaderData = fileToByteBuffer(file);
+     
+        VkShaderModuleCreateInfo moduleCreateInfo  = VkShaderModuleCreateInfo.calloc()
+                 .sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
+                 .flags(0)
+                 .pNext(NULL)
+                 .pCode(shaderData);
+         
+        LongBuffer pShaderModule = memAllocLong(1);
+        int err = vkCreateShaderModule(logicalDevice, moduleCreateInfo, null, pShaderModule);
+        validate(err, "Failed to create shader module!");
+        long handle = pShaderModule.get(0);
+         
+        memFree(pShaderModule);
+        moduleCreateInfo.free();
+        
+        return handle;
+     }
+    
 }

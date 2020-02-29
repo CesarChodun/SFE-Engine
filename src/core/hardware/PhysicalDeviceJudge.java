@@ -11,14 +11,14 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
  */
 public interface PhysicalDeviceJudge {
 
-	/**
-	 * Calculates a physical device score base on it's
-	 * properties. The device with higher score
-	 * is more suitable.
-	 * 
-	 * @param device	Physical device to be evaluated.
-	 * @return			Score of the device.
-	 */
-	public int score(VkPhysicalDevice device);
-	
+    /**
+     * Calculates a physical device score base on it's
+     * properties. The device with higher score
+     * is more suitable.
+     * 
+     * @param device    Physical device to be evaluated.
+     * @return            Score of the device.
+     */
+    public int score(VkPhysicalDevice device);
+    
 }

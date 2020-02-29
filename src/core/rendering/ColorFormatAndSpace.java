@@ -9,18 +9,18 @@ package core.rendering;
  */
 public class ColorFormatAndSpace {
 
-	/** Color format. */
-	public int colorFormat;
-	/** Color space. */
-	public int colorSpace;
-	
-	/**
-	 * 
-	 * @param colorFormat	The color format.
-	 * @param colorSpace	The color space.
-	 */
-	public ColorFormatAndSpace(int colorFormat, int colorSpace) {
-		this.colorFormat = colorFormat;
-		this.colorSpace = colorSpace;
-	}
+    /** Color format. */
+    public int colorFormat;
+    /** Color space. */
+    public int colorSpace;
+    
+    /**
+     * 
+     * @param colorFormat    The color format.
+     * @param colorSpace    The color space.
+     */
+    public ColorFormatAndSpace(int colorFormat, int colorSpace) {
+        this.colorFormat = colorFormat;
+        this.colorSpace = colorSpace;
+    }
 }

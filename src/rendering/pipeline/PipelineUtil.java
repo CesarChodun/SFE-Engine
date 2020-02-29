@@ -23,41 +23,41 @@ import core.result.VulkanException;
  */
 public class PipelineUtil {
 
-	/**
-	 * Creates a descriptor set layout.
-	 * 
-	 * @param device			- Logical device
-	 * @param layoutBindings	- Layout bindings
-	 * @return					- Handle to descriptor set layout
-	 * @throws VulkanException 
-	 */
-	public static long createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayoutBinding.Buffer layoutBindings) throws VulkanException {
-		IntBuffer bindingFlagsBuffer = memAllocInt(1);
-		bindingFlagsBuffer.put(0, VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT);
-		
-		VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags = VkDescriptorSetLayoutBindingFlagsCreateInfoEXT.calloc()
-				.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
-				.pNext(NULL)
-				.pBindingFlags(bindingFlagsBuffer);
-		
-		
-		VkDescriptorSetLayoutCreateInfo layoutCreateInfo = VkDescriptorSetLayoutCreateInfo.calloc()
-				.sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)
-				.pNext(bindingFlags.address())
-				.flags(VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT & VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT)// VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread independent descriptor updates
-				.pBindings(layoutBindings);
-		
-		LongBuffer pSetLayout = memAllocLong(1);
-		int err = vkCreateDescriptorSetLayout(device, layoutCreateInfo, null, pSetLayout);
-		validate(err, "Filed to create descriptor set layout.");
-		
-		long ans = pSetLayout.get(0);
-		
-		memFree(pSetLayout);
-		layoutCreateInfo.free();
-		memFree(bindingFlagsBuffer);
-		bindingFlags.free();
-		
-		return ans;
-	}
+    /**
+     * Creates a descriptor set layout.
+     * 
+     * @param device            - Logical device
+     * @param layoutBindings    - Layout bindings
+     * @return                    - Handle to descriptor set layout
+     * @throws VulkanException 
+     */
+    public static long createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayoutBinding.Buffer layoutBindings) throws VulkanException {
+        IntBuffer bindingFlagsBuffer = memAllocInt(1);
+        bindingFlagsBuffer.put(0, VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT);
+        
+        VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags = VkDescriptorSetLayoutBindingFlagsCreateInfoEXT.calloc()
+                .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
+                .pNext(NULL)
+                .pBindingFlags(bindingFlagsBuffer);
+        
+        
+        VkDescriptorSetLayoutCreateInfo layoutCreateInfo = VkDescriptorSetLayoutCreateInfo.calloc()
+                .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)
+                .pNext(bindingFlags.address())
+                .flags(VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT & VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT)// VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread independent descriptor updates
+                .pBindings(layoutBindings);
+        
+        LongBuffer pSetLayout = memAllocLong(1);
+        int err = vkCreateDescriptorSetLayout(device, layoutCreateInfo, null, pSetLayout);
+        validate(err, "Filed to create descriptor set layout.");
+        
+        long ans = pSetLayout.get(0);
+        
+        memFree(pSetLayout);
+        layoutCreateInfo.free();
+        memFree(bindingFlagsBuffer);
+        bindingFlags.free();
+        
+        return ans;
+    }
 }

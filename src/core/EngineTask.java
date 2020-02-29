@@ -9,10 +9,10 @@ package core;
  *
  */
 public interface EngineTask extends Runnable{
-	
-	@Override
-	/**
-	 * Performs the task.
-	 */
-	public void run() throws AssertionError;
+    
+    @Override
+    /**
+     * Performs the task.
+     */
+    public void run() throws AssertionError;
 }

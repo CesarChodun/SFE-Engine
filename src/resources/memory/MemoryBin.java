@@ -15,35 +15,35 @@ import core.resources.Destroyable;
  */
 public class MemoryBin implements Destroyable {
 
-	// Objects to destroy
-	private List<Destroyable> toDestroy = new ArrayList<>();
-	
-	/**
-	 * Adds a destroyable object to the bin.
-	 * 
-	 * @param <T>
-	 * @param destroyable 
-	 * @return	the destroyable
-	 */
-	public <T extends Destroyable> T add(T destroyable) {
-		toDestroy.add(destroyable);
-		return destroyable;
-	}
-	
-	/**
-	 * Ands destroyable objects to the bin.
-	 * 
-	 * @param destroyables 
-	 */
-	public void add(Destroyable... destroyables) {
-		for (Destroyable d : destroyables)
-			toDestroy.add(d);
-	}
-	
-	@Override
-	public void destroy() {
-		for (Destroyable d : toDestroy)
-			d.destroy();
-		toDestroy.clear();
-	}
+    // Objects to destroy
+    private List<Destroyable> toDestroy = new ArrayList<>();
+    
+    /**
+     * Adds a destroyable object to the bin.
+     * 
+     * @param <T>
+     * @param destroyable 
+     * @return    the destroyable
+     */
+    public <T extends Destroyable> T add(T destroyable) {
+        toDestroy.add(destroyable);
+        return destroyable;
+    }
+    
+    /**
+     * Ands destroyable objects to the bin.
+     * 
+     * @param destroyables 
+     */
+    public void add(Destroyable... destroyables) {
+        for (Destroyable d : destroyables)
+            toDestroy.add(d);
+    }
+    
+    @Override
+    public void destroy() {
+        for (Destroyable d : toDestroy)
+            d.destroy();
+        toDestroy.clear();
+    }
 }

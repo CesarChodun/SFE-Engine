@@ -11,11 +11,11 @@ package core.resources;
  */
 public interface Destroyable {
 
-	/**
-	 * Frees allocated data.
-	 * After this call the object
-	 * <b>should</b> not be used.
-	 */
-	public void destroy();
-	
+    /**
+     * Frees allocated data.
+     * After this call the object
+     * <b>should</b> not be used.
+     */
+    public void destroy();
+    
 }

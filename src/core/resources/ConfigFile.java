@@ -17,58 +17,58 @@ import org.json.JSONObject;
  * @since 23.10.2019
  */
 public class ConfigFile extends ConfigAsset implements Closeable{
-	
-	/** Default logger for the class. */
-	private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
+    
+    /** Default logger for the class. */
+    private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
 
-	/** Tells whether the JSON object was created. */
-	boolean created = false;
-	/** Parental asset folder. */
-	private Asset asset;
-	/** The path to the JSON file. */
-	private String path;
-	
-	/**
-	 * Obtains configuration data from a file within the asset.
-	 * 
-	 * @param asset		Asset containing the configuration file.
-	 * @param path		Path to the configuration file within the asset.
-	 * @throws IOException		If an I/O error occurred.
-	 */
-	public ConfigFile(Asset asset, String path) throws IOException{
-		super(null);
-		this.asset = asset;
-		this.path = path;
-		
-		try {
-			data = asset.getJSON(path);
-		} catch (IOException e) {
-			cfgLogging.log(Level.INFO, "Failed to locate CFG data: " + asset.getAssetLocation().getPath() + "/" + path, e);
-		}
-		
-		if (this.data == null) {
-			created = true;
-			
-			data = new JSONObject();//asset.getJSON(path);
-		}
-	}
-	
-	/**
-	 * Saves JSON data to the file.
-	 */
-	public void close() {
-		if (created) {
-			FileWriter writer;
-			try {
-				asset.newFile(path);
-				writer = new FileWriter(asset.get(path));
-				data.write(writer, ResourceUtil.INDENT_FACTOR, ResourceUtil.INDENT);
-				writer.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /** Tells whether the JSON object was created. */
+    boolean created = false;
+    /** Parental asset folder. */
+    private Asset asset;
+    /** The path to the JSON file. */
+    private String path;
+    
+    /**
+     * Obtains configuration data from a file within the asset.
+     * 
+     * @param asset        Asset containing the configuration file.
+     * @param path        Path to the configuration file within the asset.
+     * @throws IOException        If an I/O error occurred.
+     */
+    public ConfigFile(Asset asset, String path) throws IOException{
+        super(null);
+        this.asset = asset;
+        this.path = path;
+        
+        try {
+            data = asset.getJSON(path);
+        } catch (IOException e) {
+            cfgLogging.log(Level.INFO, "Failed to locate CFG data: " + asset.getAssetLocation().getPath() + "/" + path, e);
+        }
+        
+        if (this.data == null) {
+            created = true;
+            
+            data = new JSONObject();//asset.getJSON(path);
+        }
+    }
+    
+    /**
+     * Saves JSON data to the file.
+     */
+    public void close() {
+        if (created) {
+            FileWriter writer;
+            try {
+                asset.newFile(path);
+                writer = new FileWriter(asset.get(path));
+                data.write(writer, ResourceUtil.INDENT_FACTOR, ResourceUtil.INDENT);
+                writer.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

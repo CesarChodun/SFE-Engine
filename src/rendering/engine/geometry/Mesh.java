@@ -10,21 +10,21 @@ import core.resources.Destroyable;
  */
 public interface Mesh extends Destroyable{
 
-	/**
-	 * 
-	 * @return Vulkan handle for the vertices buffer.
-	 */
-	public long getVerticesHandle();
-	
-	/**
-	 * 
-	 * @return Stride for the vertices buffer.
-	 */
-	public int getStride();
-	
-	/**
-	 * 
-	 * @return Number of the vertices in the mesh.
-	 */
-	public int verticesCount();
+    /**
+     * 
+     * @return Vulkan handle for the vertices buffer.
+     */
+    public long getVerticesHandle();
+    
+    /**
+     * 
+     * @return Stride for the vertices buffer.
+     */
+    public int getStride();
+    
+    /**
+     * 
+     * @return Number of the vertices in the mesh.
+     */
+    public int verticesCount();
 }

@@ -12,11 +12,11 @@ import java.util.List;
  */
 public interface SynchronizedTask extends Runnable {
 
-	/**
-	 * The dependencies list.
-	 * 
-	 * @return
-	 */
-	public List<Dependency> dependencies();
-	
+    /**
+     * The dependencies list.
+     * 
+     * @return
+     */
+    public List<Dependency> dependencies();
+    
 }

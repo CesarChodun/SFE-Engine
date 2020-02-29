@@ -1,5 +1,8 @@
 <project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:unless="ant:unless" name="SF-Engine" default="build-all">
 	
+	<taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
+	         classpath="C:\Program Files\apache-ant-1.9.14\lib\checkstyle-8.30-all.jar"/>
+	
 	<!-- General settings -->
 	<property name="app.classes.dir" value="src" />
 	<property name="build.dir" value="build" />
@@ -198,6 +201,13 @@
 		        </fileset>
 		    </classpath>
 		</javadoc>
+	</target>
+	
+	<target name="check-style" depends="compile">
+		<checkstyle config="google_checks.xml">
+		  <fileset dir="${app.classes.dir}" includes="**/*.java"/>
+
+		</checkstyle>
 	</target>
 	
 	<target name="build-all" depends="compile">

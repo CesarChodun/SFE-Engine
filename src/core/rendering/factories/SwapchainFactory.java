@@ -12,20 +12,20 @@ import core.rendering.Window;
  */
 public interface SwapchainFactory {
 
-	/**
-	 * Provides the create info for the swapchain.
-	 * 
-	 * @param window		The targeted window.
-	 * @param oldSwapchain	The old swapchain(VK_NULL_HANDLE if no swapchains were created).
-	 * @return		Create info for the swapchain.
-	 */
-	public VkSwapchainCreateInfoKHR getCreateInfo(Window window, long oldSwapchain);
-	
-	/**
-	 * Destroys the create info created by this class.
-	 * 
-	 * @param info	The create info.
-	 */
-	public void destroyInfo(VkSwapchainCreateInfoKHR info);
-	
+    /**
+     * Provides the create info for the swapchain.
+     * 
+     * @param window        The targeted window.
+     * @param oldSwapchain    The old swapchain(VK_NULL_HANDLE if no swapchains were created).
+     * @return        Create info for the swapchain.
+     */
+    public VkSwapchainCreateInfoKHR getCreateInfo(Window window, long oldSwapchain);
+    
+    /**
+     * Destroys the create info created by this class.
+     * 
+     * @param info    The create info.
+     */
+    public void destroyInfo(VkSwapchainCreateInfoKHR info);
+    
 }

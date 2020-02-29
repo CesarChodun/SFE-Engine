@@ -7,19 +7,19 @@ package core.synchronization;
  */
 public interface Dependency {
 
-	/**
-	 * Adds a smart queue to the list, so that it can be updated
-	 * when the dependency will be released.
-	 * 
-	 * @param queue	the queue.
-	 */
-	public void addSmartQueue(SmartWaitQueue queue);
-	
-	/**
-	 * Tells whether the dependency was satisfied.
-	 * 
-	 * @return	true if the dependency was satisfied
-	 * 		and false otherwise.
-	 */
-	public boolean isReleased();
+    /**
+     * Adds a smart queue to the list, so that it can be updated
+     * when the dependency will be released.
+     * 
+     * @param queue    the queue.
+     */
+    public void addSmartQueue(SmartWaitQueue queue);
+    
+    /**
+     * Tells whether the dependency was satisfied.
+     * 
+     * @return    true if the dependency was satisfied
+     *         and false otherwise.
+     */
+    public boolean isReleased();
 }

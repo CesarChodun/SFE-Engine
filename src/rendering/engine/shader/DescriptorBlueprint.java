@@ -8,11 +8,11 @@ package rendering.engine.shader;
  */
 public interface DescriptorBlueprint {
 
-	/**
-	 * Returns all of the values within the descriptor.
-	 * 
-	 * @return a array of descriptor values.
-	 */
-	public DescriptorValue[] getDescriptorValues();
-	
+    /**
+     * Returns all of the values within the descriptor.
+     * 
+     * @return a array of descriptor values.
+     */
+    public DescriptorValue[] getDescriptorValues();
+    
 }
