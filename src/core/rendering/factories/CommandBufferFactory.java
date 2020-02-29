@@ -40,11 +40,9 @@ public class CommandBufferFactory{
 	 * Creates a new Command Buffer factory.
 	 * 
 	 * @param device			Vulkan device.
-	 * @param cmdWork			Work that will be encoded by command buffer.
 	 * @param renderPass		The current render pass.
 	 * @param queueFamilyIndex	Index of the render queue family.
 	 * @param flags				Command buffer flags(for command pool creation).
-	 * @param clearValues		Clear values for the rendered image.
 	 */
 	public CommandBufferFactory(VkDevice device, RenderPass renderPass, int queueFamilyIndex, int flags) {
 		this.device = device;

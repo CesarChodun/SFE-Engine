@@ -54,8 +54,8 @@ public class Util {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
-	 * <p>Creates a pointer buffer from given buffers.</p>
+	 * Creates a pointer buffer from given buffers.
+	 * 
 	 * @param buffers	- Buffers to be converted into pointer buffer.
 	 * @return			- Pointer buffer that points to given buffers.
 	 */

@@ -380,7 +380,6 @@ public class GraphicsPipeline implements Pipeline{
 	 * Returns handle of the pipeline.
 	 * 
 	 * @return
-	 * @Deprecated
 	 */
 	public long getPipelineHandle() {
 		return pipelineHandle;

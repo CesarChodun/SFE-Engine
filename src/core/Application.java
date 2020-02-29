@@ -101,7 +101,7 @@ public class Application {
 	/**
 	 * Initializes the application and pools data from the config files.
 	 * 
-	 * @param appLocation				File containing the application.
+	 * @param configName				Name of the configuration folder.
 	 * 
 	 * @throws FileNotFoundException	When the asset wasn't found.
 	 */

@@ -12,7 +12,9 @@ public interface FrameBufferFactory {
 	 * Creates a list of frame buffers
 	 * for given image views.
 	 * 
-	 * @param images			A list of image views 
+	 * @param width			width of the frame buffer.
+	 * @param height		height of the frame buffer.
+	 * @param imageViews	A list of image views 
 	 * 							for frame buffer creation.
 	 * @return	A list of frame buffers.
 	 */
@@ -23,7 +25,7 @@ public interface FrameBufferFactory {
 	 * It is guaranteed that the frame buffers
 	 * to destroy were created using this factory.
 	 * 
-	 * @param farmebuffers		a list of frame buffers handles
+	 * @param framebuffers		a list of frame buffers handles
 	 */
 	public void destroyFramebuffers(long... framebuffers);
 	

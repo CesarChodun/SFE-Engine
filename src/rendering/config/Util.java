@@ -25,7 +25,7 @@ import core.result.VulkanException;
 public class Util {
 
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Converts file content to byte buffer.
 	 * </p>
@@ -53,7 +53,7 @@ public class Util {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates shader stage.
 	 * </p>
@@ -94,7 +94,7 @@ public class Util {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates a shader module.
 	 * </p>

@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="SF-Engine" default="debug-hardware-init">
+<project xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:unless="ant:unless" name="SF-Engine" default="build-all">
 	
 	<!-- General settings -->
 	<property name="app.classes.dir" value="src" />
@@ -27,12 +27,14 @@
 	<!-- General purpose targets -->
 
 	<!-- new target to get dependencies, after first obtaining Ivy -->
-	<target name="get-dependencies" depends="init-ivy">
+	<target name="get-dependencies" unless="get-dependenciesDone" depends="init-ivy">
+		<property name="get-dependenciesDone" value="true"/>
 	    <ivy:retrieve conf="binaries" pattern="${build.dir}/lib/[artifact](-[classifier]).[ext]" />
 	</target>
 
 	<!-- Try to load Ivy from either the local lib dir or Ant's lib dir -->
-	<target name="init-ivy" depends="download-ivy">
+	<target name="init-ivy" unless="init-ivyDone" depends="download-ivy">
+		<property name="init-ivyDone" value="true"/>
 	    <path id="ivy.lib.path">
 	        <fileset dir="${ivy.jar.dir}" includes="*.jar" />
 	    </path>
@@ -42,7 +44,8 @@
 
 	<!-- new target to download Ivy if necessary, considering desired
 	     version, file timestamp, and whether the 'net can be reached -->
-	<target name="download-ivy" unless="offline">
+	<target name="download-ivy" unless="download-ivyDone">
+		<property name="download-ivyDone" value="true"/>
 		<mkdir dir="${ivy.jar.dir}" />
 		    <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
 		         dest="${ivy.jar.file}" usetimestamp="true" />
@@ -54,7 +57,8 @@
 	</path>
 	
 	<!-- the existing "build" target has a new dependency -->
-	<target name="build" depends="get-dependencies">
+	<target name="build" unless="buildDone" depends="get-dependencies">
+		<property name="buildDone" value="true"/>
 		<mkdir dir="${app.classes.dir}" />
         <mkdir dir="${app.jar.dir}" />
 		<mkdir dir="${lib.dir}"/>
@@ -80,12 +84,14 @@
         <delete dir="build"/>
     </target>
 	
-    <target name="resolve" depends="init-ivy" description="--> retrieve dependencies with Ivy">
+    <target name="resolve" unless="resolveDone" depends="init-ivy" description="--> retrieve dependencies with Ivy">
+    	<property name="resolveDone" value="true"/>
     	<ivy:resolve/>
     	<ivy:cachepath pathid="compile.path"/>
     </target>
 	
-    <target name="compile" depends="resolve,build">
+    <target name="compile" unless="compileDone" depends="resolve,build">
+    	<property name="compileDone" value="true"/>
         <mkdir dir="${build.classes.dir}" />
         <javac classpathref="classpath" destdir="${build.classes.dir}" srcdir="src" debug="true" />
     </target>
@@ -109,7 +115,7 @@
 	
 	<!-- Specific targets -->
 	
-	<target name="make-demos" depends="compile">
+	<target name="make-demos">
 		<pathconvert property="classpathInName" refid="classpath" />
 		<mkdir dir="${app.demos.jar.dir}"/>
 		
@@ -167,13 +173,47 @@
 		</parallel>
 	</target>
 	
-	<target name="debug-hardware-init">
+	<target name="create-engine-jar" depends="compile">
+		<jar destfile="${app.jar.dir}/SFEngine.jar" basedir="${build.classes.dir}">
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</zipgroupfileset>
+	    </jar>
+	</target>
+	
+	<target name="create-engine-source-jar" depends="compile">
+		<jar destfile="${app.jar.dir}/SFEngine-source.jar" basedir="${app.classes.dir}">
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</zipgroupfileset>
+	    </jar>
+	</target>
+	
+	<target name="create-engine-javadoc" depends="compile">
+		<mkdir dir="${app.jar.dir}/SFEngine-javadoc"/>
+		<javadoc sourcepath="${app.classes.dir}" destdir="${app.jar.dir}/SFEngine-javadoc">
+			<classpath>
+		        <fileset dir="${lib.dir}">
+		            <include name="**/*.jar"/>
+		        </fileset>
+		    </classpath>
+		</javadoc>
+	</target>
+	
+	<target name="build-all" depends="compile">
+		<antcall target="make-demos"/>
+		<antcall target="create-engine-jar"/>
+		<antcall target="create-engine-source-jar"/>
+		<antcall target="create-engine-javadoc"/>
+	</target>
+	
+	<target name="run-debug-hardware-init" depends="compile">
 		<antcall target="debug">
 		    <param name="debugJarName" value="HardwareInit"/>
 		</antcall>
 	</target>
 	
-	<target name="release-hardware-init">
+	<target name="run-release-hardware-init" depends="compile">
 		<antcall target="release">
 		    <param name="releaseJarName" value="HardwareInit"/>
 		</antcall>

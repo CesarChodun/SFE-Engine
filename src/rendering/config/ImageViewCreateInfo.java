@@ -70,7 +70,7 @@ public class ImageViewCreateInfo implements Destroyable {
 	/**
 	 * Loads an VkImageViewCreateInfo object from the configuration file.
 	 * 
-	 * @param asset					Asset package with the configuration file.
+	 * @param assetPackage			Asset package with the configuration file.
 	 * @param configurationFileName	Configuration file name.
 	 * 
 	 * @throws AssertionError	When failed to load the data.
@@ -126,7 +126,7 @@ public class ImageViewCreateInfo implements Destroyable {
 	
 	/**
 	 * Returns the allocated create info object.
-	 * @note Implementation can make changes to the
+	 * <b>Note:</b> Implementation can make changes to the
 	 * 		create info file if and only if it wasn't
 	 * 		destroyed jet.
 	 * 

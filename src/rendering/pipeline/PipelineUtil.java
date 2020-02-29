@@ -26,9 +26,9 @@ public class PipelineUtil {
 	/**
 	 * Creates a descriptor set layout.
 	 * 
-	 * @param device		- Logical device
-	 * @param layoutBinding	- Layout binding
-	 * @return				- Handle to descriptor set layout
+	 * @param device			- Logical device
+	 * @param layoutBindings	- Layout bindings
+	 * @return					- Handle to descriptor set layout
 	 * @throws VulkanException 
 	 */
 	public static long createDescriptorSetLayout(VkDevice device, VkDescriptorSetLayoutBinding.Buffer layoutBindings) throws VulkanException {

@@ -28,7 +28,7 @@ import core.result.VulkanException;
 public class RenderingMemoryUtil {
 
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Binds data to gpu buffer.
 	 * </p>
@@ -54,10 +54,8 @@ public class RenderingMemoryUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
-	 * <p>
-	 * 		Copies data to gpu buffer.
-	 * </p>
+	 * 	Copies data to gpu buffer.
+	 * 
 	 * @param device	- Logical device
 	 * @param buff		- Destination gpu buffer
 	 * @param data		- Source buffer
@@ -77,12 +75,10 @@ public class RenderingMemoryUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
-	 * <p>
-	 * 		Allocates buffer memory for future use.
-	 * </p>
+	 * 	Allocates buffer memory for future use.
+	 * 
 	 * @param device							- Logical device
-	 * @param physicalDeviceMemoryProperties	- Physical device
+	 * @param physicalDevice					- The physical device
 	 * @param buferSize							- Buffer size
 	 * @param bufferUsage						- Buffer usage 
 	 * @param sharingMode						- Sharing mode

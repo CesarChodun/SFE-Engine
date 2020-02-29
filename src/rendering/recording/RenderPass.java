@@ -131,7 +131,7 @@ public class RenderPass implements Destroyable{
 	@Override
 	/**
 	 * Frees the render pass data.
-	 * @note The attachments are not freed.
+	 * <b>Note:</b> The attachments are not freed.
 	 */
 	public void destroy() {
 		attachments.destroy();

@@ -25,10 +25,10 @@ import core.result.VulkanException;
 public class HardwareUtil {
 
 	/**
-	 * <h5>Description</h5>
 	 * 
 	 * <p>Function for acquiring queue family index which meets requirements(<code><i><b>VkQueueFlagBits</b></i></code>).</p>
-	 * <h4>Note:</h4>
+	 * 
+	 * <b>Note:</b>
 	 * <p>						If <code><b><i>requiredSupport</i></b></code> equals to <b>0</b> and <code><b><i>first</i></b></code> 
 	 * 							is less than <code><b><i>queueFamilyCount</i></b></code> 
 	 * 							next queue family will be returned.
@@ -36,9 +36,9 @@ public class HardwareUtil {
 	 * @param first 			First interesting queue index. By default <b>0</b>.
 	 * @param requiredSupport 	Required queue flag bits(<code><i><b>VkQueueFlagBits</b></i></code>). For example <code>VK_QUEUE_GRAPHICS_BIT</code>.<br>
 	 * 
+	 * @see org.lwjgl.vulkan.VK10#VK_QUEUE_GRAPHICS_BIT
 	 * 
 	 * @return	If queue family has been found, the index of such family is returned. Otherwise <b>-1</b> is returned.
-	 * @see {@link org.lwjgl.vulkan.VK10#VK_QUEUE_GRAPHICS_BIT}
 	 */
 	public static int getNextQueueFamilyIndex(int first, int requiredSupport, VkQueueFamilyProperties.Buffer queueFamilyProperties) {
 		for(int i = max(0, first); i < queueFamilyProperties.remaining(); i++)
@@ -48,12 +48,12 @@ public class HardwareUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * 
 	 * <p>Returns the next queue family that supports given surface.</p>
 	 * 
 	 * @param first				First interesting queue index.
-	 * @param requiredSupport	Required queue flag bits(<code><i><b>VkQueueFlagBits</b></i></code>).
+	 * @param requiredFlags		Required queue flag bits(<code><i><b>VkQueueFlagBits</b></i></code>).
 	 * @param surface			Surface handle for compatibility check.
 	 * @param physicalDevice	<b>Must</b> be a valid VkPhysicalDevice handle.
 	 * @param queueFamilyProperties		Valid buffer of queue family properties.

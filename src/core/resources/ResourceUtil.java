@@ -122,7 +122,7 @@ public class ResourceUtil {
 	 * Obtains default static Integer values from a given class.
 	 * 
 	 * @param c 						The class to retrieve static values from.
-	 * @param valueNames				The names of the static values.
+	 * @param valueName					The name of the static value.
 	 * 
 	 * @return	A list of the values. In the same order as given by the
 	 * 			<code>valueNames</code> list.

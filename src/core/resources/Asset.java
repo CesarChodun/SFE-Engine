@@ -128,7 +128,6 @@ public class Asset {
 	
 	/**
 	 * Creates a new file within the asset.
-	 * @see {@link java.io.File.createNewFile()}
 	 * 
 	 * @param fileName		Name of the new file.
 	 * @return	True if the file was successfully created and false otherwise.

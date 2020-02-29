@@ -33,7 +33,7 @@ public class BasicSwapchainFactory implements SwapchainFactory{
 	}
 	
 	/**
-     * <h5>Description:</h5>
+     * 
 	 * <p>
 	 * 		Gets resolution range.
 	 * </p>
@@ -52,7 +52,7 @@ public class BasicSwapchainFactory implements SwapchainFactory{
     }
     
     /**
-     * <h5>Description:</h5>
+     * 
 	 * <p>
 	 * 		Outputs best supported surface present mode.
 	 * </p>

@@ -47,7 +47,6 @@ public class BasicPipeline {
 	public static long verticesBuffer;
 	
 	/**
-	 * <h5>Description:</h5>
 	 * <p>
 	 * 			Returns memory type that meets requirements.
 	 * </p>
@@ -315,7 +314,7 @@ public class BasicPipeline {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Converts file content to byte buffer.
 	 * </p>
@@ -343,7 +342,7 @@ public class BasicPipeline {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates shader stage.
 	 * </p>
@@ -364,14 +363,11 @@ public class BasicPipeline {
 	
 
 	/**
-	 * <h5>Description:</h5>
-	 * <p>
-	 * 		Creates shader stage.
-	 * </p>
+	 * 	Creates shader stage.
+	 * 
 	 * @param shaderModule	- Shader module.
 	 * @param stage			- Shader stage.
 	 * @param invokeName	- Name of the method to be invoked.
-	 * @return
 	 */
 	public static void loadShaderStage(
 			VkPipelineShaderStageCreateInfo info, 
@@ -389,7 +385,7 @@ public class BasicPipeline {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates a shader module.
 	 * </p>

@@ -90,13 +90,13 @@ public class RenderUtil {
     }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Obtains queue from logical device.
 	 * </p>
 	 * @param device
-	 * @param queueFamilyIndex
-	 * @param queueIndex		- If only queue family capabilities are considered queue index should equal <b>0</b>.
+	 * @param queueFamilyIndex	index of the current queue family.
+	 * @param queueIndex		if only queue family capabilities are considered queue index should equal <b>0</b>.
 	 * @return
 	 */
 	public static VkQueue getDeviceQueue(VkDevice device, int queueFamilyIndex, int queueIndex) {
@@ -112,15 +112,16 @@ public class RenderUtil {
 	 * 
 	 * Creates <code><b><i>LogicalDevice</i></b></code> with given parameters.
 	 * 
-	 * @param dev					- <b>Must</b> be a valid <code><b><i>PhysicalDevice</i></b></code>.
-	 * @param requiredQueueFlags	- Bitwise <b>OR</b> of required queue flags.
-	 * @param layers				- Layers to be enabled.
-	 * @param extensions			- Needed extensions.
+	 * @param physicalDevice		<b>must</b> be a valid <code><b><i>PhysicalDevice</i></b></code>.
+	 * @param queueFamilyIndex		index of the current queue family.
+	 * @param queuePriorities	 	buffer of queue priorities.
+	 * @param layers				layers to be enabled.
+	 * @param extensions			required extensions.
+	 * 
 	 * @return	<p>Valid LogicalDevice.</p>
 	 * @throws VulkanException 		when device creation process fails.
-	 * @see {@link core.employees.LogicalDevice}
 	 */
-	public static VkDevice createLogicalDevice(VkPhysicalDevice dev, int queueFamilyIndex, FloatBuffer queuePriorities, int flags, @Nullable Collection<String> layers, @Nullable Collection<String> extensions) throws VulkanException {
+	public static VkDevice createLogicalDevice(VkPhysicalDevice physicalDevice, int queueFamilyIndex, FloatBuffer queuePriorities, int flags, @Nullable Collection<String> layers, @Nullable Collection<String> extensions) throws VulkanException {
 
 		ByteBuffer[] layersBuff = null;
 		if (layers != null)
@@ -134,7 +135,7 @@ public class RenderUtil {
 			pExtensions = makePointer(extensionsBuff);
 		}
 		
-		VkDevice device = createLogicalDevice(dev, queueFamilyIndex, queuePriorities, flags, layersBuff, pExtensions);
+		VkDevice device = createLogicalDevice(physicalDevice, queueFamilyIndex, queuePriorities, flags, layersBuff, pExtensions);
 		
 		memFree(pExtensions);
 		if (extensionsBuff != null)
@@ -149,15 +150,15 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>Creates <code><b><i>LogicalDevice</i></b></code> with given parameters.</p>
 	 * @param dev					- <b>Must</b> be a valid <code><b><i>PhysicalDevice</i></b></code>.
-	 * @param requiredQueueFlags	- Bitwise <b>OR</b> of required queue flags.
+	 * @param queueFamilyIndex		index of the current queue family.
+	 * @param queuePriorities	 	buffer of queue priorities.
 	 * @param layers				- Layers to be enabled.
 	 * @param extensions			- Needed extensions.
 	 * @return	<p>Valid LogicalDevice.</p>
 	 * @throws VulkanException 		when device creation process fails.
-	 * @see {@link core.employees.LogicalDevice}
 	 */
 	public static VkDevice createLogicalDevice(VkPhysicalDevice dev, int queueFamilyIndex, FloatBuffer queuePriorities, int flags, @Nullable ByteBuffer[] layers, @Nullable PointerBuffer extensions) throws VulkanException {
 		VkDevice out = null;
@@ -196,15 +197,15 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 			Returns memory type that meets requirements.
 	 * </p>
-	 * @param memoryProperties	- Memory properties.
-	 * @param bits				- Interesting indices.
-	 * @param properties		- Properties that memory type should meet.
-	 * @param typeIndex			- Integer buffer for returned value.
-	 * @return					- Information about successfulness of the operation(true - success, false - fail).
+	 * @param device			<b>must</b> be a valid physical device.
+	 * @param bits				interesting indices.
+	 * @param properties		properties that memory type should meet.
+	 * @param typeIndex			integer buffer for returned value.
+	 * @return					information about successfulness of the operation(true - success, false - fail).
 	 */
 	 public static boolean getMemoryType(VkPhysicalDevice device, int bits, int properties, IntBuffer typeIndex) {
 		 VkPhysicalDeviceMemoryProperties memoryProperties = VkPhysicalDeviceMemoryProperties.calloc();
@@ -264,8 +265,8 @@ public class RenderUtil {
 	 * @param renderPass	current render pass
 	 * @param imageViews	image views
 	 * @param attachments	a list of attachments
-	 * @param width			frame buffer width(>0)
-	 * @param height		frame buffer height(>0)
+	 * @param width			frame buffer width(must be a positive integer)
+	 * @param height		frame buffer height(must be a positive integer)
 	 * 
 	 * @return a list of frame buffers binded to corresponding images
 	 * @throws VulkanException	when there was a problem with frame buffers creation process
@@ -307,7 +308,7 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates fence.
 	 * </p>
@@ -328,7 +329,7 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 		Creates semaphore.
 	 * </p>
@@ -349,7 +350,7 @@ public class RenderUtil {
 	}
 	
 	/**
-	  *	<h5>Description:</h5>
+	  *	
 	  * <p>
 	  * 	Obtains available surface extensions.
 	  * </p>
@@ -357,7 +358,7 @@ public class RenderUtil {
 	  * @param surface			- Surface handle.
 	  * @return					- Buffer with <b><i><code>VkSurfaceFormatKHR</code></i></b>.
 	 * @throws VulkanException 
-	  * @see 					{@link VkSurfaceFormatKHR}
+	  * @see  VkSurfaceFormatKHR
 	  */
 	public static VkSurfaceFormatKHR.Buffer listSurfaceFormats(VkPhysicalDevice physicalDevice, long surface) throws VulkanException{
 		 IntBuffer pCount = memAllocInt(1);
@@ -374,7 +375,7 @@ public class RenderUtil {
 	 }
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>
 	 * 	Obtains desired color format if possible.
 	 * </p>
@@ -410,7 +411,7 @@ public class RenderUtil {
 	}
 	
 	/**
-     * <h5>Description:</h5>
+     * 
 	 * <p>
 	 * 		Gets current surface present modes.
 	 * </p>
@@ -440,7 +441,7 @@ public class RenderUtil {
      * @param surface			
      * @return					Surface capabilities.
 	 * @throws VulkanException 	when failed to obtain surface capabilities.
-     * @see {@link org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR}
+     * @see  org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR
      */
     public static VkSurfaceCapabilitiesKHR getSurfaceCapabilities(VkPhysicalDevice physicalDevice, long surface) throws VulkanException {
     	VkSurfaceCapabilitiesKHR pSurfaceCapabilities = VkSurfaceCapabilitiesKHR.calloc();
@@ -458,8 +459,8 @@ public class RenderUtil {
 	 * @param extensionNames	 	Names of the vulkan extensions that should be enabled.
 	 * @return		<p>VkInstance</p>
 	 * @throws VulkanException 		If there was a problem with Instance creation process.
-	 * @see {@link org.lwjgl.vulkan.VkInstance}
-	 * @see {@link org.lwjgl.vulkan.VkApplicationInfo}
+	 * @see  org.lwjgl.vulkan.VkInstance
+	 * @see  org.lwjgl.vulkan.VkApplicationInfo
 	 */
 	public static VkInstance createInstance(VkApplicationInfo appInfo, Collection<String> validationLayers, Collection<String> extensionNames) throws VulkanException {		
 		
@@ -534,7 +535,7 @@ public class RenderUtil {
 	 * 
 	 * @return						available vulkan validation layers
 	 * @throws VulkanException		when failed to list validation layers.
-	 * @see {@link org.lwjgl.vulkan.VkLayerProperties}
+	 * @see  org.lwjgl.vulkan.VkLayerProperties
 	 */
 	public static VkLayerProperties[] listAvailableValidationLayers() throws VulkanException {
 		VkLayerProperties.Buffer validationLayers;
@@ -563,7 +564,7 @@ public class RenderUtil {
 	 * 
 	 * @return						available instance extensions.
 	 * @throws VulkanException		when extension enumeration fails.
-	 * @see {@link org.lwjgl.vulkan.VkExtensionProperties}
+	 * @see  org.lwjgl.vulkan.VkExtensionProperties
 	 */
 	public static VkExtensionProperties[] listAvailableExtensions() throws VulkanException {
 		VkExtensionProperties.Buffer extensions;
@@ -586,7 +587,7 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * <h5>Description:</h5>
+	 * 
 	 * <p>Enumerate available physical devices.</p>
 	 * <p><b>Note:</b> This method should be invoked only once.</p>
 	 * 
