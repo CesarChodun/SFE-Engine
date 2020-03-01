@@ -3,14 +3,12 @@ package core.result;
 import java.util.HashMap;
 
 /**
- *    Enum for representing errors that
- *    can be thrown by Vulkan loader.
- * 
+ * Enum for representing errors that can be thrown by Vulkan loader.
+ *
  * @author Cezary Chodun
  * @since 26.09.2019
  */
 public enum VulkanErrors {
-
     UNKNOWN_ERROR(1, "UNKNOWN_ERROR"),
     VK_ERROR_OUT_OF_HOST_MEMORY(-1, "VK_ERROR_OUT_OF_HOST_MEMORY"),
     VK_ERROR_OUT_OF_DEVICE_MEMORY(-2, "VK_ERROR_OUT_OF_DEVICE_MEMORY"),
@@ -32,70 +30,60 @@ public enum VulkanErrors {
     VK_ERROR_INCOMPATIBLE_DISPLAY_KHR(-1000003001, "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR"),
     VK_ERROR_VALIDATION_FAILED_EXT(-1000011001, "VK_ERROR_VALIDATION_FAILED_EXT"),
     VK_ERROR_INVALID_SHADER_NV(-1000012000, "VK_ERROR_INVALID_SHADER_NV"),
-    VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT(-1000158000, "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT"),
+    VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT(
+            -1000158000, "VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT"),
     VK_ERROR_FRAGMENTATION_EXT(-1000161000, "VK_ERROR_FRAGMENTATION_EXT"),
     VK_ERROR_NOT_PERMITTED_EXT(-1000174001, "VK_ERROR_NOT_PERMITTED_EXT"),
     VK_ERROR_INVALID_DEVICE_ADDRESS_EXT(-1000244000, "VK_ERROR_INVALID_DEVICE_ADDRESS_EXT"),
-    VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT(-1000255000, "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT");
-    
-    /**
-     * A map of Vulkan errors with the corresponding error id numbers.
-     */
-    private static final HashMap<Integer, VulkanErrors> errors = new HashMap<Integer, VulkanErrors>();
-    
-    /**
-     * Vulkan error id number.
-     */
+    VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT(
+            -1000255000, "VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT");
+
+    /** A map of Vulkan errors with the corresponding error id numbers. */
+    private static final HashMap<Integer, VulkanErrors> errors =
+            new HashMap<Integer, VulkanErrors>();
+
+    /** Vulkan error id number. */
     private int errorNumber;
-    /**
-     * Name of the vulkan error.
-     */
+    /** Name of the vulkan error. */
     private String name;
-    
+
     /**
-     * Creates a new VulkanErrors enum with
-     * given error number and name.
-     * 
-     * @param errorNumber    ID number of the error.
-     * @param name            Name of the error.
+     * Creates a new VulkanErrors enum with given error number and name.
+     *
+     * @param errorNumber ID number of the error.
+     * @param name Name of the error.
      */
     VulkanErrors(int errorNumber, String name) {
         this.errorNumber = errorNumber;
         this.name = name;
     }
-    
+
     /**
-     * Obtains Vulkan error corresponding to
-     * vulkan error ID.
-     * 
-     * @param num            Vulkan error ID.
-     * @return                Returns th Vulkan error.
+     * Obtains Vulkan error corresponding to vulkan error ID.
+     *
+     * @param num Vulkan error ID.
+     * @return Returns th Vulkan error.
      */
     public static VulkanErrors getVulkanError(int num) {
-        if(errors.size() == 0)
-            populateErrorMap();
-        
+        if (errors.size() == 0) populateErrorMap();
+
         VulkanErrors error = errors.get(num);
-        if(error == null)
-            return UNKNOWN_ERROR;
-        
+        if (error == null) return UNKNOWN_ERROR;
+
         return error;
     }
-    
-    /**
-     * Fills the map with errors from this enum.
-     */
+
+    /** Fills the map with errors from this enum. */
     private static void populateErrorMap() {
         VulkanErrors[] errorList = VulkanErrors.values();
-        
-        for(VulkanErrors e : errorList)
-            errors.put(e.getErrorNumber(), e);
+
+        for (VulkanErrors e : errorList) errors.put(e.getErrorNumber(), e);
     }
 
     /**
      * Returns the Vulkan error ID.
-     * 
-     * @return                Error ID.
+     *
+     * @return Error ID.
      */
     public int getErrorNumber() {
         return errorNumber;
@@ -103,7 +91,8 @@ public enum VulkanErrors {
 
     /**
      * Returns the Vulkan error name
-     * @return                Error name.
+     *
+     * @return Error name.
      */
     public String getName() {
         return name;
