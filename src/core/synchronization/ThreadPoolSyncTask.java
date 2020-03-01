@@ -28,7 +28,9 @@ public class ThreadPoolSyncTask implements SynchronizedTask {
         this.task = task;
 
         deps = new ArrayList<>();
-        for (Dependency d : dependencies) deps.add(d);
+        for (Dependency d : dependencies) {
+            deps.add(d);
+        }
     }
 
     @Override

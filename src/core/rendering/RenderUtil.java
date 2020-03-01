@@ -84,7 +84,9 @@ public class RenderUtil {
      * @param imageViews The image views to be destroyed.
      */
     public static void destroyImageViews(VkDevice device, long... imageViews) {
-        for (int i = 0; i < imageViews.length; i++) vkDestroyImageView(device, imageViews[i], null);
+        for (int i = 0; i < imageViews.length; i++) {
+            vkDestroyImageView(device, imageViews[i], null);
+        }
     }
 
     /**
@@ -112,8 +114,7 @@ public class RenderUtil {
      * @param queuePriorities buffer of queue priorities.
      * @param layers layers to be enabled.
      * @param extensions required extensions.
-     * @return
-     *     <p>Valid LogicalDevice.
+     * @return Valid LogicalDevice.
      * @throws VulkanException when device creation process fails.
      */
     public static VkDevice createLogicalDevice(
@@ -126,7 +127,9 @@ public class RenderUtil {
             throws VulkanException {
 
         ByteBuffer[] layersBuff = null;
-        if (layers != null) layersBuff = makeByteBuffers(layers);
+        if (layers != null) {
+            layersBuff = makeByteBuffers(layers);
+        }
 
         PointerBuffer pExtensions = null;
         ByteBuffer[] extensionsBuff = null;
@@ -136,7 +139,7 @@ public class RenderUtil {
             pExtensions = makePointer(extensionsBuff);
         }
 
-        VkDevice device =
+        final VkDevice device =
                 createLogicalDevice(
                         physicalDevice,
                         queueFamilyIndex,
@@ -146,10 +149,17 @@ public class RenderUtil {
                         pExtensions);
 
         memFree(pExtensions);
-        if (extensionsBuff != null)
-            for (int i = 0; i < extensionsBuff.length; i++) memFree(extensionsBuff[i]);
+        if (extensionsBuff != null) {
+            for (int i = 0; i < extensionsBuff.length; i++) {
+                memFree(extensionsBuff[i]);
+            }
+        }
 
-        if (layersBuff != null) for (int i = 0; i < layersBuff.length; i++) memFree(layersBuff[i]);
+        if (layersBuff != null) {
+            for (int i = 0; i < layersBuff.length; i++) {
+                memFree(layersBuff[i]);
+            }
+        }
 
         return device;
     }
@@ -162,8 +172,7 @@ public class RenderUtil {
      * @param queuePriorities buffer of queue priorities.
      * @param layers - Layers to be enabled.
      * @param extensions - Needed extensions.
-     * @return
-     *     <p>Valid LogicalDevice.
+     * @return Valid LogicalDevice.
      * @throws VulkanException when device creation process fails.
      */
     public static VkDevice createLogicalDevice(
@@ -228,13 +237,15 @@ public class RenderUtil {
 
         boolean ret = false;
 
-        for (int i = 0; i < 32; i++)
-            if ((bits & (1 << i)) > 0)
+        for (int i = 0; i < 32; i++) {
+            if ((bits & (1 << i)) > 0) {
                 if ((memoryProperties.memoryTypes(i).propertyFlags() & properties) == properties) {
                     typeIndex.put(0, i);
                     ret = true;
                     break;
                 }
+            }
+        }
 
         memoryProperties.free();
         return ret;
@@ -296,7 +307,9 @@ public class RenderUtil {
         long[] frameBuffers;
 
         LongBuffer attachmentsBuffer = memAllocLong(attachments.length);
-        for (int i = 0; i < attachments.length; i++) attachmentsBuffer.put(i, attachments[i]);
+        for (int i = 0; i < attachments.length; i++) {
+            attachmentsBuffer.put(i, attachments[i]);
+        }
 
         VkFramebufferCreateInfo frameBufferCreateInfo =
                 VkFramebufferCreateInfo.calloc()
@@ -416,18 +429,21 @@ public class RenderUtil {
         ColorFormatAndSpace out = null;
         int size = formats.remaining();
 
-        if (size == 1 && formats.get(0).format() == VK_FORMAT_UNDEFINED)
+        if (size == 1 && formats.get(0).format() == VK_FORMAT_UNDEFINED) {
             return new ColorFormatAndSpace(
                     desiredFormat,
                     desiredColorSpace == -1 ? formats.get(0).colorSpace() : desiredColorSpace);
+        }
 
-        for (int i = first; i < size; i++)
+        for (int i = first; i < size; i++) {
             if (formats.get(i).format() == desiredFormat || desiredFormat == -1) {
                 out = new ColorFormatAndSpace(formats.get(i).format(), formats.get(i).colorSpace());
 
-                if (formats.get(i).colorSpace() == desiredColorSpace || desiredColorSpace == -1)
+                if (formats.get(i).colorSpace() == desiredColorSpace || desiredColorSpace == -1) {
                     break;
+                }
             }
+        }
 
         formats.free();
 
@@ -436,11 +452,6 @@ public class RenderUtil {
 
     /**
      * Gets current surface present modes.
-     *
-     * @param physicalDevice
-     * @param surface
-     * @return
-     * @throws VulkanException
      */
     public static IntBuffer getSurfacePresentModes(VkPhysicalDevice physicalDevice, long surface)
             throws VulkanException {
@@ -483,8 +494,7 @@ public class RenderUtil {
      * @param appInfo Application info.
      * @param validationLayers Names of the validation layers that should be enabled.
      * @param extensionNames Names of the vulkan extensions that should be enabled.
-     * @return
-     *     <p>VkInstance
+     * @return VkInstance
      * @throws VulkanException If there was a problem with Instance creation process.
      * @see org.lwjgl.vulkan.VkInstance
      * @see org.lwjgl.vulkan.VkApplicationInfo
@@ -509,7 +519,9 @@ public class RenderUtil {
 
         // Create pointer buffer of the enabled layers.
         PointerBuffer ppEnabledLayerNames = memAllocPointer(layers.length);
-        for (int i = 0; i < layers.length; i++) ppEnabledLayerNames.put(layers[i]);
+        for (int i = 0; i < layers.length; i++) {
+            ppEnabledLayerNames.put(layers[i]);
+        }
         ppEnabledLayerNames.flip();
 
         // Logger info about extensions
@@ -525,7 +537,9 @@ public class RenderUtil {
 
         // Create pointer buffer to extension name buffers
         PointerBuffer ppExtensions = memAllocPointer(extensions.length);
-        for (int i = 0; i < extensions.length; i++) ppExtensions.put(extensions[i]);
+        for (int i = 0; i < extensions.length; i++) {
+            ppExtensions.put(extensions[i]);
+        }
         ppExtensions.flip();
 
         VkInstanceCreateInfo instanceCreateInfo =
@@ -541,10 +555,14 @@ public class RenderUtil {
         VulkanResult.validate(err, "Failed to create Vulkan Instance");
 
         long instanceAdr = inst.get(0);
-        VkInstance out = new VkInstance(instanceAdr, instanceCreateInfo);
+        final VkInstance out = new VkInstance(instanceAdr, instanceCreateInfo);
 
-        for (ByteBuffer buff : layers) memFree(buff);
-        for (ByteBuffer buff : extensions) memFree(buff);
+        for (ByteBuffer buff : layers) {
+            memFree(buff);
+        }
+        for (ByteBuffer buff : extensions) {
+            memFree(buff);
+        }
 
         memFree(inst);
         memFree(ppExtensions);
@@ -579,7 +597,9 @@ public class RenderUtil {
         memFree(propsCount);
 
         VkLayerProperties[] props = new VkLayerProperties[validationLayersCount];
-        for (int i = 0; i < validationLayersCount; i++) props[i] = validationLayers.get(i);
+        for (int i = 0; i < validationLayersCount; i++) {
+            props[i] = validationLayers.get(i);
+        }
 
         validationLayers.free();
         return props;
@@ -606,7 +626,9 @@ public class RenderUtil {
         validate(err, "Failed to enumerate instance extension properties!");
 
         VkExtensionProperties[] out = new VkExtensionProperties[pPropertyCount[0]];
-        for (int i = 0; i < pPropertyCount[0]; i++) out[i] = extensions.get(i);
+        for (int i = 0; i < pPropertyCount[0]; i++) {
+            out[i] = extensions.get(i);
+        }
 
         extensions.free();
 
@@ -623,21 +645,22 @@ public class RenderUtil {
      */
     public static VkPhysicalDevice[] enumeratePhysicalDevices(VkInstance instance)
             throws VulkanException {
-        IntBuffer dev_count = memAllocInt(1);
-        int err = vkEnumeratePhysicalDevices(instance, dev_count, null);
+        IntBuffer devicesCount = memAllocInt(1);
+        int err = vkEnumeratePhysicalDevices(instance, devicesCount, null);
         validate(err, "Could not enumerate physical devices!");
 
-        int devCount = dev_count.get(0);
+        int devCount = devicesCount.get(0);
         PointerBuffer pDevices = memAllocPointer(devCount);
 
-        err = vkEnumeratePhysicalDevices(instance, dev_count, pDevices);
+        err = vkEnumeratePhysicalDevices(instance, devicesCount, pDevices);
         validate(err, "Could not enumerate physical devices!");
 
         VkPhysicalDevice[] devices = new VkPhysicalDevice[devCount];
-        for (int i = 0; i < devCount; i++)
+        for (int i = 0; i < devCount; i++) {
             devices[i] = new VkPhysicalDevice(pDevices.get(i), instance);
+        }
 
-        memFree(dev_count);
+        memFree(devicesCount);
         memFree(pDevices);
 
         return devices;

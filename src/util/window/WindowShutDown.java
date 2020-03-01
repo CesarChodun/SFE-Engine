@@ -38,7 +38,9 @@ public class WindowShutDown implements WindowTickTask.WindowCloseCallback {
         window.setVisible(false);
 
         // Destroying other objects.
-        if (toDestroy != null) toDestroy.destroy();
+        if (toDestroy != null) {
+            toDestroy.destroy();
+        }
 
         // Removes the tick task from the engine.
         engine.removeTickTask(windowTickTask);

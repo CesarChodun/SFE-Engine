@@ -27,7 +27,9 @@ public class GLFWException extends Exception {
 
     @Override
     public String getMessage() {
-        if (message == null) return "";
+        if (message == null) {
+            return "";
+        }
 
         return message;
     }

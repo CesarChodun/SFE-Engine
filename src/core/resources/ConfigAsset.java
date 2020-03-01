@@ -28,7 +28,9 @@ public class ConfigAsset {
      * @return The configuration asset.
      */
     public ConfigAsset getCfgAsset(String cfgAssetName) {
-        if (data.isNull(cfgAssetName)) data.put(cfgAssetName, new JSONObject());
+        if (data.isNull(cfgAssetName)) {
+            data.put(cfgAssetName, new JSONObject());
+        }
 
         return new ConfigAsset(data.getJSONObject(cfgAssetName));
     }
@@ -40,12 +42,16 @@ public class ConfigAsset {
      * @return The array(converted to list).
      */
     public List<ConfigAsset> getCfgList(String listName) {
-        if (data.isNull(listName)) data.put(listName, new JSONArray());
+        if (data.isNull(listName)) {
+            data.put(listName, new JSONArray());
+        }
 
         JSONArray arr = data.getJSONArray(listName);
 
         List<ConfigAsset> cfgs = new ArrayList<ConfigAsset>();
-        for (int i = 0; i < arr.length(); i++) cfgs.add(new ConfigAsset(arr.getJSONObject(i)));
+        for (int i = 0; i < arr.length(); i++) {
+            cfgs.add(new ConfigAsset(arr.getJSONObject(i)));
+        }
 
         return cfgs;
     }
@@ -81,7 +87,9 @@ public class ConfigAsset {
         List<String> flagNames = getArray(key, defaultValue);
         List<Integer> flagValues = ResourceUtil.getStaticIntValuesFromClass(source, flagNames);
         int flags = 0;
-        for (int i = 0; i < flagValues.size(); i++) flags |= flagValues.get(i);
+        for (int i = 0; i < flagValues.size(); i++) {
+            flags |= flagValues.get(i);
+        }
 
         return flags;
     }
@@ -139,7 +147,9 @@ public class ConfigAsset {
         List<String> flagNames = getArray(key, defaultValue);
         List<Integer> flagValues = ResourceUtil.getStaticIntValuesFromClass(source, flagNames);
         int flags = 0;
-        for (int i = 0; i < flagValues.size(); i++) flags |= flagValues.get(i);
+        for (int i = 0; i < flagValues.size(); i++) {
+            flags |= flagValues.get(i);
+        }
 
         return flags;
     }
@@ -206,7 +216,9 @@ public class ConfigAsset {
 
         JSONArray arr = data.getJSONArray(key);
         List<T> out = new ArrayList<T>();
-        for (int i = 0; i < arr.length(); i++) out.add((T) arr.get(i));
+        for (int i = 0; i < arr.length(); i++) {
+            out.add((T) arr.get(i));
+        }
 
         return out;
     }
@@ -226,7 +238,9 @@ public class ConfigAsset {
 
         JSONArray arr = data.getJSONArray(key);
         List<Float> out = new ArrayList<Float>();
-        for (int i = 0; i < arr.length(); i++) out.add(arr.getFloat(i));
+        for (int i = 0; i < arr.length(); i++) {
+            out.add(arr.getFloat(i));
+        }
 
         return out;
     }
@@ -246,7 +260,9 @@ public class ConfigAsset {
 
         JSONArray arr = data.getJSONArray(key);
         List<String> out = new ArrayList<String>();
-        for (int i = 0; i < arr.length(); i++) out.add(arr.getString(i));
+        for (int i = 0; i < arr.length(); i++) {
+            out.add(arr.getString(i));
+        }
 
         return out;
     }
@@ -260,7 +276,9 @@ public class ConfigAsset {
      */
     public String getString(String key, String defaultValue) {
 
-        if (!data.isNull(key)) return data.getString(key);
+        if (!data.isNull(key)) {
+            return data.getString(key);
+        }
 
         data.put(key, defaultValue);
         return defaultValue;
@@ -275,7 +293,9 @@ public class ConfigAsset {
      */
     public Integer getInteger(String key, Integer defaultValue) {
 
-        if (!data.isNull(key)) return data.getInt(key);
+        if (!data.isNull(key)) {
+            return data.getInt(key);
+        }
 
         data.put(key, (int) defaultValue);
         return defaultValue;
@@ -290,7 +310,9 @@ public class ConfigAsset {
      */
     public Float getFloat(String key, Float defaultValue) {
 
-        if (!data.isNull(key)) return data.getFloat(key);
+        if (!data.isNull(key)) {
+            return data.getFloat(key);
+        }
 
         data.put(key, (float) defaultValue);
         return defaultValue;
@@ -305,7 +327,9 @@ public class ConfigAsset {
      */
     public Double getDouble(String key, Double defaultValue) {
 
-        if (!data.isNull(key)) return data.getDouble(key);
+        if (!data.isNull(key)) {
+            return data.getDouble(key);
+        }
 
         data.put(key, (double) defaultValue);
         return defaultValue;
@@ -320,7 +344,9 @@ public class ConfigAsset {
      */
     public Boolean getBoolean(String key, Boolean defaultValue) {
 
-        if (!data.isNull(key)) return data.getBoolean(key);
+        if (!data.isNull(key)) {
+            return data.getBoolean(key);
+        }
 
         data.put(key, (boolean) defaultValue);
         return defaultValue;

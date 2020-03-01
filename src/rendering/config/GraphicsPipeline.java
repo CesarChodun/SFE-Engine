@@ -570,7 +570,9 @@ public class GraphicsPipeline implements Pipeline {
     private void loadStages(ConfigAsset cfg) throws VulkanException {
         List<ConfigAsset> cfgs = cfg.getCfgList(STAGES_KEY);
 
-        if (cfgs.size() == 0) cfgs.add(new ConfigAsset(new JSONObject()));
+        if (cfgs.size() == 0) {
+            cfgs.add(new ConfigAsset(new JSONObject()));
+        }
 
         stages = VkPipelineShaderStageCreateInfo.calloc(cfgs.size());
         for (int i = 0; i < cfgs.size(); i++) {
@@ -617,7 +619,9 @@ public class GraphicsPipeline implements Pipeline {
         attributeDescription.free();
         vertexCreateInfo.free();
         inputAsemblyInfo.free();
-        if (tessellationInfo != null) tessellationInfo.free();
+        if (tessellationInfo != null) {
+            tessellationInfo.free();
+        }
         rasterizationStateInfo.free();
         colorWriteMask.free();
         colorBlendStateInfo.free();

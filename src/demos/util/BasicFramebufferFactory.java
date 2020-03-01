@@ -64,8 +64,9 @@ public class BasicFramebufferFactory implements FrameBufferFactory, Destroyable 
 
     @Override
     public void destroyFramebuffers(long... framebuffers) {
-        for (long framebuffer : framebuffers)
+        for (long framebuffer : framebuffers) {
             vkDestroyFramebuffer(device, framebuffer, null); // TODO change allocator
+        }
     }
 
     @Override

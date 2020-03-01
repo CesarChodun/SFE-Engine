@@ -65,10 +65,14 @@ public enum VulkanErrors {
      * @return Returns th Vulkan error.
      */
     public static VulkanErrors getVulkanError(int num) {
-        if (errors.size() == 0) populateErrorMap();
+        if (errors.size() == 0) {
+            populateErrorMap();
+        }
 
         VulkanErrors error = errors.get(num);
-        if (error == null) return UNKNOWN_ERROR;
+        if (error == null) {
+            return UNKNOWN_ERROR;
+        }
 
         return error;
     }
@@ -77,7 +81,9 @@ public enum VulkanErrors {
     private static void populateErrorMap() {
         VulkanErrors[] errorList = VulkanErrors.values();
 
-        for (VulkanErrors e : errorList) errors.put(e.getErrorNumber(), e);
+        for (VulkanErrors e : errorList) {
+            errors.put(e.getErrorNumber(), e);
+        }
     }
 
     /**

@@ -37,9 +37,11 @@ public class HardwareUtil {
      */
     public static int getNextQueueFamilyIndex(
             int first, int requiredSupport, VkQueueFamilyProperties.Buffer queueFamilyProperties) {
-        for (int i = max(0, first); i < queueFamilyProperties.remaining(); i++)
-            if ((queueFamilyProperties.get(i).queueFlags() & requiredSupport) == requiredSupport)
+        for (int i = max(0, first); i < queueFamilyProperties.remaining(); i++) {
+            if ((queueFamilyProperties.get(i).queueFlags() & requiredSupport) == requiredSupport) {
                 return i;
+            }
+        }
         return -1;
     }
 
@@ -74,7 +76,9 @@ public class HardwareUtil {
 
             int at = supportPresent.get(0);
             if ((queueFamilyProperties.get(i).queueFlags() & requiredFlags) == requiredFlags
-                    && at == VK_TRUE) return i;
+                    && at == VK_TRUE) {
+                return i;
+            }
         }
 
         return -1;

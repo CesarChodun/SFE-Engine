@@ -58,12 +58,14 @@ public class BasicPipeline {
             int bits,
             int properties,
             IntBuffer typeIndex) {
-        for (int i = 0; i < 32; i++)
-            if ((bits & (1 << i)) > 0)
+        for (int i = 0; i < 32; i++) {
+            if ((bits & (1 << i)) > 0) {
                 if ((memoryProperties.memoryTypes(i).propertyFlags() & properties) == properties) {
                     typeIndex.put(0, i);
                     return true;
                 }
+            }
+        }
 
         return false;
     }
@@ -76,8 +78,11 @@ public class BasicPipeline {
                 VkPhysicalDeviceMemoryProperties.calloc();
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 
-        if (quad) vertexBuffer = memAlloc(6 * 2 * 4);
-        else vertexBuffer = memAlloc(3 * 2 * 4);
+        if (quad) {
+            vertexBuffer = memAlloc(6 * 2 * 4);
+        } else {
+            vertexBuffer = memAlloc(3 * 2 * 4);
+        }
         FloatBuffer fb = vertexBuffer.asFloatBuffer();
 
         if (quad) {
@@ -93,15 +98,15 @@ public class BasicPipeline {
             fb.put(0.0f).put(0.5f);
         }
 
-        VkMemoryAllocateInfo memAlloc =
+        final VkMemoryAllocateInfo memAlloc =
                 VkMemoryAllocateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)
                         .pNext(NULL)
                         .allocationSize(0)
                         .memoryTypeIndex(0);
-        VkMemoryRequirements memReqs = VkMemoryRequirements.calloc();
+        final VkMemoryRequirements memReqs = VkMemoryRequirements.calloc();
 
-        VkBufferCreateInfo bufInfo =
+        final VkBufferCreateInfo bufInfo =
                 VkBufferCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO)
                         .pNext(NULL)
@@ -123,7 +128,9 @@ public class BasicPipeline {
                 pMemoryProperties,
                 memReqs.memoryTypeBits(),
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                memoryTypeIndex)) throw new AssertionError("Failed to obtain memry type.");
+                memoryTypeIndex)) {
+            throw new AssertionError("Failed to obtain memry type.");
+        }
         memAlloc.memoryTypeIndex(memoryTypeIndex.get(0));
         memFree(memoryTypeIndex);
         memReqs.free();
@@ -325,7 +332,9 @@ public class BasicPipeline {
         bindingDescription.free();
         attributeDescription.free();
 
-        for (int i = 0; i < stages.remaining(); i++) memFree(stages.get(i).pName());
+        for (int i = 0; i < stages.remaining(); i++) {
+            memFree(stages.get(i).pName());
+        }
         stages.free();
 
         pipelineCreateInfo.free();
@@ -340,7 +349,9 @@ public class BasicPipeline {
      * @return
      */
     public static ByteBuffer fileToByteBuffer(File file) {
-        if (file.isDirectory()) return null;
+        if (file.isDirectory()) {
+            return null;
+        }
 
         ByteBuffer buffer = null;
 

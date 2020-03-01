@@ -133,10 +133,11 @@ public class CommandBufferFactory {
      */
     public void destroyCmdBuffers(VkCommandBuffer[] buffers) {
 
-        for (VkCommandBuffer cmd : buffers)
+        for (VkCommandBuffer cmd : buffers) {
             if (cmdPools.containsKey(cmd)) {
                 Long pool = cmdPools.get(cmd);
                 vkDestroyCommandPool(device, pool, null);
             }
+        }
     }
 }

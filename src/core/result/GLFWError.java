@@ -26,7 +26,9 @@ public class GLFWError extends Error {
 
     @Override
     public String getMessage() {
-        if (message == null) return "";
+        if (message == null) {
+            return "";
+        }
 
         return message;
     }

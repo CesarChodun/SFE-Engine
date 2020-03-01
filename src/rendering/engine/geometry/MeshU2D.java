@@ -59,7 +59,9 @@ public class MeshU2D implements Mesh {
 
         // Fills the byte buffer with data.
         FloatBuffer fb = vertexBuffer.asFloatBuffer();
-        for (int i = 0; i < verticesCount; i++) fb.put(vertices.get(i).x).put(vertices.get(i).y);
+        for (int i = 0; i < verticesCount; i++) {
+            fb.put(vertices.get(i).x).put(vertices.get(i).y);
+        }
         fb.flip();
 
         // Creates a Vulkan buffer with vertices data.

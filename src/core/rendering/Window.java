@@ -66,8 +66,11 @@ public class Window {
         this.width = width;
         this.height = height;
 
-        if (fullScreen == false) createWindow(instance, NULL);
-        else createWindow(instance, glfwGetPrimaryMonitor());
+        if (fullScreen == false) {
+            createWindow(instance, NULL);
+        } else {
+            createWindow(instance, glfwGetPrimaryMonitor());
+        }
     }
 
     /**
@@ -138,8 +141,11 @@ public class Window {
 
         this.name = name;
 
-        if (fullScreen == false) createWindow(instance, NULL);
-        else createWindow(instance, glfwGetPrimaryMonitor());
+        if (fullScreen == false) {
+            createWindow(instance, NULL);
+        } else {
+            createWindow(instance, glfwGetPrimaryMonitor());
+        }
     }
 
     public long getSurface() {
@@ -153,7 +159,9 @@ public class Window {
      */
     private void createWindow(VkInstance instance, long monitor) throws VulkanException {
         windowID = glfwCreateWindow(width, height, name, monitor, NULL);
-        if (monitor == NULL) setPos(x, y);
+        if (monitor == NULL) {
+            setPos(x, y);
+        }
 
         LongBuffer pSurface = memAllocLong(1);
         int err = glfwCreateWindowSurface(instance, windowID, null, pSurface);
@@ -169,8 +177,11 @@ public class Window {
 
     /** Sets visibility of the window. */
     public void setVisible(boolean val) {
-        if (val) glfwShowWindow(windowID);
-        else glfwHideWindow(windowID);
+        if (val) {
+            glfwShowWindow(windowID);
+        } else {
+            glfwHideWindow(windowID);
+        }
     }
     /** Tells whether the Window is currently visible. */
     public boolean isVsible() {
@@ -203,10 +214,12 @@ public class Window {
     }
 
     public void setFullScreen(boolean full) {
-        if (full == true)
+        if (full == true) {
             glfwSetWindowMonitor(
                     windowID, glfwGetPrimaryMonitor(), x, y, width, height, GLFW_DONT_CARE);
-        else glfwSetWindowMonitor(windowID, NULL, x, y, width, height, GLFW_DONT_CARE);
+        } else {
+            glfwSetWindowMonitor(windowID, NULL, x, y, width, height, GLFW_DONT_CARE);
+        }
     }
 
     public void setName(String name) {

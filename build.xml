@@ -203,8 +203,8 @@
 		</javadoc>
 	</target>
 	
-	<target name="check-style" depends="compile">
-		<checkstyle config="google_checks.xml">
+	<target name="check-style">
+		<checkstyle config="modified_google_checks.xml">
 		  <fileset dir="${app.classes.dir}" includes="**/*.java"/>
 
 		</checkstyle>

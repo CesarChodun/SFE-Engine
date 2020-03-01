@@ -56,7 +56,9 @@ public class SPIRVConverter implements Converter {
             StringBuilder sb = new StringBuilder();
 
             String line;
-            while ((line = r.readLine()) != null) sb.append(line + "\n");
+            while ((line = r.readLine()) != null) {
+                sb.append(line + "\n");
+            }
 
             logger.log(Level.FINER, sb.toString());
         } catch (IOException e) {

@@ -109,8 +109,12 @@ public class RenderPass implements Destroyable {
 
         vkCmdBeginRenderPass(cmd, renderPassBeginInfo, contents);
 
-        if (preset != null) preset.record(cmd);
-        if (work != null) work.record(cmd);
+        if (preset != null) {
+            preset.record(cmd);
+        }
+        if (work != null) {
+            work.record(cmd);
+        }
 
         vkCmdEndRenderPass(cmd);
     }

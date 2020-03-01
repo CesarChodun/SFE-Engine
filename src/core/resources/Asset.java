@@ -47,9 +47,10 @@ public class Asset {
     public File get(String path) throws FileNotFoundException {
         File out = new File(location.getAbsolutePath() + "/" + path);
 
-        if (!out.exists())
+        if (!out.exists()) {
             throw new FileNotFoundException(
                     "Failed to locate file: " + location.getAbsolutePath() + "/" + path);
+        }
         return out;
     }
 

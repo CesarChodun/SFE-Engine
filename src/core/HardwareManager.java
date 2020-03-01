@@ -73,7 +73,9 @@ public class HardwareManager {
 
     /** Initializes the GLFW library. This method <b>MUST</b> be invoked in order to use GLFW. */
     private static void initGLFW() {
-        if (!glfwInit()) throw new GLFWError("Failed to initialize GLFW!");
+        if (!glfwInit()) {
+            throw new GLFWError("Failed to initialize GLFW!");
+        }
 
         PointerBuffer pRequiredExtensions = glfwGetRequiredInstanceExtensions();
         int requiredInstanceExtensionsCount = pRequiredExtensions.capacity();
@@ -92,7 +94,9 @@ public class HardwareManager {
         PointerBuffer pMonitors = glfwGetMonitors();
         int monitorCount = pMonitors.capacity();
         monitors = new Monitor[monitorCount];
-        for (int i = 0; i < monitorCount; i++) monitors[i] = new Monitor(pMonitors.get(i));
+        for (int i = 0; i < monitorCount; i++) {
+            monitors[i] = new Monitor(pMonitors.get(i));
+        }
     }
 
     /**

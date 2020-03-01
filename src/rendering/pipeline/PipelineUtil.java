@@ -48,14 +48,16 @@ public class PipelineUtil {
                         .pNext(bindingFlags.address())
                         .flags(
                                 VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT
-                                        & VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT) // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread independent descriptor updates
+                                        & VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT) 
+                        // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread 
+                        // independent descriptor updates
                         .pBindings(layoutBindings);
 
         LongBuffer pSetLayout = memAllocLong(1);
         int err = vkCreateDescriptorSetLayout(device, layoutCreateInfo, null, pSetLayout);
         validate(err, "Filed to create descriptor set layout.");
 
-        long ans = pSetLayout.get(0);
+        final long ans = pSetLayout.get(0);
 
         memFree(pSetLayout);
         layoutCreateInfo.free();

@@ -52,8 +52,11 @@ public class ResourceUtil {
         JSONArray arr = obj.getJSONArray(property);
         HashSet<String> map = new HashSet<String>(compatible);
 
-        for (int i = 0; i < arr.length(); i++)
-            if (map.contains(arr.getString(i))) return arr.getString(i);
+        for (int i = 0; i < arr.length(); i++) {
+            if (map.contains(arr.getString(i))) {
+                return arr.getString(i);
+            }
+        }
 
         return null;
     }
@@ -66,16 +69,22 @@ public class ResourceUtil {
      * @return Converted position in pixels.
      */
     public static int toPx(String pos, int maxPx) {
-        if (pos.startsWith("+")) return toPx(pos.substring(1), maxPx);
+        if (pos.startsWith("+")) {
+            return toPx(pos.substring(1), maxPx);
+        }
 
-        if (pos.contains("-")) return maxPx - toPx(pos.substring(1), maxPx);
+        if (pos.contains("-")) {
+            return maxPx - toPx(pos.substring(1), maxPx);
+        }
 
         if (pos.contains("%")) {
             String[] spl = pos.split("%");
             String prc = spl[0];
 
             int out = (int) (Float.valueOf(prc) * maxPx / 100);
-            if (spl.length > 1) out += toPx(pos.substring(prc.length() + 1), maxPx - out);
+            if (spl.length > 1) {
+                out += toPx(pos.substring(prc.length() + 1), maxPx - out);
+            }
             return out;
         }
 

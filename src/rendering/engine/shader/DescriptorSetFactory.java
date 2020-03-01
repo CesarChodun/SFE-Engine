@@ -38,7 +38,9 @@ public class DescriptorSetFactory {
     public static long[] createDescriptorSets(VkDevice device, DescriptorSetBlueprint... blueprints)
             throws VulkanException {
         int descriptors = 0;
-        for (int i = 0; i < blueprints.length; i++) descriptors += blueprints[i].descriptorCount();
+        for (int i = 0; i < blueprints.length; i++) {
+            descriptors += blueprints[i].descriptorCount();
+        }
 
         VkDescriptorPoolSize.Buffer descriptorPoolSizes =
                 VkDescriptorPoolSize.calloc(1)
@@ -58,8 +60,9 @@ public class DescriptorSetFactory {
         long descriptorPool = pDescriptorPool.get(0);
 
         long[] dscs = new long[blueprints.length];
-        for (int i = 0; i < blueprints.length; i++)
+        for (int i = 0; i < blueprints.length; i++) {
             dscs[i] = createDescriptorSet(device, descriptorPool, blueprints[i].getLayout());
+        }
 
         descriptorPoolSizes.free();
         descriptorPoolCreateInfo.free();
@@ -91,7 +94,9 @@ public class DescriptorSetFactory {
 
         LongBuffer pDescriptorSet = memAllocLong(1);
         int err = vkAllocateDescriptorSets(device, descriptorSetAllocateInfo, pDescriptorSet);
-        if (err != VK_SUCCESS) throw new AssertionError("Failed to allocate descriptor set.");
+        if (err != VK_SUCCESS) {
+            throw new AssertionError("Failed to allocate descriptor set.");
+        }
         long ans = pDescriptorSet.get(0);
 
         memFree(pDescriptorSet);

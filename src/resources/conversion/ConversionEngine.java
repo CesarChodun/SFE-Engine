@@ -28,7 +28,9 @@ public class ConversionEngine {
         @Override
         public void run() {
             conv.convert(from, to);
-            if (sem != null) sem.release();
+            if (sem != null) {
+                sem.release();
+            }
 
             System.out.println("Converted!");
         }
@@ -60,7 +62,9 @@ public class ConversionEngine {
     }
 
     public void addConverter(Converter conv) {
-        for (String ext : conv.fileExtensionFrom()) converters.put(ext, conv);
+        for (String ext : conv.fileExtensionFrom()) {
+            converters.put(ext, conv);
+        }
     }
 
     private String getExt(File f) {
@@ -92,18 +96,27 @@ public class ConversionEngine {
 
         int converted = 0;
 
-        if (!to.isFile()) to.mkdirs();
+        if (!to.isFile()) {
+            to.mkdirs();
+        }
 
         if (to.isFile()) {
-            if (!from.isFile()) throw new AssertionError("Cannot convert a directiory to a file!");
+            if (!from.isFile()) {
+                throw new AssertionError("Cannot convert a directiory to a file!");
+            }
 
             converted += convert(from, to, workDone);
-        } else if (from.isFile()) converted += convert(from, subFile(from, to), workDone);
-        else
+        } else if (from.isFile()) {
+            converted += convert(from, subFile(from, to), workDone);
+        } else {
             for (File f : from.listFiles()) {
-                if (!f.isFile()) converted += convertFile(f, subFile(f, to), workDone);
-                else converted += convert(f, subFile(f, to), workDone);
+                if (!f.isFile()) {
+                    converted += convertFile(f, subFile(f, to), workDone);
+                } else {
+                    converted += convert(f, subFile(f, to), workDone);
+                }
             }
+        }
         return converted;
     }
 

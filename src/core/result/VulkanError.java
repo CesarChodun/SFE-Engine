@@ -68,12 +68,17 @@ public class VulkanError extends Error {
         sb.append(error.getName());
         sb.append(" Error(");
 
-        if (number < 0) sb.append(number);
-        else sb.append("?");
+        if (number < 0) {
+            sb.append(number);
+        } else {
+            sb.append("?");
+        }
 
         sb.append(")");
 
-        if (message != null) sb.append(": " + message);
+        if (message != null) {
+            sb.append(": " + message);
+        }
 
         return sb.toString();
     }

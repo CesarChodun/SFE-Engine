@@ -63,14 +63,19 @@ public class Engine implements Runnable, Destroyable {
                 // Performs simple tasks(one time tasks)
                 int taskToComplete =
                         (int) (tasks.size() * TASKS_PER_TICK_SCALING) + MINIMUM_TASKS_PER_TICK;
-                for (int i = 0; i < taskToComplete && tasks.size() > 0; i++)
+                for (int i = 0; i < taskToComplete && tasks.size() > 0; i++) {
                     synchronized (tasks) {
                         tasks.poll().run();
                     }
+                }
 
                 // Performs per-tick tasks.
                 List<EngineTask> tmp = new ArrayList<EngineTask>(tickTasks);
-                for (EngineTask tickTask : tmp) if (running == true) tickTask.run();
+                for (EngineTask tickTask : tmp) {
+                    if (running == true) {
+                        tickTask.run();
+                    }
+                }
             }
         } catch (AssertionError e) {
             running = false;

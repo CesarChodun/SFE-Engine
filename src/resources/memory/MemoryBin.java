@@ -33,12 +33,16 @@ public class MemoryBin implements Destroyable {
      * @param destroyables
      */
     public void add(Destroyable... destroyables) {
-        for (Destroyable d : destroyables) toDestroy.add(d);
+        for (Destroyable d : destroyables) {
+            toDestroy.add(d);
+        }
     }
 
     @Override
     public void destroy() {
-        for (Destroyable d : toDestroy) d.destroy();
+        for (Destroyable d : toDestroy) {
+            d.destroy();
+        }
         toDestroy.clear();
     }
 }

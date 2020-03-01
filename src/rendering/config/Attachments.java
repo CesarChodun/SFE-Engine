@@ -75,14 +75,16 @@ public class Attachments implements Destroyable {
         attachments = VkAttachmentDescription.calloc(fileNames.length);
         clearValues = VkClearValue.calloc(fileNames.length);
 
-        for (int i = 0; i < fileNames.length; i++)
+        for (int i = 0; i < fileNames.length; i++) {
             loadAttachment(asset, fileNames[i], attachments.get(i), clearValues.get(i));
+        }
     }
 
     private int getImageLayout(String name) {
         try {
-            if (name.contains("KHR"))
+            if (name.contains("KHR")) {
                 return ResourceUtil.getStaticIntValueFromClass(KHRSwapchain.class, name);
+            }
 
             return ResourceUtil.getStaticIntValueFromClass(VK10.class, name);
         } catch (NoSuchFieldException
@@ -144,13 +146,14 @@ public class Attachments implements Destroyable {
                         .float32(1, colorArray.get(1).floatValue())
                         .float32(2, colorArray.get(2).floatValue())
                         .float32(3, colorArray.get(3).floatValue());
-            } else
+            } else {
                 pClearValue
                         .depthStencil()
                         .depth(
                                 cfg.getFloat(
                                         CLEAR_VALUE_DEPTH_STENCIL_KEY,
                                         DEFAULT_CLEAR_VALUE_DEPTH_STENCIL));
+            }
 
             cfg.close();
         } catch (NoSuchFieldException

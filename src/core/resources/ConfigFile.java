@@ -55,6 +55,7 @@ public class ConfigFile extends ConfigAsset implements Closeable {
     }
 
     /** Saves JSON data to the file. */
+    @Override
     public void close() {
         if (created) {
             FileWriter writer;

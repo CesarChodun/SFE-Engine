@@ -27,7 +27,9 @@ public class Descriptor implements Destroyable {
 
     private void makeMap() {
 
-        for (int i = 0; i < values.length; i++) indexMap.put(values[i].name(), i);
+        for (int i = 0; i < values.length; i++) {
+            indexMap.put(values[i].name(), i);
+        }
     }
 
     public DescriptorValue getValue(int index) {
@@ -43,16 +45,24 @@ public class Descriptor implements Destroyable {
     }
 
     public void update() throws VulkanException {
-        for (int i = 0; i < valuesCount; i++) values[i].update();
+        for (int i = 0; i < valuesCount; i++) {
+            values[i].update();
+        }
     }
 
     public boolean isUpToDate() {
-        for (int i = 0; i < valuesCount; i++) if (!values[i].isUpToDate()) return false;
+        for (int i = 0; i < valuesCount; i++) {
+            if (!values[i].isUpToDate()) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Override
     public void destroy() {
-        for (int i = 0; i < valuesCount; i++) values[i].destroy();
+        for (int i = 0; i < valuesCount; i++) {
+            values[i].destroy();
+        }
     }
 }

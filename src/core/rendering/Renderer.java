@@ -140,8 +140,9 @@ public class Renderer implements Destroyable {
         this.queue = queue;
         this.imageViewCreateInfo = imageViewCreateInfo;
 
-        if (device.getCapabilities().vkCreateSwapchainKHR == NULL)
+        if (device.getCapabilities().vkCreateSwapchainKHR == NULL) {
             throw new AssertionError("The device cannot create the swapchain.");
+        }
 
         this.cmdFactory = cmdFactory;
         this.swapFactory = swapchainFactory;
@@ -206,7 +207,9 @@ public class Renderer implements Destroyable {
     public void update() throws VulkanException {
         recreateSwapchain();
 
-        if (this.commandBuffers != null) destroyCmdBuffers();
+        if (this.commandBuffers != null) {
+            destroyCmdBuffers();
+        }
         this.commandBuffers = cmdFactory.createCmdBuffers(width, height, framebuffers);
 
         renderImageIndices = new ArrayList<Integer>(images.length);
@@ -231,8 +234,9 @@ public class Renderer implements Destroyable {
         renderCompleteSemaphores = new long[images.length];
         workDoneFences = new long[images.length];
 
-        for (int i = 0; i < images.length; i++)
+        for (int i = 0; i < images.length; i++) {
             workDoneFences[i] = createFence(device, workDoneFenceInfo, null);
+        }
     }
 
     /** Helper function for destroying the created command buffers. */
@@ -253,7 +257,9 @@ public class Renderer implements Destroyable {
         height = createInfo.imageExtent().height();
 
         // Destroying old swapchain.
-        if (swapchain != VK_NULL_HANDLE) vkDestroySwapchainKHR(device, swapchain, null);
+        if (swapchain != VK_NULL_HANDLE) {
+            vkDestroySwapchainKHR(device, swapchain, null);
+        }
 
         // Create swapchain
         int err = vkCreateSwapchainKHR(device, createInfo, null, pSwapchain);
@@ -272,13 +278,19 @@ public class Renderer implements Destroyable {
         validate(err, "Failed to obtain swapchain images!");
 
         images = new long[swapchainImageCount];
-        for (int i = 0; i < swapchainImageCount; i++) images[i] = pSwapchainImages.get(i);
+        for (int i = 0; i < swapchainImageCount; i++) {
+            images[i] = pSwapchainImages.get(i);
+        }
 
-        if (imageViews != null) destroyImageViews(device);
+        if (imageViews != null) {
+            destroyImageViews(device);
+        }
         imageViews = createImageViews(device, imageViewCreateInfo, images);
 
         // Create framebuffers
-        if (framebuffers != null) fbFactory.destroyFramebuffers(framebuffers);
+        if (framebuffers != null) {
+            fbFactory.destroyFramebuffers(framebuffers);
+        }
         framebuffers = fbFactory.createFramebuffers(width, height, imageViews);
 
         // Clean up
@@ -298,10 +310,14 @@ public class Renderer implements Destroyable {
      */
     public boolean acquireNextImage() throws VulkanException {
 
-        if (images == null) update();
+        if (images == null) {
+            update();
+        }
 
         // Checking if a next image can be acquired.
-        if (acquiredImages >= images.length) return false;
+        if (acquiredImages >= images.length) {
+            return false;
+        }
         acquiredImages++;
 
         long semaphore = createSemaphore(device, imageAcquireSemaphoreCreateInfo, null);
@@ -335,12 +351,15 @@ public class Renderer implements Destroyable {
      * @throws VulkanException When failed to create semaphore, or submit to queue.
      */
     public boolean submitToQueue() throws VulkanException {
-        if (renderImageIndices.size() == 0) return false;
+        if (renderImageIndices.size() == 0) {
+            return false;
+        }
 
         Integer imageIndex = renderImageIndices.remove(0);
 
-        if (renderCompleteSemaphores[imageIndex] != VK_NULL_HANDLE)
+        if (renderCompleteSemaphores[imageIndex] != VK_NULL_HANDLE) {
             vkDestroySemaphore(device, renderCompleteSemaphores[imageIndex], null);
+        }
         renderCompleteSemaphores[imageIndex] =
                 createSemaphore(device, renderCompleteSemaphoreCreateInfo, null);
 
@@ -373,10 +392,14 @@ public class Renderer implements Destroyable {
      * @throws VulkanException When failed to present the image.
      */
     public boolean presentKHR() throws VulkanException {
-        if (busyFrames.size() == 0) return false;
+        if (busyFrames.size() == 0) {
+            return false;
+        }
         Integer imageIndex = busyFrames.get(0);
 
-        if (vkGetFenceStatus(device, workDoneFences[imageIndex]) != VK_SUCCESS) return false;
+        if (vkGetFenceStatus(device, workDoneFences[imageIndex]) != VK_SUCCESS) {
+            return false;
+        }
         imageIndex = busyFrames.remove(0);
 
         pSignalSemaphores.put(0, renderCompleteSemaphores[imageIndex]);

@@ -16,7 +16,9 @@ public class FPSCounter {
     public FPSCounter(int samples) {
         this.samples = samples;
         remembered = new int[samples];
-        for (int i = 0; i < samples; i++) remembered[i] = 0;
+        for (int i = 0; i < samples; i++) {
+            remembered[i] = 0;
+        }
 
         avrFPS = 1;
         lastTime = System.nanoTime();
@@ -38,6 +40,8 @@ public class FPSCounter {
         count++;
 
         long time = System.nanoTime();
-        if (time - lastTime >= NANO) newReading(time);
+        if (time - lastTime >= NANO) {
+            newReading(time);
+        }
     }
 }

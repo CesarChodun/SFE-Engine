@@ -32,7 +32,8 @@ public class Application {
     public static final String APPLICATION_INFO_FILE = "appInfo.cfg";
 
     /** The configuration property names. */
-    protected static final String ENGINE_NAME_KEY = "ENGINE_NAME",
+    protected static final String 
+            ENGINE_NAME_KEY = "ENGINE_NAME",
             APPLICATION_NAME_KEY = "APPLICATION_NAME",
             API_MAJOR_KEY = "API_VERSION_MAJOR",
             API_MINOR_KEY = "API_VERSION_MINOR",
@@ -47,7 +48,8 @@ public class Application {
             DEFAULT_APPLICATION_NAME = "Application";
 
     /** Default configuration values. */
-    protected static final Integer DEFAULT_API_MAJOR = 1,
+    protected static final Integer 
+            DEFAULT_API_MAJOR = 1,
             DEFAULT_API_MINOR = 0,
             DEFAULT_API_PATCH = 1,
             DEFAULT_ENGINE_MAJOR = 0,
@@ -76,15 +78,18 @@ public class Application {
      * @throws FileNotFoundException When the asset wasn't found.
      */
     public static void init(File appLocation) throws FileNotFoundException {
-        if (applicationInfo != null)
+        if (applicationInfo != null) {
             throw new AssertionError(
                     "Failed to initialize the application. As it was initialized earlier.");
+        }
 
         applicationLocation = appLocation;
 
         appAssets = new Asset(applicationLocation);
         configAssets = appAssets.getSubAsset(CONFIG_FOLDER_NAME);
-        if (configAssets == null) throw new FileNotFoundException();
+        if (configAssets == null) {
+            throw new FileNotFoundException();
+        }
 
         try {
             applicationInfo = createAppInfo(configAssets);
@@ -100,9 +105,10 @@ public class Application {
      * @throws FileNotFoundException When the asset wasn't found.
      */
     public static void init(String configName) throws FileNotFoundException {
-        if (applicationInfo != null)
+        if (applicationInfo != null) {
             throw new AssertionError(
                     "Failed to initialize the application. As it was initialized earlier.");
+        }
 
         applicationLocation = new File("");
 
@@ -110,7 +116,9 @@ public class Application {
                 new Asset(
                         new File(applicationLocation.getAbsolutePath() + "/" + CONFIG_FOLDER_NAME));
         configAssets = appAssets.getSubAsset(configName);
-        if (configAssets == null) throw new FileNotFoundException();
+        if (configAssets == null) {
+            throw new FileNotFoundException();
+        }
 
         try {
             applicationInfo = createAppInfo(configAssets);

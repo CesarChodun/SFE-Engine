@@ -29,7 +29,9 @@ public class Util {
      * @return
      */
     public static ByteBuffer fileToByteBuffer(File file) {
-        if (file.isDirectory()) return null;
+        if (file.isDirectory()) {
+            return null;
+        }
 
         ByteBuffer buffer = null;
 

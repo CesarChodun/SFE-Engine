@@ -18,13 +18,19 @@ public class GameLogic implements EngineTask {
     public void run() throws AssertionError {
         System.out.print("The engine is running in the ");
 
-        if (Application.RELEASE) System.out.print("'RELEASE' mode. ");
-        else System.out.print("developer mode. ");
+        if (Application.RELEASE) {
+            System.out.print("'RELEASE' mode. ");
+        } else {
+            System.out.print("developer mode. ");
+        }
 
         System.out.print("With the debug information turned ");
 
-        if (Application.DEBUG) System.out.print("ON.\n");
-        else System.out.print("OFF.\n");
+        if (Application.DEBUG) {
+            System.out.print("ON.\n");
+        } else {
+            System.out.print("OFF.\n");
+        }
 
         // Semaphores for monitoring the progress.
         Semaphore initialized = new Semaphore(0);

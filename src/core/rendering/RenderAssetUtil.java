@@ -45,7 +45,9 @@ public class RenderAssetUtil {
                 cfgFile.getStringArray(INSTANCE_VALIDATION_LAYERS_KEY, new ArrayList<String>());
         List<String> extensions =
                 cfgFile.getStringArray(INSTANCE_EXTENSIONS_KEY, new ArrayList<String>());
-        for (String required : requiredExtensions) extensions.add(required);
+        for (String required : requiredExtensions) {
+            extensions.add(required);
+        }
 
         cfgFile.close();
 

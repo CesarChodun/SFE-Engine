@@ -42,7 +42,9 @@ public class SmartWaitQueue {
                 if (d != null && !d.isReleased()) {
                     d.addSmartQueue(this);
 
-                    if (!links.containsKey(d)) links.put(d, new ArrayList<>());
+                    if (!links.containsKey(d)) {
+                        links.put(d, new ArrayList<>());
+                    }
 
                     links.get(d).add(task);
                     added++;
@@ -75,11 +77,15 @@ public class SmartWaitQueue {
                 if (x <= 0) {
                     degree.remove(t);
                     toInvoke.add(t);
-                } else degree.put(t, x);
+                } else {
+                    degree.put(t, x);
+                }
             }
         }
 
-        for (SynchronizedTask t : toInvoke) invoke(t);
+        for (SynchronizedTask t : toInvoke) {
+            invoke(t);
+        }
     }
 
     /**

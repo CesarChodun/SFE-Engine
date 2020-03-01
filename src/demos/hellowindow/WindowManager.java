@@ -64,11 +64,15 @@ public class WindowManager implements EngineTask {
             glfwPollEvents();
 
             // Checking if the window should close.
-            if (glfwWindowShouldClose(windowID)) closeWindow();
+            if (glfwWindowShouldClose(windowID)) {
+                closeWindow();
+            }
         }
 
         private void closeWindow() {
-            if (closeCall != null) closeCall.close(windowID);
+            if (closeCall != null) {
+                closeCall.close(windowID);
+            }
         }
 
         public void setCloseCall(WindowCloseCallback closeCall) {

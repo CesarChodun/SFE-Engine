@@ -69,7 +69,9 @@ public class WindowFactory {
                         window.setName(name);
                         window.setFullScreen(fullscreen);
 
-                        if (workDone != null) workDone.release();
+                        if (workDone != null) {
+                            workDone.release();
+                        }
                     }
                 });
     }

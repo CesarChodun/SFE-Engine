@@ -62,7 +62,9 @@ public class GameLogic implements Runnable {
         Handler consoleLog = new ConsoleHandler();
         consoleLog.setLevel(Level.ALL);
 
-        for (Logger lg : loggers) lg.addHandler(consoleLog);
+        for (Logger lg : loggers) {
+            lg.addHandler(consoleLog);
+        }
     }
 
     /** Redirects loggers output */

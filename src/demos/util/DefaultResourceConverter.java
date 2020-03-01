@@ -24,7 +24,9 @@ public class DefaultResourceConverter {
 
     private static void deleteContents(File file) {
         for (File f : file.listFiles()) {
-            if (!f.isFile()) deleteContents(f);
+            if (!f.isFile()) {
+                deleteContents(f);
+            }
             f.delete();
         }
     }
@@ -36,7 +38,9 @@ public class DefaultResourceConverter {
      */
     public void runConversion() {
 
-        if (sem != null) throw new AssertionError("This conversion can only be run once!");
+        if (sem != null) {
+            throw new AssertionError("This conversion can only be run once!");
+        }
 
         STORAGE_FILE.mkdir();
         deleteContents(STORAGE_FILE);

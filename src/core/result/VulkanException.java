@@ -70,12 +70,17 @@ public class VulkanException extends Exception {
         sb.append(exception.getName());
         sb.append(" Exception(");
 
-        if (number >= 0) sb.append(number);
-        else sb.append("?");
+        if (number >= 0) {
+            sb.append(number);
+        } else {
+            sb.append("?");
+        }
 
         sb.append(")");
 
-        if (message != null) sb.append(": " + message);
+        if (message != null) {
+            sb.append(": " + message);
+        }
 
         return sb.toString();
     }

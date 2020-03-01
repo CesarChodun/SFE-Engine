@@ -38,8 +38,11 @@ public class DependencyFence extends Semaphore implements Dependency {
     @Override
     public void addSmartQueue(SmartWaitQueue queue) {
         synchronized (this) {
-            if (released) queue.popDependency(this);
-            else queues.add(queue);
+            if (released) {
+                queue.popDependency(this);
+            } else {
+                queues.add(queue);
+            }
         }
     }
 
@@ -50,7 +53,9 @@ public class DependencyFence extends Semaphore implements Dependency {
         synchronized (this) {
             released = true;
 
-            for (SmartWaitQueue q : queues) q.popDependency(this);
+            for (SmartWaitQueue q : queues) {
+                q.popDependency(this);
+            }
         }
     }
 

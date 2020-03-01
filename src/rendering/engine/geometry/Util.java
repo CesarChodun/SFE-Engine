@@ -39,12 +39,14 @@ public class Util {
             int bits,
             int properties,
             IntBuffer typeIndex) {
-        for (int i = 0; i < 32; i++)
-            if ((bits & (1 << i)) > 0)
+        for (int i = 0; i < 32; i++) {
+            if ((bits & (1 << i)) > 0) {
                 if ((memoryProperties.memoryTypes(i).propertyFlags() & properties) == properties) {
                     typeIndex.put(0, i);
                     return true;
                 }
+            }
+        }
 
         return false;
     }
@@ -103,7 +105,9 @@ public class Util {
                 pMemoryProperties,
                 memReqs.memoryTypeBits(),
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-                memoryTypeIndex)) throw new AssertionError("Failed to obtain memry type.");
+                memoryTypeIndex)) {
+            throw new AssertionError("Failed to obtain memry type.");
+        }
 
         VkMemoryAllocateInfo memAlloc =
                 VkMemoryAllocateInfo.calloc()

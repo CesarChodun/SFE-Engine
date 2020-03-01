@@ -98,7 +98,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
         DescriptorSet[] descriptorSets = createDescriptorSets(physicalDevice, device, dscBlueprint);
         destroy.add(descriptorSets);
         pDesc = memAllocLong(descriptorSets.length);
-        for (DescriptorSet dsc : descriptorSets) pDesc.put(dsc.getDescriptorSet());
+        for (DescriptorSet dsc : descriptorSets) {
+            pDesc.put(dsc.getDescriptorSet());
+        }
         pDesc.flip();
 
         Recordable cmdPreset = makePreset(window);
@@ -139,7 +141,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
     public void destroy() {
         timer.cancel();
 
-        for (EngineTask task : tickTasks) engine.removeTickTask(task);
+        for (EngineTask task : tickTasks) {
+            engine.removeTickTask(task);
+        }
 
         viewport.free();
         scissor.free();
@@ -168,10 +172,12 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
                                 int out = 0;
 
-                                if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+                                if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
                                     out = 1000;
-                                else if (props.deviceType()
-                                        == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) out = 100;
+                                } else if (props.deviceType()
+                                        == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+                                    out = 100;
+                                }
 
                                 props.free();
                                 return out;
@@ -288,8 +294,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
             e1.printStackTrace();
         }
 
-        if (pSupported.get(0) != VK_TRUE)
+        if (pSupported.get(0) != VK_TRUE) {
             throw new AssertionError("Device does not support the khr swapchain.");
+        }
 
         memFree(pSupported);
     }

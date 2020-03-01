@@ -45,10 +45,14 @@ public enum VulkanExceptions {
      * @return The Vulkan exception type.
      */
     public static VulkanExceptions getVulkanException(int num) {
-        if (exceptions.size() == 0) populateExceptionMap();
+        if (exceptions.size() == 0) {
+            populateExceptionMap();
+        }
 
         VulkanExceptions exception = exceptions.get(num);
-        if (exception == null) return UNKNOWN_EXCEPTION;
+        if (exception == null) {
+            return UNKNOWN_EXCEPTION;
+        }
 
         return exception;
     }
@@ -57,7 +61,9 @@ public enum VulkanExceptions {
     private static void populateExceptionMap() {
         VulkanExceptions[] errorList = VulkanExceptions.values();
 
-        for (VulkanExceptions e : errorList) exceptions.put(e.getExceptionNumber(), e);
+        for (VulkanExceptions e : errorList) {
+            exceptions.put(e.getExceptionNumber(), e);
+        }
     }
 
     /**

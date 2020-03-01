@@ -66,7 +66,9 @@ public class GeneralizedDescriptorValue implements DescriptorValue {
         prefTab[0] = 0;
         for (int i = 0; i < slots.length; i++) {
             dataSize += slots[i].sizeOf();
-            if (i < slots.length - 1) prefTab[i + 1] = prefTab[i] + slots[i].sizeOf();
+            if (i < slots.length - 1) {
+                prefTab[i + 1] = prefTab[i] + slots[i].sizeOf();
+            }
         }
 
         data = memAlloc(dataSize);
@@ -113,7 +115,9 @@ public class GeneralizedDescriptorValue implements DescriptorValue {
 
     @Override
     public void update() {
-        if (upToDate == true) return;
+        if (upToDate == true) {
+            return;
+        }
         upToDate = true;
 
         try {
@@ -174,12 +178,13 @@ public class GeneralizedDescriptorValue implements DescriptorValue {
     }
 
     private void checkCompatibility(int index, UniformUsage usage) {
-        if (slots[index].dataType().compareTo(usage) != 0)
+        if (slots[index].dataType().compareTo(usage) != 0) {
             throw new Error(
                     "Uniform usage mismatch! Expected: "
                             + slots[index].toString()
                             + " Recived: "
                             + usage.name());
+        }
 
         upToDate = false;
     }

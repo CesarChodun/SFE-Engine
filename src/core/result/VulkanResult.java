@@ -17,9 +17,13 @@ public class VulkanResult {
      * @throws VulkanException In case that vkResult represents an exception message.
      */
     public static void validate(int vkResult, String message) throws VulkanException {
-        if (vkResult == 0) return;
+        if (vkResult == 0) {
+            return;
+        }
 
-        if (vkResult > 0) throw new VulkanException(vkResult, message);
+        if (vkResult > 0) {
+            throw new VulkanException(vkResult, message);
+        }
 
         throw new VulkanError(vkResult, message);
     }

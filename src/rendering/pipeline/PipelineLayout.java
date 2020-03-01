@@ -54,7 +54,9 @@ public class PipelineLayout {
         LongBuffer pSetLayouts = null;
         if (layouts.length != 0) {
             pSetLayouts = memAllocLong(layouts.length);
-            for (int i = 0; i < layouts.length; i++) pSetLayouts.put(i, layouts[i].getLayout());
+            for (int i = 0; i < layouts.length; i++) {
+                pSetLayouts.put(i, layouts[i].getLayout());
+            }
 
             pPipelineLayoutCreateInfo.pSetLayouts(pSetLayouts);
         }
@@ -65,7 +67,9 @@ public class PipelineLayout {
 
         pipelineLayout = pPipelineLayout.get(0);
 
-        if (pSetLayouts != null) memFree(pSetLayouts);
+        if (pSetLayouts != null) {
+            memFree(pSetLayouts);
+        }
         memFree(pPipelineLayout);
         pPipelineLayoutCreateInfo.free();
     }

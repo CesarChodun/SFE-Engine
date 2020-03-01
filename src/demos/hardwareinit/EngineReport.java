@@ -42,8 +42,9 @@ public class EngineReport implements EngineTask {
 
         VkLayerProperties[] layers = RenderUtil.listAvailableValidationLayers();
 
-        for (int i = 0; i < layers.length; i++)
+        for (int i = 0; i < layers.length; i++) {
             sb.append("\t" + layers[i].layerNameString() + "\n");
+        }
 
         return sb.toString();
     }
@@ -61,8 +62,9 @@ public class EngineReport implements EngineTask {
 
         VkExtensionProperties[] layers = RenderUtil.listAvailableExtensions();
 
-        for (int i = 0; i < layers.length; i++)
+        for (int i = 0; i < layers.length; i++) {
             sb.append("\t" + layers[i].extensionNameString() + "\n");
+        }
 
         return sb.toString();
     }

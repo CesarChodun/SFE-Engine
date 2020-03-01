@@ -40,7 +40,9 @@ public class RenderingTimeContext implements DescriptorBlueprint, Destroyable {
 
     @Override
     public void destroy() {
-        for (int i = 0; i < data.length; i++) data[i].destroy();
+        for (int i = 0; i < data.length; i++) {
+            data[i].destroy();
+        }
     }
 
     @Override

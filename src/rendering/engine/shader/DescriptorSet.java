@@ -24,8 +24,11 @@ public abstract class DescriptorSet implements Destroyable {
      * @return true if all of the descriptors are up to date and false otherwise.
      */
     public boolean isUpToDate() {
-        for (Map.Entry<String, Descriptor> i : descriptors.entrySet())
-            if (!i.getValue().isUpToDate()) return false;
+        for (Map.Entry<String, Descriptor> i : descriptors.entrySet()) {
+            if (!i.getValue().isUpToDate()) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -35,7 +38,9 @@ public abstract class DescriptorSet implements Destroyable {
      * @throws VulkanException
      */
     public void update() throws VulkanException {
-        for (Map.Entry<String, Descriptor> i : descriptors.entrySet()) i.getValue().update();
+        for (Map.Entry<String, Descriptor> i : descriptors.entrySet()) {
+            i.getValue().update();
+        }
     }
 
     /**
@@ -69,6 +74,8 @@ public abstract class DescriptorSet implements Destroyable {
 
     @Override
     public void destroy() {
-        for (Map.Entry<String, Descriptor> i : descriptors.entrySet()) i.getValue().destroy();
+        for (Map.Entry<String, Descriptor> i : descriptors.entrySet()) {
+            i.getValue().destroy();
+        }
     }
 }

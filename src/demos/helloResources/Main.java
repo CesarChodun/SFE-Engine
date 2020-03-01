@@ -11,7 +11,9 @@ public class Main {
 
     private static void deleteContents(File file) {
         for (File f : file.listFiles()) {
-            if (!f.isFile()) deleteContents(f);
+            if (!f.isFile()) {
+                deleteContents(f);
+            }
             f.delete();
         }
     }

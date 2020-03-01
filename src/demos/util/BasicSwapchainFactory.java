@@ -65,13 +65,15 @@ public class BasicSwapchainFactory implements SwapchainFactory {
         int bsize = modes.remaining();
         int hsize = presentModeHierarchy.length;
 
-        for (int i = 0; i < hsize; i++)
-            for (int j = 0; j < bsize; j++)
+        for (int i = 0; i < hsize; i++) {
+            for (int j = 0; j < bsize; j++) {
                 if (modes.get(j) == presentModeHierarchy[i]) {
                     Integer out = modes.get(j);
                     memFree(modes);
                     return out;
                 }
+            }
+        }
 
         memFree(modes);
 
@@ -110,18 +112,24 @@ public class BasicSwapchainFactory implements SwapchainFactory {
             e.printStackTrace();
             throw new AssertionError("Failed to obtain adequate present mode!");
         }
-        if (swapchainPresentMode == -1)
+        if (swapchainPresentMode == -1) {
             throw new AssertionError("Failed to locate any suitable mode!");
+        }
 
         // Triple buffering:
         int imageCount = caps.minImageCount();
-        if (imageCount <= 1) imageCount++;
-        if (caps.maxImageCount() > 0 && imageCount > caps.maxImageCount())
+        if (imageCount <= 1) {
+            imageCount++;
+        }
+        if (caps.maxImageCount() > 0 && imageCount > caps.maxImageCount()) {
             imageCount = caps.maxImageCount();
+        }
 
         // Transform
         int transform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-        if ((caps.supportedTransforms() & transform) == 0) transform = caps.currentTransform();
+        if ((caps.supportedTransforms() & transform) == 0) {
+            transform = caps.currentTransform();
+        }
 
         // Create info for new swapchain
         VkSwapchainCreateInfoKHR createInfo =
