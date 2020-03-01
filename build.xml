@@ -13,6 +13,8 @@
 	<property name="resources.dir" value="res" />
 	<property name="config.dir" value="config" />
 	
+	<property name="release.dir" value="release" />
+	
 	<!-- Demos settings -->
 	<property name="app.demos.dir" value="demos" />
 	<property name="app.demos.src.dir" value="${app.classes.dir}/demos" />
@@ -72,6 +74,17 @@
 	    <ivy:cleancache />
 	</target>
 	
+	<target name="clean-build">
+        <delete dir="build"/>
+	</target>
+	
+	<target name="clean-release">
+        <delete dir="%{release.dir}"/>
+	</target>
+	
+    <target name="clean" depends="clean-build,clean-release">
+    </target>
+	
 	<target name="make-demo-jar">	
 			<jar destfile="${app.demos.jar.dir}/${jarName}.jar" basedir="${build.classes.dir}">
 				<zipgroupfileset dir="${lib.dir}">
@@ -82,10 +95,6 @@
 		        </manifest>
 		    </jar>
 	</target>
-	
-    <target name="clean">
-        <delete dir="build"/>
-    </target>
 	
     <target name="resolve" unless="resolveDone" depends="init-ivy" description="--> retrieve dependencies with Ivy">
     	<property name="resolveDone" value="true"/>
@@ -100,7 +109,7 @@
     </target>
 
 
-	<target name="debug" depends="make-demos">
+	<target name="run-debug" depends="make-demos">
 	    <java jar="build/demos/${debugJarName}.jar" fork="true">
 	        <sysproperty key="org.lwjgl.util.DebugAllocator" value="true"/>
 	        <sysproperty key="org.lwjgl.util.DebugLoader" value="true"/>
@@ -109,7 +118,7 @@
 	    </java>
 	</target>
 	
-	<target name="release" depends="make-demos">
+	<target name="run-release" depends="make-demos">
 		<java jar="build/demos/${releaseJarName}.jar" fork="true">
 	        <sysproperty key="application_debug" value="false"/>
 	        <sysproperty key="application_release" value="true"/>
@@ -177,7 +186,7 @@
 	</target>
 	
 	<target name="create-engine-jar" depends="compile">
-		<jar destfile="${app.jar.dir}/SFEngine.jar" basedir="${build.classes.dir}">
+		<jar destfile="${create-engine-jar.dir}/SFEngine.jar" basedir="${build.classes.dir}">
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="**/*.jar" />
 			</zipgroupfileset>
@@ -185,7 +194,7 @@
 	</target>
 	
 	<target name="create-engine-source-jar" depends="compile">
-		<jar destfile="${app.jar.dir}/SFEngine-source.jar" basedir="${app.classes.dir}">
+		<jar destfile="${create-engine-source-jar.dir}/SFEngine-source.jar" basedir="${app.classes.dir}">
 			<zipgroupfileset dir="${lib.dir}">
 				<include name="**/*.jar" />
 			</zipgroupfileset>
@@ -210,21 +219,40 @@
 		</checkstyle>
 	</target>
 	
+	<target name="release" depends="compile">
+		<mkdir dir="${release.dir}"/>
+		
+		<antcall target="create-engine-jar">
+		    <param name="create-engine-jar.dir" value="${release.dir}"/>
+		</antcall>
+		
+		<antcall target="create-engine-source-jar">
+		    <param name="create-engine-source-jar.dir" value="${release.dir}"/>
+		</antcall>
+	</target>
+	
 	<target name="build-all" depends="compile">
 		<antcall target="make-demos"/>
-		<antcall target="create-engine-jar"/>
-		<antcall target="create-engine-source-jar"/>
+		
+		<antcall target="create-engine-jar">
+		    <param name="create-engine-jar.dir" value="${app.jar.dir}"/>
+		</antcall>
+		
+		<antcall target="create-engine-source-jar">
+		    <param name="create-engine-source-jar.dir" value="${app.jar.dir}"/>
+		</antcall>
+		
 		<antcall target="create-engine-javadoc"/>
 	</target>
 	
 	<target name="run-debug-hardware-init" depends="compile">
-		<antcall target="debug">
+		<antcall target="run-debug">
 		    <param name="debugJarName" value="HardwareInit"/>
 		</antcall>
 	</target>
 	
 	<target name="run-release-hardware-init" depends="compile">
-		<antcall target="release">
+		<antcall target="run-release">
 		    <param name="releaseJarName" value="HardwareInit"/>
 		</antcall>
 	</target>
