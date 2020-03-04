@@ -6,18 +6,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.json.JSONObject;
 
 /**
- * Class for obtaining configuration 
- * data from a file.
- * 
+ * Class for obtaining configuration data from a file.
+ *
  * @author Cezary Chodun
  * @since 23.10.2019
  */
-public class ConfigFile extends ConfigAsset implements Closeable{
-    
+public class ConfigFile extends ConfigAsset implements Closeable {
+
     /** Default logger for the class. */
     private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
 
@@ -27,35 +25,37 @@ public class ConfigFile extends ConfigAsset implements Closeable{
     private Asset asset;
     /** The path to the JSON file. */
     private String path;
-    
+
     /**
      * Obtains configuration data from a file within the asset.
-     * 
-     * @param asset        Asset containing the configuration file.
-     * @param path        Path to the configuration file within the asset.
-     * @throws IOException        If an I/O error occurred.
+     *
+     * @param asset Asset containing the configuration file.
+     * @param path Path to the configuration file within the asset.
+     * @throws IOException If an I/O error occurred.
      */
-    public ConfigFile(Asset asset, String path) throws IOException{
+    public ConfigFile(Asset asset, String path) throws IOException {
         super(null);
         this.asset = asset;
         this.path = path;
-        
+
         try {
             data = asset.getJSON(path);
         } catch (IOException e) {
-            cfgLogging.log(Level.INFO, "Failed to locate CFG data: " + asset.getAssetLocation().getPath() + "/" + path, e);
+            cfgLogging.log(
+                    Level.INFO,
+                    "Failed to locate CFG data: " + asset.getAssetLocation().getPath() + "/" + path,
+                    e);
         }
-        
+
         if (this.data == null) {
             created = true;
-            
-            data = new JSONObject();//asset.getJSON(path);
+
+            data = new JSONObject(); // asset.getJSON(path);
         }
     }
-    
-    /**
-     * Saves JSON data to the file.
-     */
+
+    /** Saves JSON data to the file. */
+    @Override
     public void close() {
         if (created) {
             FileWriter writer;
