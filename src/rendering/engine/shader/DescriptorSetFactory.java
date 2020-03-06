@@ -13,6 +13,8 @@ import static org.lwjgl.vulkan.VK10.vkCreateDescriptorPool;
 
 import core.result.VulkanException;
 import java.nio.LongBuffer;
+
+import org.lwjgl.vulkan.EXTDescriptorIndexing;
 import org.lwjgl.vulkan.VkDescriptorPoolCreateInfo;
 import org.lwjgl.vulkan.VkDescriptorPoolSize;
 import org.lwjgl.vulkan.VkDescriptorSetAllocateInfo;
@@ -45,12 +47,13 @@ public class DescriptorSetFactory {
         VkDescriptorPoolSize.Buffer descriptorPoolSizes =
                 VkDescriptorPoolSize.calloc(1)
                         .type(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
-                        .descriptorCount(descriptors);
-
+                        .descriptorCount(descriptors);        
+        
         VkDescriptorPoolCreateInfo descriptorPoolCreateInfo =
                 VkDescriptorPoolCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO)
                         .pNext(NULL)
+                        .flags(EXTDescriptorIndexing.VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT)
                         .maxSets(blueprints.length)
                         .pPoolSizes(descriptorPoolSizes);
 
