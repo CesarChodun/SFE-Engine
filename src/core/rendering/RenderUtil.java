@@ -3,6 +3,7 @@ package core.rendering;
 import static core.Util.*;
 import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.vulkan.EXTDescriptorIndexing.VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceFormatsKHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfacePresentModesKHR;
@@ -34,6 +35,7 @@ import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkInstanceCreateInfo;
 import org.lwjgl.vulkan.VkLayerProperties;
 import org.lwjgl.vulkan.VkPhysicalDevice;
+import org.lwjgl.vulkan.VkPhysicalDeviceDescriptorIndexingFeaturesEXT;
 import org.lwjgl.vulkan.VkPhysicalDeviceMemoryProperties;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
@@ -193,11 +195,15 @@ public class RenderUtil {
                         .pNext(NULL)
                         .queueFamilyIndex(queueFamilyIndex)
                         .pQueuePriorities(queuePriorities);
+        
+        VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = VkPhysicalDeviceDescriptorIndexingFeaturesEXT.calloc()
+                .sType(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)
+                .descriptorBindingUniformBufferUpdateAfterBind(true);
 
         VkDeviceCreateInfo deviceCreateInfo =
                 VkDeviceCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
-                        .pNext(NULL)
+                        .pNext(indexingFeatures.address())
                         .flags(flags)
                         .pQueueCreateInfos(deviceQueueCreateInfo)
                         .ppEnabledLayerNames(ppEnabledLayerNames)
@@ -216,6 +222,7 @@ public class RenderUtil {
         memFree(queuePriorities);
         memFree(ppEnabledLayerNames);
         memFree(pdev);
+        indexingFeatures.free();
 
         return out;
     }
