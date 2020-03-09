@@ -32,9 +32,12 @@ public class PipelineUtil {
     public static long createDescriptorSetLayout(
             VkDevice device, VkDescriptorSetLayoutBinding.Buffer layoutBindings)
             throws VulkanException {
-        IntBuffer bindingFlagsBuffer = memAllocInt(1);
-        bindingFlagsBuffer.put(0, VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT);
-
+        IntBuffer bindingFlagsBuffer = memAllocInt(layoutBindings.remaining());
+        
+        for (int i = 0; i < bindingFlagsBuffer.remaining(); i++) {
+            bindingFlagsBuffer.put(i, VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT);
+        }
+        
         VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags =
                 VkDescriptorSetLayoutBindingFlagsCreateInfoEXT.calloc()
                         .sType(
