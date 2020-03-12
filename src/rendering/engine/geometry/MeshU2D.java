@@ -55,7 +55,7 @@ public class MeshU2D implements Mesh {
             throws VulkanException {
 
         verticesCount = vertices.size();
-        ByteBuffer vertexBuffer = memAlloc(verticesCount * 2 * 4);
+        ByteBuffer vertexBuffer = memAlloc(verticesCount * STRIDE);
 
         // Fills the byte buffer with data.
         FloatBuffer fb = vertexBuffer.asFloatBuffer();
