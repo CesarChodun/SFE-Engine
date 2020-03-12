@@ -8,6 +8,7 @@
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="${build.dir}/lib" />
 	<property name="build.classes.dir" value="${build.dir}/classes" />
+	<property name="app.jar.dir" value="${build.dir}/app" />
 	
 	<property name="resources.dir" value="res" />
 	<property name="config.dir" value="config" />
@@ -64,6 +65,7 @@
 	<!-- the existing "build" target has a new dependency -->
 	<target name="build" unless="buildDone" depends="get-dependencies">
 		<property name="buildDone" value="true"/>
+		<mkdir dir="${app.jar.dir}" />
 		<mkdir dir="${app.classes.dir}" />
 		<mkdir dir="${lib.dir}"/>
 	</target>
@@ -85,14 +87,44 @@
     </target>
 	
 	<target name="make-demo-jar">	
-			<jar destfile="${app.demos.jar.dir}/${jarName}.jar" basedir="${build.classes.dir}">
-				<zipgroupfileset dir="${lib.dir}">
-					<include name="**/*.jar" />
-				</zipgroupfileset>
-				<manifest>
-		            <attribute name="Main-Class" value="${app.demos.dir}.${mainFolder}.Main" />
-		        </manifest>
-		    </jar>
+		<jar destfile="${app.demos.jar.dir}/${jarName}.jar" basedir="${build.classes.dir}">
+			<zipgroupfileset dir="${lib.dir}">
+				<include name="**/*.jar" />
+			</zipgroupfileset>
+			<manifest>
+	            <attribute name="Main-Class" value="${app.demos.dir}.${mainFolder}.Main" />
+	        </manifest>
+	    </jar>
+	</target>
+	
+	<target name="make-eclipse-jar" depends="build">	
+		<parallel>
+			<sequential>
+				<jar destfile="${build.dir}/eclipse/lib/dependencies.jar">
+					<zipgroupfileset dir="${lib.dir}">
+						<include name="**/*.jar" />
+						<exclude name="**/*javadoc.jar"/>
+						<exclude name="**/*sources.jar"/>
+					</zipgroupfileset>
+			    </jar>
+			</sequential>
+
+			<sequential>	
+				<jar destfile="${build.dir}/eclipse/lib/dependencies-javadoc.jar">
+					<zipgroupfileset dir="${lib.dir}">
+						<include name="**/*javadoc.jar"/>
+					</zipgroupfileset>
+			    </jar>
+			</sequential>
+	
+			<sequential>	
+				<jar destfile="${build.dir}/eclipse/lib/dependencies-sources.jar">
+					<zipgroupfileset dir="${lib.dir}">
+						<include name="**/*sources.jar"/>
+					</zipgroupfileset>
+			    </jar>
+			</sequential>
+		</parallel>
 	</target>
 	
     <target name="resolve" unless="resolveDone" depends="init-ivy" description="--> retrieve dependencies with Ivy">
@@ -242,6 +274,7 @@
 	
 	<target name="build-all" depends="compile">
 		<antcall target="make-demos"/>
+		<antcall target="make-eclipse-jar"/>
 		
 		<antcall target="create-engine-jar">
 		    <param name="create-engine-jar.dir" value="${app.jar.dir}"/>
