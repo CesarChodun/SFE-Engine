@@ -8,10 +8,10 @@
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="${build.dir}/lib" />
 	<property name="build.classes.dir" value="${build.dir}/classes" />
-	<property name="app.jar.dir" value="${build.dir}/app" />
 	
 	<property name="resources.dir" value="res" />
 	<property name="config.dir" value="config" />
+	<property name="glslangvalidator.name" value="glslangValidator" />
 	
 	<property name="release.dir" value="release" />
 	
@@ -65,7 +65,6 @@
 	<target name="build" unless="buildDone" depends="get-dependencies">
 		<property name="buildDone" value="true"/>
 		<mkdir dir="${app.classes.dir}" />
-        <mkdir dir="${app.jar.dir}" />
 		<mkdir dir="${lib.dir}"/>
 	</target>
 
@@ -107,27 +106,10 @@
         <mkdir dir="${build.classes.dir}" />
         <javac classpathref="classpath" destdir="${build.classes.dir}" srcdir="src" debug="true" />
     </target>
-
-
-	<target name="run-debug" depends="make-demos">
-	    <java jar="build/demos/${debugJarName}.jar" fork="true">
-	        <sysproperty key="org.lwjgl.util.DebugAllocator" value="true"/>
-	        <sysproperty key="org.lwjgl.util.DebugLoader" value="true"/>
-	        <sysproperty key="application_debug" value="true"/>
-	        <sysproperty key="application_release" value="false"/>
-	    </java>
-	</target>
-	
-	<target name="run-release" depends="make-demos">
-		<java jar="build/demos/${releaseJarName}.jar" fork="true">
-	        <sysproperty key="application_debug" value="false"/>
-	        <sysproperty key="application_release" value="true"/>
-	    </java>
-	</target>
 	
 	<!-- Specific targets -->
 	
-	<target name="make-demos">
+	<target name="make-demos" depends="compile">
 		<pathconvert property="classpathInName" refid="classpath" />
 		<mkdir dir="${app.demos.jar.dir}"/>
 		
@@ -136,6 +118,9 @@
 		</copy> 
 		<copy todir="${app.demos.jar.dir}/config" >  
 		    <fileset dir="${config.dir}" includes="**"/>  
+		</copy>
+		<copy todir="${app.demos.jar.dir}" >  
+		    <fileset dir="" includes="${glslangvalidator.name}*"/>  
 		</copy>
 		
 		<parallel>
@@ -190,6 +175,23 @@
 			</sequential>
 
 		</parallel>
+	</target>
+	
+
+	<target name="run-debug" depends="make-demos">
+	    <java jar="build/demos/${debugJarName}.jar" fork="true">
+	        <sysproperty key="org.lwjgl.util.DebugAllocator" value="true"/>
+	        <sysproperty key="org.lwjgl.util.DebugLoader" value="true"/>
+	        <sysproperty key="application_debug" value="true"/>
+	        <sysproperty key="application_release" value="false"/>
+	    </java>
+	</target>
+	
+	<target name="run-release" depends="make-demos">
+		<java jar="build/demos/${releaseJarName}.jar" fork="true">
+	        <sysproperty key="application_debug" value="false"/>
+	        <sysproperty key="application_release" value="true"/>
+	    </java>
 	</target>
 	
 	<target name="create-engine-jar" depends="compile">
