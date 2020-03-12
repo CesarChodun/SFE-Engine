@@ -4,13 +4,29 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+/**
+ * Stores basic information about the position,
+ * rotation, and projection of the camera.
+ * 
+ * @author Cezary Chodun
+ * @since 12.03.2020
+ */
 public class CameraTransform implements Transform4f {
     
     private Matrix4f projection;
     public Vector3f position;
     public Quaternionf rotation;
     
-    
+    /**
+     * Creates a basic camera transform with the
+     * perspective projection.
+     * The camera is located at the point (0, 0, 0).
+     * And it is looking along (0, 0, 1) with the
+     * up value equal to (0, 1, 0).
+     * 
+     * @param width     Render area width.
+     * @param height    Render area height.
+     */
     public CameraTransform(int width, int height) {
         this.projection = new Matrix4f();
         this.projection = this.projection.perspective((float)Math.toRadians(70), (float)width / height, 0.01f, 1000.0f);

@@ -8,6 +8,12 @@ import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.GeneralizedDescriptorValue;
 import rendering.engine.shader.UniformUsage;
 
+/**
+ * Descriptor set for camera and model transformation.
+ * 
+ * @author Cezary Chodun
+ * @since 12.03.2020
+ */
 public class TransformationDescriptorSet extends DescriptorSet {
 
     private VkPhysicalDevice physicalDevice;
@@ -23,8 +29,10 @@ public class TransformationDescriptorSet extends DescriptorSet {
         makeDescriptors();
     }
 
+    /**
+     * Creates needed descriptors.
+     */
     private void makeDescriptors() {
-        //TODO: Change to include transformation info.
         GeneralizedDescriptorValue[] descVals = new GeneralizedDescriptorValue[2];
         descVals[0] =
                 new GeneralizedDescriptorValue(

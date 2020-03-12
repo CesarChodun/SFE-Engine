@@ -4,7 +4,7 @@ import core.Application;
 import core.Engine;
 
 /**
- * Main class of the hello descriptors demo.
+ * Main class of the hello cube demo.
  *
  * @author Cezary Chodun
  * @since 10.01.2020

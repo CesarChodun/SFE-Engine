@@ -30,8 +30,9 @@ public class WindowManager implements Runnable {
         final MemoryBin toDestroy = new MemoryBin();
         DependencyFence windowCreated = new DependencyFence(0);
 
-        System.err.println("WindowManager work submited!");
+        System.out.println("WindowManager work submited!");
 
+        // Submits window creation task to the engine configuration queue.
         engine.addConfigSMQ(
                 () -> {
                     // Obtaining the asset folder for the window.
@@ -42,8 +43,9 @@ public class WindowManager implements Runnable {
                 },
                 wait);
 
-        System.err.println("CFrame work submited!");
+        System.out.println("CFrame work submited!");
 
+        // Submits rendering task to the engine configuration queue.
         engine.addConfigSMQ(
                 () -> {
                     // Creating the rendering task.
@@ -54,6 +56,6 @@ public class WindowManager implements Runnable {
                 },
                 windowCreated);
 
-        System.err.println("Window manager done!");
+        System.out.println("Window manager done!");
     }
 }

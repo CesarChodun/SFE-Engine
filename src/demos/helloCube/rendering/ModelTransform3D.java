@@ -4,14 +4,23 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+/**
+ * Stores information about the model's
+ * position, rotation and scale.
+ * 
+ * @author Cezary Chodun
+ * @since 12.03.2020
+ */
 public class ModelTransform3D implements Transform4f {
     
     private final Vector3f scale = new Vector3f(1f, 1f, 1f);
     private final Vector3f position = new Vector3f(0f, 0f, 0f);
     private final Quaternionf rotation = new Quaternionf();
     
-    public ModelTransform3D() {
-    }
+    /**
+     * Creates a basic model transform.
+     */
+    public ModelTransform3D() {}
 
     @Override
     public Matrix4f getTransformation() {

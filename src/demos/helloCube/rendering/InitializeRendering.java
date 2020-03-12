@@ -57,6 +57,12 @@ import rendering.pipeline.PipelineLayout;
 import rendering.recording.RenderPass;
 import resources.memory.MemoryBin;
 
+/**
+ * Sets up data needed for the rendering.
+ * 
+ * @author Cezary Chodun
+ * @since 12.03.2020
+ */
 public class InitializeRendering implements EngineTask, Destroyable {
 
     private Engine engine;
@@ -408,7 +414,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
             e.printStackTrace();
         }
 
+        // Sets the cube position
         cubeTransform.getPosition().set(0.0f, 0.0f, 2.0f);
+        
         DescriptorSet[] out = new DescriptorSet[dscs.length];
         TransformationDescriptorSet env =
                 new TransformationDescriptorSet(physicalDevice, device, dscs[0]);

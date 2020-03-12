@@ -6,10 +6,10 @@ import rendering.engine.shader.DescriptorSet;
 import rendering.engine.shader.GeneralizedDescriptorValue;
 
 /**
- * Updates the time descriptor.
+ * Updates the transformation descriptors.
  *
  * @author Cezary Chodun
- * @since 10.01.2020
+ * @since 12.03.2020
  */
 public class Transform4fPeriodicalDescriptorUpdater extends TimerTask {
 
@@ -35,6 +35,7 @@ public class Transform4fPeriodicalDescriptorUpdater extends TimerTask {
 
     @Override
     public void run() {
+        // Rotates the cube based on the time that passed.
         if (mili == -1) {
             mili = System.currentTimeMillis();
         }
@@ -45,9 +46,9 @@ public class Transform4fPeriodicalDescriptorUpdater extends TimerTask {
         transform.getRotation().rotateAxis(0.006f * delta / 10, new Vector3f(1, 1, 0));
         mili = newTime;
 
+        // Updates the descriptors.
         modelDescriptor.setUniform(0, transform.getTransformation());
         modelDescriptor.update();
-        
         cameraDescriptor.setUniform(0, camera.getTransformation());
         cameraDescriptor.update();
     }
