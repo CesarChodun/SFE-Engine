@@ -183,6 +183,7 @@ public class Window {
             glfwHideWindow(windowID);
         }
     }
+    
     /** Tells whether the Window is currently visible. */
     public boolean isVsible() {
         return ((glfwGetWindowAttrib(windowID, GLFW_VISIBLE) == 0) ? true : false);

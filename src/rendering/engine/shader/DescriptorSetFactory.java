@@ -13,7 +13,6 @@ import static org.lwjgl.vulkan.VK10.vkCreateDescriptorPool;
 
 import core.result.VulkanException;
 import java.nio.LongBuffer;
-
 import org.lwjgl.vulkan.EXTDescriptorIndexing;
 import org.lwjgl.vulkan.VkDescriptorPoolCreateInfo;
 import org.lwjgl.vulkan.VkDescriptorPoolSize;
@@ -100,7 +99,7 @@ public class DescriptorSetFactory {
         if (err != VK_SUCCESS) {
             throw new AssertionError("Failed to allocate descriptor set.");
         }
-        long ans = pDescriptorSet.get(0);
+        final long ans = pDescriptorSet.get(0);
 
         memFree(pDescriptorSet);
         descriptorSetAllocateInfo.free();

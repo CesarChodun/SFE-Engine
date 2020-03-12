@@ -198,8 +198,6 @@ public class ConfigAsset {
         return new Integer(getStaticIntFromClass(source, key, defaultValue));
     }
 
-    @Deprecated
-    @SuppressWarnings("unchecked")
     /**
      * Obtains an array from the JSON object.
      *
@@ -208,6 +206,8 @@ public class ConfigAsset {
      * @param defaultValue The default value for the key.
      * @return A list with the objects from the JSON data.
      */
+    @Deprecated
+    @SuppressWarnings("unchecked")
     public <T> List<T> getArray(String key, List<T> defaultValue) {
         if (data.isNull(key)) {
             data.put(key, defaultValue);

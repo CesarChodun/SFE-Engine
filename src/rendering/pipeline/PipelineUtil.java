@@ -40,8 +40,7 @@ public class PipelineUtil {
         
         VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags =
                 VkDescriptorSetLayoutBindingFlagsCreateInfoEXT.calloc()
-                        .sType(
-                                VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
+                        .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
                         .pNext(NULL)
                         .pBindingFlags(bindingFlagsBuffer);
 
@@ -49,9 +48,7 @@ public class PipelineUtil {
                 VkDescriptorSetLayoutCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)
                         .pNext(bindingFlags.address())
-                        .flags(
-                                VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT)
-//                                        & VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT) 
+                        .flags(VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT)
                         // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread 
                         // independent descriptor updates
                         .pBindings(layoutBindings);

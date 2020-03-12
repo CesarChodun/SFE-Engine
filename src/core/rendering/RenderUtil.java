@@ -196,7 +196,8 @@ public class RenderUtil {
                         .queueFamilyIndex(queueFamilyIndex)
                         .pQueuePriorities(queuePriorities);
         
-        VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = VkPhysicalDeviceDescriptorIndexingFeaturesEXT.calloc()
+        VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = 
+                VkPhysicalDeviceDescriptorIndexingFeaturesEXT.calloc()
                 .sType(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)
                 .descriptorBindingUniformBufferUpdateAfterBind(true);
 

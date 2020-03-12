@@ -97,7 +97,7 @@ public class Util {
                 VkPhysicalDeviceMemoryProperties.calloc();
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, pMemoryProperties);
 
-        VkMemoryRequirements memReqs = VkMemoryRequirements.calloc();
+        final VkMemoryRequirements memReqs = VkMemoryRequirements.calloc();
         vkGetBufferMemoryRequirements(device, bufferHandle, memReqs);
 
         IntBuffer memoryTypeIndex = memAllocInt(1);
@@ -109,7 +109,7 @@ public class Util {
             throw new AssertionError("Failed to obtain memry type.");
         }
 
-        VkMemoryAllocateInfo memAlloc =
+        final VkMemoryAllocateInfo memAlloc =
                 VkMemoryAllocateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)
                         .pNext(NULL)
@@ -160,10 +160,10 @@ public class Util {
         int err = vkMapMemory(device, memory, 0, memAlloc.allocationSize(), 0, pData);
         validate(err, "Failed to map memory!");
         memAlloc.free();
-        long buffer_data = pData.get(0);
+        long bufferData = pData.get(0);
         memFree(pData);
 
-        return buffer_data;
+        return bufferData;
     }
 
     /**
@@ -184,13 +184,42 @@ public class Util {
                         device, verticesData.remaining(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, 0);
         VkMemoryAllocateInfo memAlloc = getMemoryAllocateInfo(physicalDevice, device, handle);
         long memory = allocateMemory(device, memAlloc);
-        long buffer_data = mapMemory(device, memory, memAlloc);
+        long bufferData = mapMemory(device, memory, memAlloc);
 
-        MemoryUtil.memCopy(memAddress(verticesData), buffer_data, verticesData.remaining());
+        MemoryUtil.memCopy(memAddress(verticesData), bufferData, verticesData.remaining());
         vkUnmapMemory(device, memory);
 
         int err = vkBindBufferMemory(device, handle, memory, 0);
         validate(err, "Failed to bind memory to vertex buffer!");
+
+        return handle;
+    }
+    
+    /**
+     * Creates a vertices buffer and fills it with provided data.
+     *
+     * @param physicalDevice A physical device that will be using the mesh.
+     * @param device A device that will store the vertices information.
+     * @param indicesData A buffer with the indices data.
+     * @return A handle to the vertices buffer.
+     * @throws VulkanException When failed to create the buffer.
+     */
+    public static long createIndicesBuffer(
+            VkPhysicalDevice physicalDevice, VkDevice device, ByteBuffer indicesData)
+            throws VulkanException {
+
+        long handle =
+                createBuffer(
+                        device, indicesData.remaining(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 0);
+        VkMemoryAllocateInfo memAlloc = getMemoryAllocateInfo(physicalDevice, device, handle);
+        long memory = allocateMemory(device, memAlloc);
+        long bufferData = mapMemory(device, memory, memAlloc);
+
+        MemoryUtil.memCopy(memAddress(indicesData), bufferData, indicesData.remaining());
+        vkUnmapMemory(device, memory);
+
+        int err = vkBindBufferMemory(device, handle, memory, 0);
+        validate(err, "Failed to bind memory to index buffer!");
 
         return handle;
     }

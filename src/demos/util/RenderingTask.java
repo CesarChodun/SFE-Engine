@@ -13,7 +13,7 @@ public class RenderingTask implements EngineTask {
         this.ren = renderer;
     }
 
-    private int fps_tick = 0;
+    private int fpsTick = 0;
 
     @Override
     public void run() throws AssertionError {
@@ -25,9 +25,9 @@ public class RenderingTask implements EngineTask {
             res = ren.presentKHR();
             if (res == true) {
                 counter.newFrame();
-                fps_tick++;
-                if (fps_tick >= 100) {
-                    fps_tick = 0;
+                fpsTick++;
+                if (fpsTick >= 100) {
+                    fpsTick = 0;
                     System.out.println(counter.avrFPS);
                 }
             }

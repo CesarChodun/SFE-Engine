@@ -155,7 +155,7 @@ public class BasicPipeline {
         validate(err, "Failed to bind memory to vertex buffer!");
 
         // Binding:
-        VkVertexInputBindingDescription.Buffer bindingDescription =
+        final VkVertexInputBindingDescription.Buffer bindingDescription =
                 VkVertexInputBindingDescription.calloc(1)
                         .binding(0) // <- we bind our vertex buffer to point 0
                         .stride(2 * 4)
@@ -163,7 +163,7 @@ public class BasicPipeline {
 
         // Attribute descriptions
         // Describes memory layout and shader attribute locations
-        VkVertexInputAttributeDescription.Buffer attributeDescription =
+        final VkVertexInputAttributeDescription.Buffer attributeDescription =
                 VkVertexInputAttributeDescription.calloc(1);
         // Location 0 : Position
         attributeDescription
@@ -174,7 +174,7 @@ public class BasicPipeline {
                 .offset(0);
 
         // asign to vertex buffer
-        VkPipelineVertexInputStateCreateInfo vertexCreateInfo =
+        final VkPipelineVertexInputStateCreateInfo vertexCreateInfo =
                 VkPipelineVertexInputStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)
                         .pNext(NULL)
@@ -183,14 +183,14 @@ public class BasicPipeline {
 
         // Vertex input state
         // Describes the topoloy used with this pipeline
-        VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo =
+        final VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo =
                 VkPipelineInputAssemblyStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
                         .topology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
                         .primitiveRestartEnable(false);
 
         // Rasterization state
-        VkPipelineRasterizationStateCreateInfo rasterizationStateInfo =
+        final VkPipelineRasterizationStateCreateInfo rasterizationStateInfo =
                 VkPipelineRasterizationStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)
                         .polygonMode(VK_POLYGON_MODE_FILL)
@@ -203,17 +203,17 @@ public class BasicPipeline {
 
         // Color blend state
         // Describes blend modes and color masks
-        VkPipelineColorBlendAttachmentState.Buffer colorWriteMask =
+        final VkPipelineColorBlendAttachmentState.Buffer colorWriteMask =
                 VkPipelineColorBlendAttachmentState.calloc(1)
                         .blendEnable(false)
                         .colorWriteMask(0xF);
-        VkPipelineColorBlendStateCreateInfo colorBlendStateInfo =
+        final VkPipelineColorBlendStateCreateInfo colorBlendStateInfo =
                 VkPipelineColorBlendStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)
                         .pAttachments(colorWriteMask);
 
         // Viewport state
-        VkPipelineViewportStateCreateInfo viewportStateCreateInfo =
+        final VkPipelineViewportStateCreateInfo viewportStateCreateInfo =
                 VkPipelineViewportStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)
                         .viewportCount(1) // <- one viewport
@@ -226,7 +226,7 @@ public class BasicPipeline {
         // a viewport's dimensions or a scissor box
         IntBuffer dynamicStates = memAllocInt(2);
         dynamicStates.put(VK_DYNAMIC_STATE_VIEWPORT).put(VK_DYNAMIC_STATE_SCISSOR).flip();
-        VkPipelineDynamicStateCreateInfo dynamicState =
+        final VkPipelineDynamicStateCreateInfo dynamicState =
                 VkPipelineDynamicStateCreateInfo.calloc()
                         // The dynamic state properties themselves are stored in the command buffer
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO)
@@ -234,7 +234,7 @@ public class BasicPipeline {
 
         // Depth and stencil state
         // Describes depth and stenctil test and compare ops
-        VkPipelineDepthStencilStateCreateInfo depthStencilState =
+        final VkPipelineDepthStencilStateCreateInfo depthStencilState =
                 VkPipelineDepthStencilStateCreateInfo.calloc()
                         // No depth test/write and no stencil used
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO)
@@ -252,14 +252,14 @@ public class BasicPipeline {
 
         // Multi sampling state
         // No multi sampling used in this example
-        VkPipelineMultisampleStateCreateInfo multisampleState =
+        final VkPipelineMultisampleStateCreateInfo multisampleState =
                 VkPipelineMultisampleStateCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
                         .pSampleMask(null)
                         .rasterizationSamples(VK_SAMPLE_COUNT_1_BIT);
 
         // Load shaders
-        VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(2);
+        final VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(2);
 
         loadShaderStage(
                 stages.get(0),
@@ -277,7 +277,7 @@ public class BasicPipeline {
 
         // Create the pipeline layout that is used to generate the rendering pipelines that
         // are based on this descriptor set layout
-        VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo =
+        final VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo =
                 VkPipelineLayoutCreateInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
                         .pNext(NULL)
@@ -291,13 +291,11 @@ public class BasicPipeline {
         memFree(pLayout);
         pipelineLayoutCreateInfo.free();
 
-        VkGraphicsPipelineCreateInfo.Buffer pipelineCreateInfo =
+        final VkGraphicsPipelineCreateInfo.Buffer pipelineCreateInfo =
                 VkGraphicsPipelineCreateInfo.calloc(1)
                         .sType(VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)
-                        .layout(
-                                layout) // <- the layout used for this pipeline (NEEDS TO BE SET!
-                                        // even though it is basically empty)
-                        .renderPass(renderPass) // <- renderpass this pipeline is attached to
+                        .layout(layout)
+                        .renderPass(renderPass)
                         .pVertexInputState(vertexCreateInfo)
                         .pInputAssemblyState(inputAssemblyInfo)
                         .pTessellationState(null)
@@ -316,7 +314,7 @@ public class BasicPipeline {
         err =
                 vkCreateGraphicsPipelines(
                         logicalDevice, VK_NULL_HANDLE, pipelineCreateInfo, null, pPipeline);
-        long pipelineHandle = pPipeline.get(0);
+        final long pipelineHandle = pPipeline.get(0);
         memFree(pPipeline);
         vertexCreateInfo.free();
         inputAssemblyInfo.free();
@@ -408,10 +406,10 @@ public class BasicPipeline {
 
     /**
      * Creates a shader module.
-     *
+     * 
      * @param logicalDevice
      * @param file
-     * @return
+     * @return  the shader module handle.
      * @throws VulkanException
      */
     public static long createShaderModule(VkDevice logicalDevice, File file)

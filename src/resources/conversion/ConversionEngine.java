@@ -34,7 +34,7 @@ public class ConversionEngine {
 
             System.out.println("Converted!");
         }
-    };
+    }
 
     private Map<String, Converter> converters;
     private ThreadPoolExecutor pool;

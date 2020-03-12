@@ -20,7 +20,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        long time = System.nanoTime();
+        final long startTime = System.nanoTime();
 
         STORAGE_FILE.mkdir();
         deleteContents(STORAGE_FILE);
@@ -40,8 +40,8 @@ public class Main {
         }
         System.out.println("Done " + remaining);
 
-        long end_time = System.nanoTime();
+        long endTime = System.nanoTime();
 
-        System.out.println("Conversion took: " + (double) (end_time - time) / 1000000 + "ms");
+        System.out.println("Conversion took: " + (double) (endTime - startTime) / 1000000 + "ms");
     }
 }

@@ -8,7 +8,9 @@ package core;
  */
 public interface EngineTask extends Runnable {
 
+    /** 
+     * Performs the task. 
+     */
     @Override
-    /** Performs the task. */
     public void run() throws AssertionError;
 }

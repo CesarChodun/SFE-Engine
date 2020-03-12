@@ -124,8 +124,11 @@ public class RenderPass implements Destroyable {
         return renderPass;
     }
 
+    /** 
+     * Frees the render pass data. 
+     * <b>Note:</b> The attachments are not freed. 
+     */
     @Override
-    /** Frees the render pass data. <b>Note:</b> The attachments are not freed. */
     public void destroy() {
         attachments.destroy();
         memFree(renderPassInfo.pSubpasses().pColorAttachments());

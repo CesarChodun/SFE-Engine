@@ -55,7 +55,7 @@ public class BasicSwapchainFactory implements SwapchainFactory {
      * @param physicalDevice
      * @param surface
      * @param presentModeHierarchy
-     * @return
+     * @return  present mode identifier.
      * @throws VulkanException
      */
     private static Integer getBestPresentMode(
@@ -82,9 +82,8 @@ public class BasicSwapchainFactory implements SwapchainFactory {
 
     @Override
     public VkSwapchainCreateInfoKHR getCreateInfo(Window window, long oldSwapchain) {
-
-        int width = (int) (window.getWidth());
-        int height = (int) (window.getHeight());
+        final int width = (int) (window.getWidth());
+        final int height = (int) (window.getHeight());
 
         VkSurfaceCapabilitiesKHR caps;
         try {

@@ -32,14 +32,14 @@ public class Descriptor implements Destroyable {
         }
     }
 
-    public DescriptorValue getValue(int index) {
-        return values[index];
-    }
-
     public Integer getIndex(String name) {
         return indexMap.get(name);
     }
 
+    public DescriptorValue getValue(int index) {
+        return values[index];
+    }
+    
     public DescriptorValue getValue(String name) {
         return getValue(getIndex(name));
     }

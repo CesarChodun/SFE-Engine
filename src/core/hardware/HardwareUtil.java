@@ -93,15 +93,15 @@ public class HardwareUtil {
      */
     public static VkQueueFamilyProperties.Buffer newQueueFamilyProperties(
             VkPhysicalDevice physicalDevice) {
-        IntBuffer queue_family_count_buffer = memAllocInt(1);
-        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queue_family_count_buffer, null);
-        int queueFamilyCount = queue_family_count_buffer.get(0);
+        IntBuffer queueFamilyCountBuffer = memAllocInt(1);
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, queueFamilyCountBuffer, null);
+        int queueFamilyCount = queueFamilyCountBuffer.get(0);
 
         VkQueueFamilyProperties.Buffer queueFamilyProperties =
                 VkQueueFamilyProperties.calloc(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(
-                physicalDevice, queue_family_count_buffer, queueFamilyProperties);
-        memFree(queue_family_count_buffer);
+                physicalDevice, queueFamilyCountBuffer, queueFamilyProperties);
+        memFree(queueFamilyCountBuffer);
 
         return queueFamilyProperties;
     }

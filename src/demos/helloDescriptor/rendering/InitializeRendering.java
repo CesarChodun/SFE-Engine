@@ -83,7 +83,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
         int renderQueueFamilyIndex = getRenderQueueFamilyIndex(window, physicalDevice);
         VkDevice device = getLogicalDevice(physicalDevice, renderQueueFamilyIndex);
-        VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
+        final VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
 
         // Checking the window support
         checkSupport(window, physicalDevice, renderQueueFamilyIndex);
@@ -93,7 +93,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         DescriptorSetBlueprint[] dscBlueprint =
                 createDscBlueprints(
                         device, Application.getConfigAssets().getSubAsset("descriptors"), destroy);
-        Pipeline pipeline = createPipeline(physicalDevice, device, renderPass, dscBlueprint);
+        final Pipeline pipeline = createPipeline(physicalDevice, device, renderPass, dscBlueprint);
 
         DescriptorSet[] descriptorSets = createDescriptorSets(physicalDevice, device, dscBlueprint);
         destroy.add(descriptorSets);

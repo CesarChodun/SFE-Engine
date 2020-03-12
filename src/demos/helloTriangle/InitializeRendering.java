@@ -86,7 +86,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
         int renderQueueFamilyIndex = getRenderQueueFamilyIndex(window, physicalDevice);
         VkDevice device = getLogicalDevice(physicalDevice, renderQueueFamilyIndex);
-        VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
+        final VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
 
         // Checking the window support
         checkSupport(window, physicalDevice, renderQueueFamilyIndex);
@@ -342,7 +342,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         long pipeline = VK_NULL_HANDLE;
 
         try {
-            long rpHandle = renderPass.handle();
+            final long rpHandle = renderPass.handle();
 
             // renderingPipeline.getGraphicsPipeline();
             // Create the pipeline layout that is used to generate the rendering pipelines that
