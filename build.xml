@@ -181,6 +181,13 @@
 			    <param name="mainFolder" value="helloworld"/>
 			</antcall>
 			</sequential>
+			
+			<sequential>
+			<antcall target="make-demo-jar">
+			    <param name="jarName" value="HelloCube"/>
+			    <param name="mainFolder" value="helloCube"/>
+			</antcall>
+			</sequential>
 
 		</parallel>
 	</target>
