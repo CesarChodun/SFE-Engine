@@ -67,7 +67,7 @@ public class RenderingMemoryUtil {
         long pData = ppData.get(0);
         memFree(ppData);
 
-        memCopy(memAddress(data), pData, data.remaining());
+        memCopy(memAddress(data), pData, buff.allocationSize);
 
         vkUnmapMemory(device, buff.memory);
     }
