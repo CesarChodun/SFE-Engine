@@ -74,7 +74,7 @@ public class CFrame {
                         try {
                             window = new Window(HardwareManager.getInstance());
 
-                            System.err.println("Window created!");
+                            logger.log(Level.INFO, "Window created.");
 
                             created.release();
                         } catch (VulkanException e) {
@@ -90,7 +90,7 @@ public class CFrame {
                             WindowFactory.loadFromFileC(
                                     engine, window, asset.getConfigFile(WINDOW_CFG_FILE), loaded);
 
-                            System.err.println("Window loaded!");
+                            logger.log(Level.INFO, "Window data loaded.");
                         } catch (IOException | AssertionError e) {
                             logger.log(Level.FINE, "Failed to create window.", e);
                             e.printStackTrace();
