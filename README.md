@@ -5,8 +5,52 @@ A small engine based on Vulkan(LWJGL3) and Java. With a goal to provide a highly
 <h2>Relevant links</h2>
 
  * Trello board for the project: https://trello.com/b/ghMSQq99
+ 
+<h2>Installation with ANT(Recomended)</h2>
 
-<h2>Instalation</h2>
+  <h3>Install folowing:</h3>
+  
+   - Java 8(JDK)
+   - Apache ANT
+   - Vulkan SDK [version >= 1.2]
+   - Vulkan runtime(only on windows) [version >= 1.2]
+   
+   Note: If some of this programs are already installed on your maschine or are already included in your GPU driver(Vulkan runtime) you can ommit some of this steps.
+   
+   <h3>Engine installation</h3>
+   
+   - Clone or download the repository.
+   - Copy the glslangValidator(.exe) from the Vulkan SDK folder(/Bin/glslangValidator...) to the repository folder.
+   - Either open the repository in an editor that has tools for ANT and invoke the "build-all" task. Or run <code>ant build-all</code>.
+   - DONE! If everything went well you should be able to go to the folder: build/demos and run the demonstration programs(see "running the demos" section).
+   
+   <h3>Working with the engine</h3>
+   
+   If you want to experiment with the engine I recomend setting up a project in IDE like Eclipse or IntelliJ. To do so you should first follow the instructions above. When you are done and at least the HardwareInit demo works(see "running the demos" section). You can move on to prepare your workspace.
+   
+   - Add the build/eclipse/lib/dependencies.jar jar file to the classpath of your project(in the IDE).
+   - Attach the source build/eclipse/lib/dependencies-sources.jar and the javadoc build/eclipse/lib/dependencies-javadoc.jar
+   - Add following VM arguments:<br/>
+      <code>-Dorg.lwjgl.util.DebugAllocator=true</code><br/>
+      <code>-Dorg.lwjgl.util.DebugLoader=true</code><br/>
+      <code>-Dorg.lwjgl.vulkan.libname=[Your path to the vulkan library eg. "C:\Windows\System32\vulkan-1.dll"]</code><br/>
+  - And if you are on MAC add also:<br/>
+  <code>-XstartOnFirstThread</code>
+  
+<h2>Running the demos</h2>
+
+After the installation(with ANT) you should be able to run some(or all) of the demos.<br/>
+The demos can be run simply by double-click but it's not the best way to go especially if you are running them for the first time.<br/>
+A much better way of running the demos is to go to the repository folder and run the following command in the terminal: <code>java -jar demoName.jar</code>(where "demoName" is the name of the program that you want to run).<br/>
+This way you should be able to see the demo output. Also if you are running it on MAC you might want to run the following command instead:<code>java -jar -XstartOnFirstThread demoName.jar</code>.
+
+<h2>Troubleshooting</h2>
+
+Try running the HardwareInit.jar demo in the console and check if the demo outputs information about Validation Layers and available Vulkan extensions. If not you have some problem with your Vulkan runtime installation. And you might want to try reinstalling it.
+
+If you have experienced any other problems running the demos. Please report them in the issues section.
+   
+<h2>Installation without ANT(Not Recomended) </h2>
 
  <h3>Prepare your IDE</h3>
  
@@ -20,20 +64,20 @@ A small engine based on Vulkan(LWJGL3) and Java. With a goal to provide a highly
   * You are ready to go!
   
   
-<h2>Dependencies</h2>
+<h3>Dependencies</h3>
 
- <h3>LWJGL3 and JOML</h3>
+   <h4>LWJGL3 and JOML</h4>
 
- <p> You need "Minimal Vulkan" preset with JOML selected. You can find it on <a href="https://www.lwjgl.org/download">this</a> website. </p>
- 
- <h3> JSON </h3>
- 
- <p> The engine uses JSON files and loads it with the following open source library: https://github.com/douglascrockford/JSON-java.git.
-It is required to add it to the build path.</p>
+   <p> You need "Minimal Vulkan" preset with JOML selected. You can find it on <a href="https://www.lwjgl.org/download">this</a> website.   </p>
 
-<h3> Nullable anotations </h3>
+   <h4> JSON </h4>
 
-<p> The project uses Eclipse null anotations(org.eclipse.jdt.annotation.Nullable). If you are using any other IDEs you might need to remove @Nullable anotation from a few files. </p>
+   <p> The engine uses JSON files and loads it with the following open source library: https://github.com/douglascrockford/JSON-java.git.
+  It is required to add it to the build path.</p>
+
+  <h4> Nullable anotations </h4>
+
+  <p> The project uses Eclipse null anotations(org.eclipse.jdt.annotation.Nullable). If you are using any other IDEs you might need to remove @Nullable anotation from a few files. </p>
 
 <h2>Contribute!</h2>
 <p>Developing fully functional game engine is challenging enough for a team of full time developers. Not to say for a guy that is pursuing bechelor's degree at the same time(and tries to sleep 8 hours a day). So any amount of help is more then welcome!</p>
