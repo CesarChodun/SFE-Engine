@@ -3,7 +3,8 @@ package demos.helloTriangle;
 import core.Engine;
 import demos.util.DefaultResourceConverter;
 import java.util.concurrent.Semaphore;
-import util.hardware.EngineInitializationTask;
+
+import components.util.EngineInitializationTask;
 
 public class GameLogic implements Runnable {
 

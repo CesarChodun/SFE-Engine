@@ -2,8 +2,9 @@ package demos.helloResources;
 
 import java.io.File;
 import java.util.concurrent.Semaphore;
-import resources.conversion.ConversionEngine;
-import resources.conversion.converters.SPIRVConverter;
+
+import components.resources.ConversionEngine;
+import components.resources.converters.SPIRVConverter;
 
 public class Main {
 

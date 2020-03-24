@@ -56,12 +56,13 @@ import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
-import rendering.config.Attachments;
-import rendering.config.GraphicsPipeline;
-import rendering.config.ImageViewCreateInfo;
-import rendering.engine.geometry.MeshU2D;
-import rendering.recording.RenderPass;
-import resources.memory.MemoryBin;
+
+import components.geometry.MeshU2D;
+import components.pipeline.Attachments;
+import components.pipeline.GraphicsPipeline;
+import components.pipeline.ImageViewCreateInfo;
+import components.recording.RenderPass;
+import components.resources.MemoryBin;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 

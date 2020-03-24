@@ -9,7 +9,8 @@ import core.rendering.Window;
 import core.resources.Asset;
 import core.result.VulkanException;
 import java.io.IOException;
-import util.window.WindowFactory;
+
+import components.window.WindowFactory;
 
 public class WindowManager implements EngineTask {
 

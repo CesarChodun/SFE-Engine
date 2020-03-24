@@ -44,18 +44,19 @@ import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
-import rendering.config.Attachments;
-import rendering.config.FileDescriptorSetBlueprint;
-import rendering.config.GraphicsPipeline;
-import rendering.config.ImageViewCreateInfo;
-import rendering.engine.geometry.MeshI3D;
-import rendering.engine.shader.DescriptorSet;
-import rendering.engine.shader.DescriptorSetBlueprint;
-import rendering.engine.shader.DescriptorSetFactory;
-import rendering.pipeline.Pipeline;
-import rendering.pipeline.PipelineLayout;
-import rendering.recording.RenderPass;
-import resources.memory.MemoryBin;
+
+import components.geometry.MeshI3D;
+import components.pipeline.Attachments;
+import components.pipeline.GraphicsPipeline;
+import components.pipeline.ImageViewCreateInfo;
+import components.pipeline.Pipeline;
+import components.pipeline.PipelineLayout;
+import components.recording.RenderPass;
+import components.resources.MemoryBin;
+import components.shaders.descriptor_sets.DescriptorSet;
+import components.shaders.descriptor_sets.DescriptorSetBlueprint;
+import components.shaders.descriptor_sets.DescriptorSetFactory;
+import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
 
 /**
  * Sets up data needed for the rendering.

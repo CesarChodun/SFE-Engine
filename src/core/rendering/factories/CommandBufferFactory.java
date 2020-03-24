@@ -12,7 +12,8 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkCommandBufferAllocateInfo;
 import org.lwjgl.vulkan.VkCommandBufferBeginInfo;
 import org.lwjgl.vulkan.VkDevice;
-import rendering.recording.RenderPass;
+
+import components.recording.RenderPass;
 
 /**
  * Class for command buffer creation.

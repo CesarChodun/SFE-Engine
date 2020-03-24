@@ -1,12 +1,12 @@
 package demos.helloCube;
 
+import components.resources.MemoryBin;
+import components.window.CFrame;
 import core.Application;
 import core.Engine;
 import core.resources.Asset;
 import core.synchronization.DependencyFence;
 import demos.helloCube.rendering.*;
-import resources.memory.MemoryBin;
-import util.window.CFrame;
 
 /**
  * Creates a window and initializes the rendering layer for it.

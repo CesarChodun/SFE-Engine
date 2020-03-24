@@ -2,8 +2,9 @@ package demos.helloCube.rendering;
 
 import java.util.TimerTask;
 import org.joml.Vector3f;
-import rendering.engine.shader.DescriptorSet;
-import rendering.engine.shader.GeneralizedDescriptorValue;
+
+import components.shaders.GeneralizedDescriptorValue;
+import components.shaders.descriptor_sets.DescriptorSet;
 
 /**
  * Updates the transformation descriptors.

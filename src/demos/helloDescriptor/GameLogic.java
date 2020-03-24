@@ -9,7 +9,8 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import util.hardware.EngineInitializationTask;
+
+import components.util.EngineInitializationTask;
 
 /**
  * Hello descriptor demo logic.

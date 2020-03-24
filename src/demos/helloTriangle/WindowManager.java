@@ -4,8 +4,9 @@ import core.Application;
 import core.Engine;
 import core.resources.Asset;
 import java.util.concurrent.Semaphore;
-import resources.memory.MemoryBin;
-import util.window.CFrame;
+
+import components.resources.MemoryBin;
+import components.window.CFrame;
 
 public class WindowManager implements Runnable {
 
