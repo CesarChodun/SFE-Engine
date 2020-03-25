@@ -28,8 +28,7 @@ public class CameraTransform implements Transform4f {
      * @param height    Render area height.
      */
     public CameraTransform(int width, int height) {
-        this.projection = new Matrix4f();
-        this.projection = this.projection.perspective((float)Math.toRadians(70), (float)width / height, 0.01f, 1000.0f);
+        this.projection = new Matrix4f().perspective((float)Math.toRadians(70), (float)width / height, 0.01f, 1000.0f);
         this.position = new Vector3f(0.0f, 0.0f, 0.0f);
         this.rotation = new Quaternionf().lookAlong(new Vector3f(0.0f, 0.0f, 1.0f), new Vector3f(0.0f, 1.0f, 0.0f));
     }
