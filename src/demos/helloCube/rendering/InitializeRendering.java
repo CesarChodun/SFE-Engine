@@ -57,6 +57,8 @@ import components.shaders.descriptor_sets.DescriptorSet;
 import components.shaders.descriptor_sets.DescriptorSetBlueprint;
 import components.shaders.descriptor_sets.DescriptorSetFactory;
 import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
+import components.transform.CameraTransform;
+import components.transform.ModelTransform3D;
 
 /**
  * Sets up data needed for the rendering.

@@ -1,4 +1,4 @@
-package demos.helloCube.rendering;
+package components.transform;
 
 import org.joml.Matrix4f;
 

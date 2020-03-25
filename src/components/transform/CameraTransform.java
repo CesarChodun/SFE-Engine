@@ -1,4 +1,4 @@
-package demos.helloCube.rendering;
+package components.transform;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -14,8 +14,8 @@ import org.joml.Vector3f;
 public class CameraTransform implements Transform4f {
     
     private Matrix4f projection;
-    public Vector3f position;
-    public Quaternionf rotation;
+    private Vector3f position;
+    private Quaternionf rotation;
     
     /**
      * Creates a basic camera transform with the
@@ -41,4 +41,15 @@ public class CameraTransform implements Transform4f {
         return new Matrix4f(projection).mul(rotMat).mul(posMat);
     }
 
+    public Matrix4f getProjection() {
+        return projection;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public Quaternionf getRotation() {
+        return rotation;
+    }
 }

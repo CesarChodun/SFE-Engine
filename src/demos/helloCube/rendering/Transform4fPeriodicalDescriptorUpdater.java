@@ -5,6 +5,8 @@ import org.joml.Vector3f;
 
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.descriptor_sets.DescriptorSet;
+import components.transform.CameraTransform;
+import components.transform.ModelTransform3D;
 
 /**
  * Updates the transformation descriptors.
