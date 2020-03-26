@@ -194,7 +194,7 @@ public class Util {
 
         return handle;
     }
-    
+
     /**
      * Creates a vertices buffer and fills it with provided data.
      *
@@ -209,8 +209,7 @@ public class Util {
             throws VulkanException {
 
         long handle =
-                createBuffer(
-                        device, indicesData.remaining(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 0);
+                createBuffer(device, indicesData.remaining(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, 0);
         VkMemoryAllocateInfo memAlloc = getMemoryAllocateInfo(physicalDevice, device, handle);
         long memory = allocateMemory(device, memAlloc);
         long bufferData = mapMemory(device, memory, memAlloc);

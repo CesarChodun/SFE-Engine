@@ -1,10 +1,9 @@
 package demos.helloResources;
 
-import java.io.File;
-import java.util.concurrent.Semaphore;
-
 import components.resources.ConversionEngine;
 import components.resources.converters.SPIRVConverter;
+import java.io.File;
+import java.util.concurrent.Semaphore;
 
 public class Main {
 

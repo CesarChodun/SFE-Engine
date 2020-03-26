@@ -1,13 +1,12 @@
 package demos.helloDescriptor.rendering.environment;
 
-import core.resources.Destroyable;
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkPhysicalDevice;
-
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.UniformUsage;
 import components.shaders.descriptors.DescriptorBlueprint;
 import components.shaders.descriptors.DescriptorValue;
+import core.resources.Destroyable;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 
 public class RenderingTimeContext implements DescriptorBlueprint, Destroyable {
 

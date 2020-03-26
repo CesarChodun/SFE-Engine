@@ -9,6 +9,20 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import components.geometry.MeshI3D;
+import components.pipeline.Attachments;
+import components.pipeline.GraphicsPipeline;
+import components.pipeline.ImageViewCreateInfo;
+import components.pipeline.Pipeline;
+import components.pipeline.PipelineLayout;
+import components.recording.RenderPass;
+import components.resources.MemoryBin;
+import components.shaders.descriptor_sets.DescriptorSet;
+import components.shaders.descriptor_sets.DescriptorSetBlueprint;
+import components.shaders.descriptor_sets.DescriptorSetFactory;
+import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
+import components.transform.CameraTransform;
+import components.transform.ModelTransform3D;
 import core.Application;
 import core.Engine;
 import core.EngineTask;
@@ -45,24 +59,9 @@ import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
 
-import components.geometry.MeshI3D;
-import components.pipeline.Attachments;
-import components.pipeline.GraphicsPipeline;
-import components.pipeline.ImageViewCreateInfo;
-import components.pipeline.Pipeline;
-import components.pipeline.PipelineLayout;
-import components.recording.RenderPass;
-import components.resources.MemoryBin;
-import components.shaders.descriptor_sets.DescriptorSet;
-import components.shaders.descriptor_sets.DescriptorSetBlueprint;
-import components.shaders.descriptor_sets.DescriptorSetFactory;
-import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
-import components.transform.CameraTransform;
-import components.transform.ModelTransform3D;
-
 /**
  * Sets up data needed for the rendering.
- * 
+ *
  * @author Cezary Chodun
  * @since 12.03.2020
  */
@@ -78,7 +77,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private VkRect2D.Buffer scissor;
     LongBuffer pDesc;
     Timer timer;
-    
+
     private ModelTransform3D cubeTransform = new ModelTransform3D();
     private CameraTransform camera;
 
@@ -105,7 +104,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 createDscBlueprints(
                         device, Application.getConfigAssets().getSubAsset("descriptors"), destroy);
         final Pipeline pipeline = createPipeline(physicalDevice, device, renderPass, dscBlueprint);
-        
+
         camera = new CameraTransform(window.getWidth(), window.getHeight());
 
         DescriptorSet[] descriptorSets = createDescriptorSets(physicalDevice, device, dscBlueprint);
@@ -419,11 +418,11 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         // Sets the cube position
         cubeTransform.getPosition().set(0.0f, 0.0f, 2.0f);
-        
+
         DescriptorSet[] out = new DescriptorSet[dscs.length];
         TransformationDescriptorSet env =
                 new TransformationDescriptorSet(physicalDevice, device, dscs[0]);
-        Transform4fPeriodicalDescriptorUpdater timeUp = 
+        Transform4fPeriodicalDescriptorUpdater timeUp =
                 new Transform4fPeriodicalDescriptorUpdater(env, cubeTransform, camera, "transform");
         timer = new Timer("Time timer");
         timer.schedule(timeUp, 30, 10);
@@ -468,21 +467,21 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         return out;
     }
-    
+
     /**
-     * Makes a square face from the vertices.
-     * The first two vertices must not share a edge of the square.
+     * Makes a square face from the vertices. The first two vertices must not share a edge of the
+     * square.
      */
     private static List<Integer> makeSquere(int a, int b, int c, int d) {
         List<Integer> ind = new ArrayList<Integer>();
         ind.add(a);
         ind.add(b);
         ind.add(c);
-        
+
         ind.add(d);
         ind.add(b);
         ind.add(a);
-        
+
         return ind;
     }
 
@@ -497,26 +496,25 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private static Recordable makeWorkRecordable(
             VkPhysicalDevice physicalDevice, VkDevice device, Pipeline pipeline, LongBuffer pDesc) {
 
-        //Cube
+        // Cube
         List<Vector3f> vert = new ArrayList<Vector3f>();
-        vert.add(new Vector3f(0.5f, 0.5f, 0.5f));   //0
-        vert.add(new Vector3f(0.5f, 0.5f, -0.5f));  //1
-        vert.add(new Vector3f(0.5f, -0.5f, 0.5f));  //2
-        vert.add(new Vector3f(0.5f, -0.5f, -0.5f)); //3
-        vert.add(new Vector3f(-0.5f, 0.5f, 0.5f));  //4
-        vert.add(new Vector3f(-0.5f, 0.5f, -0.5f)); //5
-        vert.add(new Vector3f(-0.5f, -0.5f, 0.5f)); //6
-        vert.add(new Vector3f(-0.5f, -0.5f, -0.5f));//7
-            
+        vert.add(new Vector3f(0.5f, 0.5f, 0.5f)); // 0
+        vert.add(new Vector3f(0.5f, 0.5f, -0.5f)); // 1
+        vert.add(new Vector3f(0.5f, -0.5f, 0.5f)); // 2
+        vert.add(new Vector3f(0.5f, -0.5f, -0.5f)); // 3
+        vert.add(new Vector3f(-0.5f, 0.5f, 0.5f)); // 4
+        vert.add(new Vector3f(-0.5f, 0.5f, -0.5f)); // 5
+        vert.add(new Vector3f(-0.5f, -0.5f, 0.5f)); // 6
+        vert.add(new Vector3f(-0.5f, -0.5f, -0.5f)); // 7
+
         List<Integer> ind = new ArrayList<Integer>();
-        ind.addAll(makeSquere(0, 3, 2, 1));//x
+        ind.addAll(makeSquere(0, 3, 2, 1)); // x
         ind.addAll(makeSquere(4, 7, 5, 6));
-        
-    
-        ind.addAll(makeSquere(0, 5, 1, 4));//y
+
+        ind.addAll(makeSquere(0, 5, 1, 4)); // y
         ind.addAll(makeSquere(2, 7, 6, 3));
-        
-        ind.addAll(makeSquere(0, 6, 4, 2));//z
+
+        ind.addAll(makeSquere(0, 6, 4, 2)); // z
         ind.addAll(makeSquere(1, 7, 3, 5));
 
         // Creating mesh
@@ -555,10 +553,11 @@ public class InitializeRendering implements EngineTask, Destroyable {
                         pBuffers.put(0, meshI3D.getVerticesHandle());
                         vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
 
-                        vkCmdBindIndexBuffer(buffer, meshI3D.getIndicesHandle(), (long)0, VK_INDEX_TYPE_UINT32);
+                        vkCmdBindIndexBuffer(
+                                buffer, meshI3D.getIndicesHandle(), (long) 0, VK_INDEX_TYPE_UINT32);
 
                         vkCmdDrawIndexed(buffer, ind.size(), 1, 0, 0, 0);
-                        
+
                         memFree(pBuffers);
                         memFree(offsets);
                     }

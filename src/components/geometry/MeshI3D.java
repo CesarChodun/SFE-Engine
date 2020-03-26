@@ -14,30 +14,30 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
 
 /**
  * Indexed 3D mesh.
- * 
+ *
  * @author Cezary Chodun
  * @since 6.03.2020
  */
 public class MeshI3D implements IndexedMesh {
-    
+
     /** Length of a vertex description(in bytes). */
     private static int STRIDE = 3 * 4; // Three(xyz) floats(4 bytes) per vertex.
 
     /** Length of a index description(in bytes). */
     private static int INDICES_STRIDE = 1 * 4;
-    
+
     private VkDevice device;
 
     /** Vertices buffer handle. */
     private long verticesBuffer;
     /** Number of vertices in the buffer. */
     private int verticesCount;
-    
+
     /** Indices buffer handle. */
     private long indicesBuffer;
     /** Number of indices in the buffer. */
     private int indicesCount;
-    
+
     /**
      * Creates a new un-indexed two-dimensional(only x and y coordinates) mesh.
      *
@@ -46,19 +46,20 @@ public class MeshI3D implements IndexedMesh {
      * @param vertices A list containing vertices position(x, y).
      * @throws VulkanException
      */
-    public MeshI3D(VkPhysicalDevice physicalDevice,
-                    VkDevice device,
-                    List<Vector3f> vertices,
-                    List<Integer> indices) throws VulkanException {
-        
+    public MeshI3D(
+            VkPhysicalDevice physicalDevice,
+            VkDevice device,
+            List<Vector3f> vertices,
+            List<Integer> indices)
+            throws VulkanException {
+
         this.device = device;
         createMesh(physicalDevice, vertices, indices);
     }
-    
-    private void createVerticesBuffer(
-            VkPhysicalDevice physicalDevice, 
-            List<Vector3f> vertices) throws VulkanException {
-        
+
+    private void createVerticesBuffer(VkPhysicalDevice physicalDevice, List<Vector3f> vertices)
+            throws VulkanException {
+
         verticesCount = vertices.size();
         ByteBuffer vertexBuffer = memAlloc(verticesCount * STRIDE);
 
@@ -73,29 +74,27 @@ public class MeshI3D implements IndexedMesh {
         verticesBuffer = Util.createVerticesBuffer(physicalDevice, device, vertexBuffer);
         memFree(vertexBuffer);
     }
-    
-    private void createIndicesBuffer(
-            VkPhysicalDevice physicalDevice, 
-            List<Integer> indices) throws VulkanException {
+
+    private void createIndicesBuffer(VkPhysicalDevice physicalDevice, List<Integer> indices)
+            throws VulkanException {
 
         indicesCount = indices.size();
         ByteBuffer indexBuffer = memAlloc(indicesCount * INDICES_STRIDE);
-        
+
         IntBuffer ib = indexBuffer.asIntBuffer();
         for (int i = 0; i < indicesCount; i++) {
             ib.put(indices.get(i));
         }
         ib.flip();
-        
+
         indicesBuffer = Util.createIndicesBuffer(physicalDevice, device, indexBuffer);
         memFree(indexBuffer);
     }
-    
+
     private void createMesh(
-            VkPhysicalDevice physicalDevice, 
-            List<Vector3f> vertices,
-            List<Integer> indices) throws VulkanException {
-        
+            VkPhysicalDevice physicalDevice, List<Vector3f> vertices, List<Integer> indices)
+            throws VulkanException {
+
         createVerticesBuffer(physicalDevice, vertices);
         createIndicesBuffer(physicalDevice, indices);
     }
@@ -135,5 +134,4 @@ public class MeshI3D implements IndexedMesh {
     public int indicesCount() {
         return indicesCount;
     }
-
 }

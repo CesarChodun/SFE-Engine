@@ -1,9 +1,8 @@
 package demos.helloDescriptor.rendering;
 
-import java.util.TimerTask;
-
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.descriptor_sets.DescriptorSet;
+import java.util.TimerTask;
 
 /**
  * Updates the time descriptor.

@@ -53,9 +53,7 @@ public class Engine implements Runnable, Destroyable {
         smartQueue = new SmartWaitQueue();
     }
 
-    /** 
-     * Starts the engine.
-     */
+    /** Starts the engine. */
     @Override
     public void run() {
         running = true;

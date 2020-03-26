@@ -1,12 +1,11 @@
 package components.shaders.descriptor_sets;
 
+import static components.pipeline.PipelineUtil.*;
+
 import core.resources.ConfigAsset;
 import core.resources.ConfigFile;
 import core.resources.Destroyable;
 import core.result.VulkanException;
-
-import static components.pipeline.PipelineUtil.*;
-
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,14 +72,14 @@ public class FileDescriptorSetBlueprint implements DescriptorSetBlueprint, Destr
                 VkDescriptorSetLayoutBinding current = layoutBindings.get(i);
                 current.binding(cfgs.get(i).getInteger(BINDING_KEY, DEFAULT_BINDING));
                 current.stageFlags(cfgs.get(i).getFlags(VK10.class, STAGE_FLAGS_KEY));
-                current.descriptorType(cfgs.get(i)
-                        .getStaticIntFromClass(
-                                VK10.class,
-                                DESCRIPTORS_TYPE_KEY,
-                                DEFAULT_DESCRIPTORS_TYPE));
-                current.descriptorCount(cfgs.get(i)
-                        .getInteger(
-                                DESCRIPTOR_COUNT_KEY, DEFAULT_DESCRIPTOR_COUNT));
+                current.descriptorType(
+                        cfgs.get(i)
+                                .getStaticIntFromClass(
+                                        VK10.class,
+                                        DESCRIPTORS_TYPE_KEY,
+                                        DEFAULT_DESCRIPTORS_TYPE));
+                current.descriptorCount(
+                        cfgs.get(i).getInteger(DESCRIPTOR_COUNT_KEY, DEFAULT_DESCRIPTOR_COUNT));
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "Failed to load descriptor set binding information.");
                 e.printStackTrace();

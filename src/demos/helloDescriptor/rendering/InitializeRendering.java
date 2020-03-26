@@ -9,6 +9,18 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import components.geometry.MeshU2D;
+import components.pipeline.Attachments;
+import components.pipeline.GraphicsPipeline;
+import components.pipeline.ImageViewCreateInfo;
+import components.pipeline.Pipeline;
+import components.pipeline.PipelineLayout;
+import components.recording.RenderPass;
+import components.resources.MemoryBin;
+import components.shaders.descriptor_sets.DescriptorSet;
+import components.shaders.descriptor_sets.DescriptorSetBlueprint;
+import components.shaders.descriptor_sets.DescriptorSetFactory;
+import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
 import core.Application;
 import core.Engine;
 import core.EngineTask;
@@ -45,19 +57,6 @@ import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
-
-import components.geometry.MeshU2D;
-import components.pipeline.Attachments;
-import components.pipeline.GraphicsPipeline;
-import components.pipeline.ImageViewCreateInfo;
-import components.pipeline.Pipeline;
-import components.pipeline.PipelineLayout;
-import components.recording.RenderPass;
-import components.resources.MemoryBin;
-import components.shaders.descriptor_sets.DescriptorSet;
-import components.shaders.descriptor_sets.DescriptorSetBlueprint;
-import components.shaders.descriptor_sets.DescriptorSetFactory;
-import components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 

@@ -33,14 +33,15 @@ public class PipelineUtil {
             VkDevice device, VkDescriptorSetLayoutBinding.Buffer layoutBindings)
             throws VulkanException {
         IntBuffer bindingFlagsBuffer = memAllocInt(layoutBindings.remaining());
-        
+
         for (int i = 0; i < bindingFlagsBuffer.remaining(); i++) {
             bindingFlagsBuffer.put(i, VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT);
         }
-        
+
         VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags =
                 VkDescriptorSetLayoutBindingFlagsCreateInfoEXT.calloc()
-                        .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
+                        .sType(
+                                VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)
                         .pNext(NULL)
                         .pBindingFlags(bindingFlagsBuffer);
 
@@ -49,7 +50,7 @@ public class PipelineUtil {
                         .sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)
                         .pNext(bindingFlags.address())
                         .flags(VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT)
-                        // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread 
+                        // VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT for thread
                         // independent descriptor updates
                         .pBindings(layoutBindings);
 

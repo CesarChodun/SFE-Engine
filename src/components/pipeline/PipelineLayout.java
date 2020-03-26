@@ -6,12 +6,11 @@ import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
 
+import components.shaders.descriptor_sets.DescriptorSetBlueprint;
 import core.result.VulkanException;
 import java.nio.LongBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
-
-import components.shaders.descriptor_sets.DescriptorSetBlueprint;
 
 /**
  * @author Cezary Chodun

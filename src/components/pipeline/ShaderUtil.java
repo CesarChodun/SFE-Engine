@@ -89,7 +89,7 @@ public class ShaderUtil {
      *
      * @param logicalDevice
      * @param file
-     * @return  handle of the created shader module.
+     * @return handle of the created shader module.
      * @throws VulkanException
      */
     public static long createShaderModule(VkDevice logicalDevice, File file)

@@ -4,6 +4,7 @@ import static core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import components.pipeline.Attachments;
 import core.rendering.Recordable;
 import core.resources.Destroyable;
 import core.result.VulkanException;
@@ -16,8 +17,6 @@ import org.lwjgl.vulkan.VkRenderPassBeginInfo;
 import org.lwjgl.vulkan.VkRenderPassCreateInfo;
 import org.lwjgl.vulkan.VkSubpassDependency;
 import org.lwjgl.vulkan.VkSubpassDescription;
-
-import components.pipeline.Attachments;
 
 /**
  * Structure storing information about the rendering work.
@@ -38,11 +37,10 @@ public class RenderPass implements Destroyable {
     private Recordable preset;
     /** Rest of the work that needs to be performed in the render pass. */
     private Recordable work;
- 
+
     // TODO: Change the architecture to utilize secondary
     // command buffers
-    private int contents =
-            VK_SUBPASS_CONTENTS_INLINE; 
+    private int contents = VK_SUBPASS_CONTENTS_INLINE;
 
     /** The render pass handle. */
     private long renderPass;
@@ -125,10 +123,7 @@ public class RenderPass implements Destroyable {
         return renderPass;
     }
 
-    /** 
-     * Frees the render pass data. 
-     * <b>Note:</b> The attachments are not freed. 
-     */
+    /** Frees the render pass data. <b>Note:</b> The attachments are not freed. */
     @Override
     public void destroy() {
         attachments.destroy();

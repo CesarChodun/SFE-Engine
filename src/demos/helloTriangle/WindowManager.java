@@ -1,12 +1,11 @@
 package demos.helloTriangle;
 
+import components.resources.MemoryBin;
+import components.window.CFrame;
 import core.Application;
 import core.Engine;
 import core.resources.Asset;
 import java.util.concurrent.Semaphore;
-
-import components.resources.MemoryBin;
-import components.window.CFrame;
 
 public class WindowManager implements Runnable {
 

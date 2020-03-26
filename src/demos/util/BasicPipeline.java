@@ -259,7 +259,8 @@ public class BasicPipeline {
                         .rasterizationSamples(VK_SAMPLE_COUNT_1_BIT);
 
         // Load shaders
-        final VkPipelineShaderStageCreateInfo.Buffer stages = VkPipelineShaderStageCreateInfo.calloc(2);
+        final VkPipelineShaderStageCreateInfo.Buffer stages =
+                VkPipelineShaderStageCreateInfo.calloc(2);
 
         loadShaderStage(
                 stages.get(0),
@@ -406,10 +407,10 @@ public class BasicPipeline {
 
     /**
      * Creates a shader module.
-     * 
+     *
      * @param logicalDevice
      * @param file
-     * @return  the shader module handle.
+     * @return the shader module handle.
      * @throws VulkanException
      */
     public static long createShaderModule(VkDevice logicalDevice, File file)

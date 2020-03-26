@@ -1,12 +1,11 @@
 package components.shaders.descriptor_sets;
 
+import components.shaders.descriptors.Descriptor;
 import core.resources.Destroyable;
 import core.result.VulkanException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import components.shaders.descriptors.Descriptor;
 
 /**
  * Vulkan descriptor set.

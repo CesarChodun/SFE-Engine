@@ -1,10 +1,9 @@
 package demos.util;
 
-import java.io.File;
-import java.util.concurrent.Semaphore;
-
 import components.resources.ConversionEngine;
 import components.resources.converters.SPIRVConverter;
+import java.io.File;
+import java.util.concurrent.Semaphore;
 
 /**
  * Converts shader programs from the resources package. Runs concurrently so it is required to wait

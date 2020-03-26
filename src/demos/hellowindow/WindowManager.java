@@ -2,6 +2,7 @@ package demos.hellowindow;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import components.window.WindowFactory;
 import core.Engine;
 import core.EngineTask;
 import core.HardwareManager;
@@ -9,8 +10,6 @@ import core.rendering.Window;
 import core.resources.Asset;
 import core.result.VulkanException;
 import java.io.IOException;
-
-import components.window.WindowFactory;
 
 public class WindowManager implements EngineTask {
 

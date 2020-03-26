@@ -15,6 +15,8 @@ import static org.lwjgl.vulkan.VK10.VK_SHARING_MODE_EXCLUSIVE;
 import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 import static org.lwjgl.vulkan.VK10.vkUpdateDescriptorSets;
 
+import components.memory.GPUBuffer;
+import components.shaders.descriptors.DescriptorValue;
 import core.result.VulkanException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
@@ -26,9 +28,6 @@ import org.lwjgl.vulkan.VkDescriptorBufferInfo;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkWriteDescriptorSet;
-
-import components.memory.GPUBuffer;
-import components.shaders.descriptors.DescriptorValue;
 
 /**
  * @author Cezary Chodun

@@ -1,5 +1,6 @@
 package demos.helloDescriptor;
 
+import components.util.EngineInitializationTask;
 import core.Engine;
 import core.synchronization.DependencyFence;
 import demos.util.DefaultResourceConverter;
@@ -9,8 +10,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import components.util.EngineInitializationTask;
 
 /**
  * Hello descriptor demo logic.

@@ -195,11 +195,11 @@ public class RenderUtil {
                         .pNext(NULL)
                         .queueFamilyIndex(queueFamilyIndex)
                         .pQueuePriorities(queuePriorities);
-        
-        VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = 
+
+        VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures =
                 VkPhysicalDeviceDescriptorIndexingFeaturesEXT.calloc()
-                .sType(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)
-                .descriptorBindingUniformBufferUpdateAfterBind(true);
+                        .sType(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)
+                        .descriptorBindingUniformBufferUpdateAfterBind(true);
 
         VkDeviceCreateInfo deviceCreateInfo =
                 VkDeviceCreateInfo.calloc()
@@ -458,9 +458,7 @@ public class RenderUtil {
         return out;
     }
 
-    /**
-     * Gets current surface present modes.
-     */
+    /** Gets current surface present modes. */
     public static IntBuffer getSurfacePresentModes(VkPhysicalDevice physicalDevice, long surface)
             throws VulkanException {
         IntBuffer pCount = memAllocInt(1);

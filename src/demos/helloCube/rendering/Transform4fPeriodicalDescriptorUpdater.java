@@ -1,12 +1,11 @@
 package demos.helloCube.rendering;
 
-import java.util.TimerTask;
-import org.joml.Vector3f;
-
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.descriptor_sets.DescriptorSet;
 import components.transform.CameraTransform;
 import components.transform.ModelTransform3D;
+import java.util.TimerTask;
+import org.joml.Vector3f;
 
 /**
  * Updates the transformation descriptors.
@@ -18,18 +17,15 @@ public class Transform4fPeriodicalDescriptorUpdater extends TimerTask {
 
     private GeneralizedDescriptorValue modelDescriptor, cameraDescriptor;
     Integer timeDescriptorIndex;
-    
+
     private ModelTransform3D transform;
     private CameraTransform camera;
-    
+
     private long mili = -1;
 
     /** @param set the descriptor to be updated. */
     public Transform4fPeriodicalDescriptorUpdater(
-            DescriptorSet set,
-            ModelTransform3D transform,
-            CameraTransform camera,
-            String target) {
+            DescriptorSet set, ModelTransform3D transform, CameraTransform camera, String target) {
         modelDescriptor = (GeneralizedDescriptorValue) set.get("Model").getValue(target);
         cameraDescriptor = (GeneralizedDescriptorValue) set.get("Camera").getValue(target);
         this.transform = transform;
@@ -42,10 +38,10 @@ public class Transform4fPeriodicalDescriptorUpdater extends TimerTask {
         if (mili == -1) {
             mili = System.currentTimeMillis();
         }
-        
+
         long newTime = System.currentTimeMillis();
         long delta = newTime - mili;
-        
+
         transform.getRotation().rotateAxis(0.006f * delta / 10, new Vector3f(1, 1, 0));
         mili = newTime;
 

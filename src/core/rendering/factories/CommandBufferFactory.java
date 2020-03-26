@@ -5,6 +5,7 @@ import static core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import components.recording.RenderPass;
 import core.result.VulkanException;
 import java.util.HashMap;
 import org.lwjgl.PointerBuffer;
@@ -12,8 +13,6 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkCommandBufferAllocateInfo;
 import org.lwjgl.vulkan.VkCommandBufferBeginInfo;
 import org.lwjgl.vulkan.VkDevice;
-
-import components.recording.RenderPass;
 
 /**
  * Class for command buffer creation.

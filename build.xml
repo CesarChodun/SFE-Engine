@@ -260,6 +260,21 @@
 		</checkstyle>
 	</target>
 	
+	<target name="auto-correct">
+		<fileset dir="src" id="java_files">
+	        <include name="**/*.java" />
+	    </fileset>
+	    <pathconvert property="j_files" refid="java_files" pathsep=" " />
+		
+		<java jar="google-java-format-1.7-all-deps.jar" fork="true">
+			<arg value="-a"/>
+			<arg value="-r"/>
+			
+			<arg value="src\components\pipeline\GraphicsPipeline.java"/>
+			<arg line="${j_files}"/>
+	    </java>
+	</target>
+	
 	<target name="release" depends="compile">
 		<mkdir dir="${release.dir}"/>
 		

@@ -140,8 +140,8 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine    Engine that will own the window.
-     * @param asset     The asset containing the window configuration file.
+     * @param engine Engine that will own the window.
+     * @param asset The asset containing the window configuration file.
      */
     public CFrame(Engine engine, Asset asset) {
         engine.getConfigPool().execute(new CreateCFrameTask(engine, asset));
@@ -152,7 +152,7 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine    Engine that will own the window.
+     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param workDone A semaphore that will indicate that the window creation process have
      *     finished.
@@ -166,7 +166,7 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine    Engine that will own the window.
+     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param showWindow Set to true if you want the window to be displayed as soon as created.
      * @param workDone A semaphore that will indicate that the window creation process have
@@ -182,7 +182,7 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine    Engine that will own the window.
+     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param workDone A semaphore that will indicate that the window creation process have
      *     finished.
@@ -199,7 +199,7 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine    Engine that will own the window.
+     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param showWindow Set to true if you want the window to be displayed as soon as created.
      * @param workDone A semaphore that will indicate that the window creation process have

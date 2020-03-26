@@ -7,5 +7,4 @@ public interface IndexedMesh extends Mesh {
     public int getIndicesStride();
 
     public int indicesCount();
-    
 }

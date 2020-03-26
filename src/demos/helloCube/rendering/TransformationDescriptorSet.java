@@ -1,17 +1,16 @@
 package demos.helloCube.rendering;
 
-import org.joml.Matrix4f;
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkPhysicalDevice;
-
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.UniformUsage;
 import components.shaders.descriptor_sets.DescriptorSet;
 import components.shaders.descriptors.Descriptor;
+import org.joml.Matrix4f;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 
 /**
  * Descriptor set for camera and model transformation.
- * 
+ *
  * @author Cezary Chodun
  * @since 12.03.2020
  */
@@ -30,9 +29,7 @@ public class TransformationDescriptorSet extends DescriptorSet {
         makeDescriptors();
     }
 
-    /**
-     * Creates needed descriptors.
-     */
+    /** Creates needed descriptors. */
     private void makeDescriptors() {
         GeneralizedDescriptorValue[] descVals = new GeneralizedDescriptorValue[2];
         descVals[0] =
@@ -43,11 +40,11 @@ public class TransformationDescriptorSet extends DescriptorSet {
                         0,
                         "transform",
                         UniformUsage.UNIFORM_USAGE_MATRIX_4F);
-        
+
         addDescriptor("Model", new Descriptor(descVals[0]));
         descVals[0].setUniform(0, new Matrix4f());
         descVals[0].update();
-        
+
         descVals[1] =
                 new GeneralizedDescriptorValue(
                         physicalDevice,
@@ -56,7 +53,7 @@ public class TransformationDescriptorSet extends DescriptorSet {
                         1,
                         "transform",
                         UniformUsage.UNIFORM_USAGE_MATRIX_4F);
-        
+
         addDescriptor("Camera", new Descriptor(descVals[1]));
         descVals[1].setUniform(0, new Matrix4f());
         descVals[1].update();

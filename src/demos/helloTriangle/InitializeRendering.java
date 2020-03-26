@@ -23,6 +23,12 @@ import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
 import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
+import components.geometry.MeshU2D;
+import components.pipeline.Attachments;
+import components.pipeline.GraphicsPipeline;
+import components.pipeline.ImageViewCreateInfo;
+import components.recording.RenderPass;
+import components.resources.MemoryBin;
 import core.Application;
 import core.Engine;
 import core.EngineTask;
@@ -56,13 +62,6 @@ import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
 import org.lwjgl.vulkan.VkViewport;
-
-import components.geometry.MeshU2D;
-import components.pipeline.Attachments;
-import components.pipeline.GraphicsPipeline;
-import components.pipeline.ImageViewCreateInfo;
-import components.recording.RenderPass;
-import components.resources.MemoryBin;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 

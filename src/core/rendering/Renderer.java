@@ -301,7 +301,8 @@ public class Renderer implements Destroyable {
 
     /**
      * Tries to acquire a new image from the swapchain.
-     * <p><b>Note:</b> <b>Must</b> be synchronized!</p>
+     *
+     * <p><b>Note:</b> <b>Must</b> be synchronized!
      *
      * @return True if the process was successful (there was an image to be acquired) and false
      *     otherwise.

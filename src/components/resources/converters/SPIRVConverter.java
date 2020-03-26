@@ -1,5 +1,6 @@
 package components.resources.converters;
 
+import components.resources.Converter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import components.resources.Converter;
 
 /**
  * Compiles SPIRV shader code to binaries.

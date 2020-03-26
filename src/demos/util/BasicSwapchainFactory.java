@@ -55,7 +55,7 @@ public class BasicSwapchainFactory implements SwapchainFactory {
      * @param physicalDevice
      * @param surface
      * @param presentModeHierarchy
-     * @return  present mode identifier.
+     * @return present mode identifier.
      * @throws VulkanException
      */
     private static Integer getBestPresentMode(

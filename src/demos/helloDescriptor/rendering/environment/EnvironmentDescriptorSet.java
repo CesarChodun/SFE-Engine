@@ -1,12 +1,11 @@
 package demos.helloDescriptor.rendering.environment;
 
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkPhysicalDevice;
-
 import components.shaders.GeneralizedDescriptorValue;
 import components.shaders.UniformUsage;
 import components.shaders.descriptor_sets.DescriptorSet;
 import components.shaders.descriptors.Descriptor;
+import org.lwjgl.vulkan.VkDevice;
+import org.lwjgl.vulkan.VkPhysicalDevice;
 
 public class EnvironmentDescriptorSet extends DescriptorSet {
 
