@@ -7,3 +7,4 @@ glslangValidator.exe
 *.log
 /build/
 /release/
+google-java-format*
