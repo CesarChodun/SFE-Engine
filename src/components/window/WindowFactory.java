@@ -7,10 +7,15 @@ import core.hardware.Monitor;
 import core.rendering.Window;
 import core.resources.ConfigFile;
 import core.resources.ResourceUtil;
-import core.result.VulkanException;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Logger;
 
+/**
+ * Enables creating windows from configuration files.
+ * 
+ * @author Cezary Chodun
+ * @since 30.03.2020
+ */
 public class WindowFactory {
 
     @SuppressWarnings("unused")
@@ -29,7 +34,14 @@ public class WindowFactory {
             DEFAULT_POSY = "0";
     protected static final Boolean DEFAULT_FULLSCREEN = false;
 
-    public static void loadFromFile(Window window, ConfigFile config) throws VulkanException {
+    /**
+     * Loads window configuration from a file.
+     * Must be invoked from the first thread.
+     * 
+     * @param window
+     * @param config
+     */
+    public static void loadFromFile(Window window, ConfigFile config) {
         Monitor monitor = HardwareManager.getPrimaryMonitor();
         int width =
                 ResourceUtil.toPx(config.getString(WIDTH_KEY, DEFAULT_WIDTH), monitor.getWidth());
@@ -47,6 +59,14 @@ public class WindowFactory {
         config.close();
     }
 
+    /**
+     * Loads window configuration from a file.
+     * 
+     * @param engine    
+     * @param window
+     * @param config
+     * @param workDone  Semaphore that indicates that the window was updated.
+     */
     public static void loadFromFileC(
             Engine engine, Window window, ConfigFile config, Semaphore workDone) {
         Monitor monitor = HardwareManager.getPrimaryMonitor();
