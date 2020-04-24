@@ -42,14 +42,29 @@ public class CameraTransform implements Transform4f {
         return new Matrix4f(projection).mul(rotMat).mul(posMat);
     }
 
+    /**
+     * Obtains the projection matrix.
+     * 
+     * @return the projection matrix.
+     */
     public Matrix4f getProjection() {
         return projection;
     }
 
+    /**
+     * Obtains the camera position in 3D space.
+     * 
+     * @return the camera's position
+     */
     public Vector3f getPosition() {
         return position;
     }
 
+    /**
+     * Obtains the camera rotation in 3D space.
+     * 
+     * @return the camera's rotation
+     */
     public Quaternionf getRotation() {
         return rotation;
     }
