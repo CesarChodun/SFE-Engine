@@ -28,14 +28,26 @@ public class ModelTransform3D implements Transform4f {
         return new Matrix4f(scaleMat).mul(posMat).mul(rotMat);
     }
 
+    /**
+     * 
+     * @return scale factor
+     */
     public Vector3f getScale() {
         return scale;
     }
 
+    /**
+     * 
+     * @return position in the 3D space
+     */
     public Vector3f getPosition() {
         return position;
     }
 
+    /**
+     * 
+     * @return rotation in 3D space
+     */
     public Quaternionf getRotation() {
         return rotation;
     }
