@@ -1,5 +1,6 @@
 /bin/
 .classpath
+.idea
 .project
 glslangValidator.exe
 /storage/
