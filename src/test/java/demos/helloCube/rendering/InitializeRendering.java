@@ -171,32 +171,25 @@ public class InitializeRendering implements EngineTask, Destroyable {
      * @return the physical device.
      */
     private static VkPhysicalDevice getPhysicalDevice() {
-        VkPhysicalDevice physicalDevice =
-                HardwareManager.getBestPhysicalDevice(
-                        new PhysicalDeviceJudge() {
+        return  HardwareManager.getBestPhysicalDevice(
+                device -> {
 
-                            @Override
-                            public int score(VkPhysicalDevice device) {
+                    VkPhysicalDeviceProperties props =
+                            VkPhysicalDeviceProperties.calloc();
+                    vkGetPhysicalDeviceProperties(device, props);
 
-                                VkPhysicalDeviceProperties props =
-                                        VkPhysicalDeviceProperties.calloc();
-                                vkGetPhysicalDeviceProperties(device, props);
+                    int out = 0;
 
-                                int out = 0;
+                    if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+                        out = 1000;
+                    } else if (props.deviceType()
+                            == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+                        out = 100;
+                    }
 
-                                if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-                                    out = 1000;
-                                } else if (props.deviceType()
-                                        == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
-                                    out = 100;
-                                }
-
-                                props.free();
-                                return out;
-                            }
-                        });
-
-        return physicalDevice;
+                    props.free();
+                    return out;
+                });
     }
 
     /**
@@ -411,8 +404,8 @@ public class InitializeRendering implements EngineTask, Destroyable {
         try {
             dscs = DescriptorSetFactory.createDescriptorSets(device, dscBlueprint);
         } catch (VulkanException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new AssertionError("Failed to create descriptor set, while creating descriptor sets.", e);
         }
 
         // Sets the cube position
@@ -454,14 +447,10 @@ public class InitializeRendering implements EngineTask, Destroyable {
         scissor.offset().set(0, 0);
 
         Recordable out =
-                new Recordable() {
+                buffer -> {
 
-                    @Override
-                    public void record(VkCommandBuffer buffer) {
-
-                        vkCmdSetScissor(buffer, 0, scissor);
-                        vkCmdSetViewport(buffer, 0, viewport);
-                    }
+                    vkCmdSetScissor(buffer, 0, scissor);
+                    vkCmdSetViewport(buffer, 0, viewport);
                 };
 
         return out;
@@ -527,39 +516,35 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         // Making the recordable object for command buffer creation
         Recordable recCmd =
-                new Recordable() {
+                buffer -> {
 
-                    @Override
-                    public void record(VkCommandBuffer buffer) {
+                    // Bind the rendering pipeline (including the shaders)
+                    vkCmdBindPipeline(
+                            buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle());
 
-                        // Bind the rendering pipeline (including the shaders)
-                        vkCmdBindPipeline(
-                                buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle());
+                    // Bind descriptor sets
+                    vkCmdBindDescriptorSets(
+                            buffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            pipeline.layout(),
+                            0,
+                            pDesc,
+                            null);
 
-                        // Bind descriptor sets
-                        vkCmdBindDescriptorSets(
-                                buffer,
-                                VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                pipeline.layout(),
-                                0,
-                                pDesc,
-                                null);
+                    // Bind triangle vertices
+                    LongBuffer offsets = memAllocLong(1);
+                    offsets.put(0, 0L);
+                    LongBuffer pBuffers = memAllocLong(1);
+                    pBuffers.put(0, meshI3D.getVerticesHandle());
+                    vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
 
-                        // Bind triangle vertices
-                        LongBuffer offsets = memAllocLong(1);
-                        offsets.put(0, 0L);
-                        LongBuffer pBuffers = memAllocLong(1);
-                        pBuffers.put(0, meshI3D.getVerticesHandle());
-                        vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
+                    vkCmdBindIndexBuffer(
+                            buffer, meshI3D.getIndicesHandle(), (long) 0, VK_INDEX_TYPE_UINT32);
 
-                        vkCmdBindIndexBuffer(
-                                buffer, meshI3D.getIndicesHandle(), (long) 0, VK_INDEX_TYPE_UINT32);
+                    vkCmdDrawIndexed(buffer, ind.size(), 1, 0, 0, 0);
 
-                        vkCmdDrawIndexed(buffer, ind.size(), 1, 0, 0, 0);
-
-                        memFree(pBuffers);
-                        memFree(offsets);
-                    }
+                    memFree(pBuffers);
+                    memFree(offsets);
                 };
 
         return recCmd;
