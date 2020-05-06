@@ -17,7 +17,7 @@
 	<property name="release.dir" value="release" />
 	
 	<!-- Demos settings -->
-	<property name="app.demos.dir" value="test.java.demos" />
+	<property name="app.demos.dir" value="demos" />
 	<property name="app.demos.src.dir" value="${app.classes.dir}/${app.demos.dir}" />
 	<property name="app.demos.jar.dir" value="${build.dir}/${app.demos.dir}" />
 

@@ -1,9 +1,9 @@
-package test.java.demos.helloCube.rendering;
+package demos.helloCube.rendering;
 
-import main.java.components.shaders.GeneralizedDescriptorValue;
-import main.java.components.shaders.descriptor_sets.DescriptorSet;
-import main.java.components.transform.CameraTransform;
-import main.java.components.transform.ModelTransform3D;
+import com.sfengine.components.shaders.GeneralizedDescriptorValue;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
+import com.sfengine.components.transform.CameraTransform;
+import com.sfengine.components.transform.ModelTransform3D;
 import java.util.TimerTask;
 import org.joml.Vector3f;
 

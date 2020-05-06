@@ -1,7 +1,7 @@
-package test.java.demos.helloworld;
+package demos.helloworld;
 
-import main.java.core.Engine;
-import main.java.core.EngineTask;
+import com.sfengine.core.Engine;
+import com.sfengine.core.EngineTask;
 
 public class Main {
 

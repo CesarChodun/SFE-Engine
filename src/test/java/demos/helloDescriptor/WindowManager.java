@@ -1,12 +1,14 @@
-package test.java.demos.helloDescriptor;
+package demos.helloDescriptor;
 
-import main.java.components.resources.MemoryBin;
-import main.java.components.window.CFrame;
-import main.java.core.Application;
-import main.java.core.Engine;
-import main.java.core.resources.Asset;
-import main.java.core.synchronization.DependencyFence;
-import test.java.demos.helloDescriptor.rendering.*;
+import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.window.CFrame;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
+import com.sfengine.core.resources.Asset;
+import com.sfengine.core.resources.Destroyable;
+import com.sfengine.core.synchronization.DependencyFence;
+
+import demos.helloDescriptor.rendering.*;
 
 /**
  * Creates a window and initializes the rendering layer for it.
@@ -49,8 +51,8 @@ public class WindowManager implements Runnable {
                     // Creating the rendering task.
                     InitializeRendering rendTask =
                             new InitializeRendering(engine, frame.getWindow());
-                    toDestroy.add(rendTask);
                     engine.addTask(rendTask);
+                    toDestroy.add((Destroyable) rendTask);
                 },
                 windowCreated);
 

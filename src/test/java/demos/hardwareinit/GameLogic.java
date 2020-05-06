@@ -1,8 +1,8 @@
-package test.java.demos.hardwareinit;
+package demos.hardwareinit;
 
-import main.java.core.Application;
-import main.java.core.Engine;
-import main.java.core.EngineTask;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
+import com.sfengine.core.EngineTask;
 import java.util.concurrent.Semaphore;
 
 public class GameLogic implements EngineTask {

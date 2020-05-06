@@ -1,10 +1,10 @@
-package test.java.demos.util;
+package demos.util;
 
-import static main.java.core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
+import static com.sfengine.core.result.VulkanResult.*;
 
-import main.java.core.result.VulkanException;
+import com.sfengine.core.result.VulkanException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

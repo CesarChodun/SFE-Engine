@@ -1,7 +1,7 @@
-package test.java.demos.util;
+package demos.util;
 
-import main.java.components.resources.ConversionEngine;
-import main.java.components.resources.converters.SPIRVConverter;
+import com.sfengine.components.resources.ConversionEngine;
+import com.sfengine.components.resources.converters.SPIRVConverter;
 import java.io.File;
 import java.util.concurrent.Semaphore;
 

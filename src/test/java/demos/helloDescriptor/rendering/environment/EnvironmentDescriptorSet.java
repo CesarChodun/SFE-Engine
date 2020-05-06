@@ -1,9 +1,9 @@
-package test.java.demos.helloDescriptor.rendering.environment;
+package demos.helloDescriptor.rendering.environment;
 
-import main.java.components.shaders.GeneralizedDescriptorValue;
-import main.java.components.shaders.UniformUsage;
-import main.java.components.shaders.descriptor_sets.DescriptorSet;
-import main.java.components.shaders.descriptors.Descriptor;
+import com.sfengine.components.shaders.GeneralizedDescriptorValue;
+import com.sfengine.components.shaders.UniformUsage;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
+import com.sfengine.components.shaders.descriptors.Descriptor;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 

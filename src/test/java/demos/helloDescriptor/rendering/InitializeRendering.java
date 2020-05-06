@@ -1,44 +1,44 @@
-package test.java.demos.helloDescriptor.rendering;
+package demos.helloDescriptor.rendering;
 
-import static main.java.core.rendering.RenderUtil.createLogicalDevice;
-import static main.java.core.rendering.RenderUtil.getDeviceQueue;
-import static main.java.core.result.VulkanResult.validate;
+import static com.sfengine.core.rendering.RenderUtil.createLogicalDevice;
+import static com.sfengine.core.rendering.RenderUtil.getDeviceQueue;
+import static com.sfengine.core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
-import main.java.components.geometry.MeshU2D;
-import main.java.components.pipeline.Attachments;
-import main.java.components.pipeline.GraphicsPipeline;
-import main.java.components.pipeline.ImageViewCreateInfo;
-import main.java.components.pipeline.Pipeline;
-import main.java.components.pipeline.PipelineLayout;
-import main.java.components.recording.RenderPass;
-import main.java.components.resources.MemoryBin;
-import main.java.components.shaders.descriptor_sets.DescriptorSet;
-import main.java.components.shaders.descriptor_sets.DescriptorSetBlueprint;
-import main.java.components.shaders.descriptor_sets.DescriptorSetFactory;
-import main.java.components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
-import main.java.core.Application;
-import main.java.core.Engine;
-import main.java.core.EngineTask;
-import main.java.core.HardwareManager;
-import main.java.core.hardware.PhysicalDeviceJudge;
-import main.java.core.rendering.ColorFormatAndSpace;
-import main.java.core.rendering.Recordable;
-import main.java.core.rendering.RenderUtil;
-import main.java.core.rendering.Renderer;
-import main.java.core.rendering.Window;
-import main.java.core.rendering.factories.CommandBufferFactory;
-import main.java.core.resources.Asset;
-import main.java.core.resources.Destroyable;
-import main.java.core.result.VulkanException;
-import test.java.demos.helloDescriptor.rendering.environment.EnvironmentDescriptorSet;
-import test.java.demos.util.BasicFramebufferFactory;
-import test.java.demos.util.BasicSwapchainFactory;
-import test.java.demos.util.RenderingTask;
+import com.sfengine.components.geometry.MeshU2D;
+import com.sfengine.components.pipeline.Attachments;
+import com.sfengine.components.pipeline.GraphicsPipeline;
+import com.sfengine.components.pipeline.ImageViewCreateInfo;
+import com.sfengine.components.pipeline.Pipeline;
+import com.sfengine.components.pipeline.PipelineLayout;
+import com.sfengine.components.recording.RenderPass;
+import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSetBlueprint;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSetFactory;
+import com.sfengine.components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
+import com.sfengine.core.EngineTask;
+import com.sfengine.core.HardwareManager;
+import com.sfengine.core.hardware.PhysicalDeviceJudge;
+import com.sfengine.core.rendering.ColorFormatAndSpace;
+import com.sfengine.core.rendering.Recordable;
+import com.sfengine.core.rendering.RenderUtil;
+import com.sfengine.core.rendering.Renderer;
+import com.sfengine.core.rendering.Window;
+import com.sfengine.core.rendering.factories.CommandBufferFactory;
+import com.sfengine.core.resources.Asset;
+import com.sfengine.core.resources.Destroyable;
+import com.sfengine.core.result.VulkanException;
+import demos.helloDescriptor.rendering.environment.EnvironmentDescriptorSet;
+import demos.util.BasicFramebufferFactory;
+import demos.util.BasicSwapchainFactory;
+import demos.util.RenderingTask;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -214,8 +214,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     }
 
     /**
-     * Returns an index to the most suitable queue family. According to the {@link
-     * HardwareManager.HARDWARE_CFG} file.
+     * Returns an index to the most suitable queue family.
      *
      * @param window
      * @param physicalDevice

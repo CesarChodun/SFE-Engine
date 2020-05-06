@@ -1,9 +1,9 @@
-package test.java.demos.hellowindow;
+package demos.hellowindow;
 
-import main.java.core.Application;
-import main.java.core.EngineTask;
-import main.java.core.HardwareManager;
-import main.java.core.result.VulkanException;
+import com.sfengine.core.Application;
+import com.sfengine.core.EngineTask;
+import com.sfengine.core.HardwareManager;
+import com.sfengine.core.result.VulkanException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;

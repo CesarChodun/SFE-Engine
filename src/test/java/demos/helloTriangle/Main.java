@@ -1,7 +1,7 @@
-package test.java.demos.helloTriangle;
+package demos.helloTriangle;
 
-import main.java.core.Application;
-import main.java.core.Engine;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
 
 public class Main {
 

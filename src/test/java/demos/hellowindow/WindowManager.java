@@ -1,14 +1,14 @@
-package test.java.demos.hellowindow;
+package demos.hellowindow;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import main.java.components.window.WindowFactory;
-import main.java.core.Engine;
-import main.java.core.EngineTask;
-import main.java.core.HardwareManager;
-import main.java.core.rendering.Window;
-import main.java.core.resources.Asset;
-import main.java.core.result.VulkanException;
+import com.sfengine.components.window.WindowFactory;
+import com.sfengine.core.Engine;
+import com.sfengine.core.EngineTask;
+import com.sfengine.core.HardwareManager;
+import com.sfengine.core.rendering.Window;
+import com.sfengine.core.resources.Asset;
+import com.sfengine.core.result.VulkanException;
 import java.io.IOException;
 
 public class WindowManager implements EngineTask {

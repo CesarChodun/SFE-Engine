@@ -1,8 +1,8 @@
-package test.java.demos.util;
+package demos.util;
 
-import main.java.core.EngineTask;
-import main.java.core.rendering.Renderer;
-import main.java.core.result.VulkanException;
+import com.sfengine.core.EngineTask;
+import com.sfengine.core.rendering.Renderer;
+import com.sfengine.core.result.VulkanException;
 
 public class RenderingTask implements EngineTask {
 

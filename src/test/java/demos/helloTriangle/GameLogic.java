@@ -1,8 +1,8 @@
-package test.java.demos.helloTriangle;
+package demos.helloTriangle;
 
-import main.java.components.util.EngineInitializationTask;
-import main.java.core.Engine;
-import test.java.demos.util.DefaultResourceConverter;
+import com.sfengine.components.util.EngineInitializationTask;
+import com.sfengine.core.Engine;
+import demos.util.DefaultResourceConverter;
 import java.util.concurrent.Semaphore;
 
 public class GameLogic implements Runnable {

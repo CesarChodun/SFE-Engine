@@ -1,9 +1,9 @@
-package test.java.demos.helloCube;
+package demos.helloCube;
 
-import main.java.components.util.EngineInitializationTask;
-import main.java.core.Engine;
-import main.java.core.synchronization.DependencyFence;
-import test.java.demos.util.DefaultResourceConverter;
+import com.sfengine.components.util.EngineInitializationTask;
+import com.sfengine.core.Engine;
+import com.sfengine.core.synchronization.DependencyFence;
+import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;

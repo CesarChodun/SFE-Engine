@@ -1,7 +1,7 @@
-package test.java.demos.helloDescriptor;
+package demos.helloDescriptor;
 
-import main.java.core.Application;
-import main.java.core.Engine;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
 
 /**
  * Main class of the hello descriptors demo.

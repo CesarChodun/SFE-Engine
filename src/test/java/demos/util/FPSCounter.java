@@ -1,4 +1,4 @@
-package test.java.demos.util;
+package demos.util;
 
 public class FPSCounter {
 

@@ -1,15 +1,15 @@
-package test.java.demos.util;
+package demos.util;
 
-import static main.java.core.rendering.RenderUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.*;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
+import static com.sfengine.core.rendering.RenderUtil.*;
 
-import main.java.core.rendering.ColorFormatAndSpace;
-import main.java.core.rendering.Window;
-import main.java.core.rendering.factories.SwapchainFactory;
-import main.java.core.result.VulkanException;
+import com.sfengine.core.rendering.ColorFormatAndSpace;
+import com.sfengine.core.rendering.Window;
+import com.sfengine.core.rendering.factories.SwapchainFactory;
+import com.sfengine.core.result.VulkanException;
 import java.nio.IntBuffer;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;

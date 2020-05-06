@@ -1,6 +1,6 @@
-package test.java.demos.hardwareinit;
+package demos.hardwareinit;
 
-import main.java.core.Engine;
+import com.sfengine.core.Engine;
 import java.util.concurrent.Semaphore;
 
 public class ShutDownEngine implements Runnable {

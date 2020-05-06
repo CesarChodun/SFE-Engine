@@ -1,10 +1,10 @@
-package test.java.demos.helloTriangle;
+package demos.helloTriangle;
 
-import main.java.components.resources.MemoryBin;
-import main.java.components.window.CFrame;
-import main.java.core.Application;
-import main.java.core.Engine;
-import main.java.core.resources.Asset;
+import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.window.CFrame;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
+import com.sfengine.core.resources.Asset;
 import java.util.concurrent.Semaphore;
 
 public class WindowManager implements Runnable {

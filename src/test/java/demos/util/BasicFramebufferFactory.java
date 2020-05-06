@@ -1,14 +1,14 @@
-package test.java.demos.util;
+package demos.util;
 
-import static main.java.core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAllocLong;
 import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
+import static com.sfengine.core.result.VulkanResult.*;
 
-import main.java.core.rendering.factories.FrameBufferFactory;
-import main.java.core.resources.Destroyable;
-import main.java.core.result.VulkanException;
+import com.sfengine.core.rendering.factories.FrameBufferFactory;
+import com.sfengine.core.resources.Destroyable;
+import com.sfengine.core.result.VulkanException;
 import java.nio.LongBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;

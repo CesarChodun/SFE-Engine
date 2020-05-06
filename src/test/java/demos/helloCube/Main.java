@@ -1,7 +1,7 @@
-package test.java.demos.helloCube;
+package demos.helloCube;
 
-import main.java.core.Application;
-import main.java.core.Engine;
+import com.sfengine.core.Application;
+import com.sfengine.core.Engine;
 
 /**
  * Main class of the hello cube demo.

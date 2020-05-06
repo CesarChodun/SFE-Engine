@@ -1,7 +1,7 @@
-package test.java.demos.helloDescriptor.rendering;
+package demos.helloDescriptor.rendering;
 
-import main.java.components.shaders.GeneralizedDescriptorValue;
-import main.java.components.shaders.descriptor_sets.DescriptorSet;
+import com.sfengine.components.shaders.GeneralizedDescriptorValue;
+import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
 import java.util.TimerTask;
 
 /**
