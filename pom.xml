@@ -6,7 +6,18 @@
 
     <groupId>com.cezarychodun</groupId>
     <artifactId>SFE-Engine</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>SFE-Engine-mvn-repo</id>
+            <url>https://raw.github.com/CesarChodun/SFE-Engine/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <properties>
         <lwjgl.version>3.2.3</lwjgl.version>
