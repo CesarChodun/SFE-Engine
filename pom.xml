@@ -6,7 +6,18 @@
 
     <groupId>com.cezarychodun</groupId>
     <artifactId>SFE-Engine</artifactId>
+    <packaging>pom</packaging>
     <version>0.2.1-SNAPSHOT</version>
+    <modules>
+        <module>../noentropy</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <lwjgl.version>3.2.3</lwjgl.version>
+        <joml.version>1.9.22</joml.version>
+    </properties>
 
     <repositories>
         <repository>
@@ -18,11 +29,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <properties>
-        <lwjgl.version>3.2.3</lwjgl.version>
-        <joml.version>1.9.22</joml.version>
-    </properties>
 
     <profiles>
         <profile>
