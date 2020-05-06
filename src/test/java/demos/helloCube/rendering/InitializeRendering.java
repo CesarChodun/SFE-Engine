@@ -226,8 +226,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     }
 
     /**
-     * Returns an index to the most suitable queue family. According to the {@link
-     * HardwareManager.HARDWARE_CFG} file.
+     * Returns an index to the most suitable queue family. According to the hardware config file.
      *
      * @param window
      * @param physicalDevice
@@ -484,9 +483,9 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         return ind;
     }
-
     /**
-     * Creates a Recordable that will render a triangle to the screen.
+     *
+     Creates a Recordable that will render a triangle to the screen.
      *
      * @param physicalDevice
      * @param device
