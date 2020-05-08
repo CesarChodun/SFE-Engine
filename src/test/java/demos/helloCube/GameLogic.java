@@ -2,6 +2,7 @@ package demos.helloCube;
 
 import com.sfengine.components.util.EngineInitializationTask;
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 import com.sfengine.core.synchronization.DependencyFence;
 import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ import java.util.logging.Logger;
 public class GameLogic implements Runnable {
 
     private static final String CONFIG_FILE = "demos/hellocube";
-    private Engine engine;
+    private Engine engine = EngineFactory.getEngine();
 
-    public GameLogic(Engine engine) {
-        this.engine = engine;
+    public GameLogic() {
+
     }
 
     @Override
@@ -45,7 +46,7 @@ public class GameLogic implements Runnable {
 
         // Creating a thread that will wait until the engine is initialized and then
         // it will create the window.
-        engine.addConfigSMQ(new WindowManager(engine, initialized));
+        engine.addConfig(new WindowManager(initialized));
     }
 
     /**

@@ -9,7 +9,7 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
-import com.sfengine.components.geometry.MeshI3D;
+import com.sfengine.components.geometry.indexed.MeshI3D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
 import com.sfengine.components.pipeline.ImageViewCreateInfo;
@@ -23,10 +23,7 @@ import com.sfengine.components.shaders.descriptor_sets.DescriptorSetFactory;
 import com.sfengine.components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
 import com.sfengine.components.transform.CameraTransform;
 import com.sfengine.components.transform.ModelTransform3D;
-import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineTask;
-import com.sfengine.core.HardwareManager;
+import com.sfengine.core.*;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
 import com.sfengine.core.rendering.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
@@ -65,7 +62,7 @@ import org.lwjgl.vulkan.VkViewport;
  */
 public class InitializeRendering implements EngineTask, Destroyable {
 
-    private Engine engine;
+    private final Engine engine = EngineFactory.getEngine();
     private Window window;
 
     private MemoryBin destroy = new MemoryBin();
@@ -79,8 +76,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private ModelTransform3D cubeTransform = new ModelTransform3D();
     private CameraTransform camera;
 
-    public InitializeRendering(Engine engine, Window window) {
-        this.engine = engine;
+    public InitializeRendering(Window window) {
         this.window = window;
     }
 

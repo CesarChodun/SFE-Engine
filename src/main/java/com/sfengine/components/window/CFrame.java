@@ -1,6 +1,7 @@
 package com.sfengine.components.window;
 
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.rendering.Window;
 import com.sfengine.core.resources.Asset;
@@ -24,6 +25,8 @@ public class CFrame {
 
     private static final Logger logger = Logger.getLogger(CFrame.class.getName());
 
+    private final Engine engine = EngineFactory.getEngine();
+
     public static final String WINDOW_CFG_FILE = "window.cfg";
     private volatile Window window;
     private volatile long handle = VK10.VK_NULL_HANDLE;
@@ -34,25 +37,23 @@ public class CFrame {
     }
 
     private class CreateCFrameTask implements Runnable {
+        private final Engine engine = EngineFactory.getEngine();
+
         private Asset asset;
-        private Engine engine;
         private Semaphore workDone;
         private boolean showWindow = true;
         private Destroyable destroyAtShutDown = null;
 
-        public CreateCFrameTask(Engine engine, Asset asset) {
+        public CreateCFrameTask(Asset asset) {
             this.asset = asset;
-            this.engine = engine;
         }
 
         public CreateCFrameTask(
-                Engine engine,
                 Asset asset,
                 boolean showWindow,
                 Semaphore workDone,
                 Destroyable destroyAtShutDown) {
             this.asset = asset;
-            this.engine = engine;
             this.workDone = workDone;
             this.showWindow = showWindow;
             this.destroyAtShutDown = destroyAtShutDown;
@@ -84,7 +85,7 @@ public class CFrame {
                         }
                     });
 
-            engine.addFastSMQ(
+            engine.addFast(
                     () -> {
                         // Setting the window data to the values from the file.
                         try {
@@ -99,7 +100,7 @@ public class CFrame {
                     },
                     created);
 
-            engine.addConfigSMQ(
+            engine.addConfig(
                     () -> {
                         if (window == null) {
                             throw new AssertionError("Window is null!");
@@ -141,11 +142,10 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      */
-    public CFrame(Engine engine, Asset asset) {
-        engine.getConfigPool().execute(new CreateCFrameTask(engine, asset));
+    public CFrame(Asset asset) {
+        engine.addConfig(new CreateCFrameTask(asset));
     }
 
     /**
@@ -153,13 +153,12 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param workDone A semaphore that will indicate that the window creation process have
      *     finished.
      */
-    public CFrame(Engine engine, Asset asset, Semaphore workDone) {
-        engine.getConfigPool().execute(new CreateCFrameTask(engine, asset, false, workDone, null));
+    public CFrame(Asset asset, Semaphore workDone) {
+        engine.addConfig(new CreateCFrameTask(asset, false, workDone, null));
     }
 
     /**
@@ -167,15 +166,13 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param showWindow Set to true if you want the window to be displayed as soon as created.
      * @param workDone A semaphore that will indicate that the window creation process have
      *     finished.
      */
-    public CFrame(Engine engine, Asset asset, boolean showWindow, Semaphore workDone) {
-        engine.getConfigPool()
-                .execute(new CreateCFrameTask(engine, asset, showWindow, workDone, null));
+    public CFrame(Asset asset, boolean showWindow, Semaphore workDone) {
+        engine.addConfig(new CreateCFrameTask(asset, showWindow, workDone, null));
     }
 
     /**
@@ -183,16 +180,14 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param workDone A semaphore that will indicate that the window creation process have
      *     finished.
      * @param destroyAtShutDown A destroyable object that will be invoked after the window was shut
      *     down.
      */
-    public CFrame(Engine engine, Asset asset, Semaphore workDone, Destroyable destroyAtShutDown) {
-        engine.getConfigPool()
-                .execute(new CreateCFrameTask(engine, asset, false, workDone, destroyAtShutDown));
+    public CFrame(Asset asset, Semaphore workDone, Destroyable destroyAtShutDown) {
+        engine.addConfig(new CreateCFrameTask(asset, false, workDone, destroyAtShutDown));
     }
 
     /**
@@ -200,7 +195,6 @@ public class CFrame {
      * the constructor from the first thread, however the window won't be created until the engine
      * starts running.
      *
-     * @param engine Engine that will own the window.
      * @param asset The asset containing the window configuration file.
      * @param showWindow Set to true if you want the window to be displayed as soon as created.
      * @param workDone A semaphore that will indicate that the window creation process have
@@ -209,15 +203,11 @@ public class CFrame {
      *     down.
      */
     public CFrame(
-            Engine engine,
             Asset asset,
             boolean showWindow,
             Semaphore workDone,
             Destroyable destroyAtShutDown) {
-        engine.getConfigPool()
-                .execute(
-                        new CreateCFrameTask(
-                                engine, asset, showWindow, workDone, destroyAtShutDown));
+        engine.addConfig(new CreateCFrameTask(asset, showWindow, workDone, destroyAtShutDown));
     }
 
     /**

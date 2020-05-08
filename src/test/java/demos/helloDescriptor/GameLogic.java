@@ -46,7 +46,7 @@ public class GameLogic implements Runnable {
         // Creating a thread that will wait until the engine is initialized and then
         // it will create the window.
         //        for (int i = 0; i < 100; i++) {
-        engine.addConfigSMQ(new WindowManager(engine, initialized));
+        engine.addConfig(new WindowManager(engine, initialized));
         //            engine.getConfigPool().execute(new WindowManager(engine, initialized));
         //            Thread waitForConfig = new Thread(new WindowManager(engine, initialized));
         //            waitForConfig.start();

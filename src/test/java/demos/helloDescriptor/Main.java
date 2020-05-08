@@ -2,6 +2,7 @@ package demos.helloDescriptor;
 
 import com.sfengine.core.Application;
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 
 /**
  * Main class of the hello descriptors demo.
@@ -21,8 +22,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Running \"Hello Descriptor\" demo.");
 
-        // Creates an engine object.
-        Engine engine = new Engine();
+        // Gets default synchronization engine
+        Engine engine = EngineFactory.getEngine();
 
         // Creates a task that will perform the game functionality.
         GameLogic logicTask = new GameLogic(engine);

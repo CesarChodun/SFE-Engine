@@ -4,6 +4,7 @@ import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 import com.sfengine.core.resources.Asset;
 import com.sfengine.core.synchronization.DependencyFence;
 import demos.helloCube.rendering.*;
@@ -16,12 +17,11 @@ import demos.helloCube.rendering.*;
  */
 public class WindowManager implements Runnable {
 
-    private Engine engine;
+    private final Engine engine = EngineFactory.getEngine();
     private DependencyFence wait;
     private CFrame frame;
 
-    public WindowManager(Engine engine, DependencyFence wait) {
-        this.engine = engine;
+    public WindowManager(DependencyFence wait) {
         this.wait = wait;
     }
 
@@ -33,24 +33,24 @@ public class WindowManager implements Runnable {
         System.out.println("WindowManager work submited!");
 
         // Submits window creation task to the engine configuration queue.
-        engine.addConfigSMQ(
+        engine.addConfig(
                 () -> {
                     // Obtaining the asset folder for the window.
                     Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
 
                     // Creating a task that will create the window.
-                    frame = new CFrame(engine, windowAsset, false, windowCreated, toDestroy);
+                    frame = new CFrame(windowAsset, false, windowCreated, toDestroy);
                 },
                 wait);
 
         System.out.println("CFrame work submited!");
 
         // Submits rendering task to the engine configuration queue.
-        engine.addConfigSMQ(
+        engine.addConfig(
                 () -> {
                     // Creating the rendering task.
                     InitializeRendering rendTask =
-                            new InitializeRendering(engine, frame.getWindow());
+                            new InitializeRendering(frame.getWindow());
                     toDestroy.add(rendTask);
                     engine.addTask(rendTask);
                 },

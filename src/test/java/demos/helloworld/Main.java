@@ -1,6 +1,7 @@
 package demos.helloworld;
 
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 import com.sfengine.core.EngineTask;
 
 public class Main {
@@ -38,9 +39,8 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-
-        // Creates an engine object.
-        Engine engine = new Engine();
+        // Gets default synchronization engine
+        Engine engine = EngineFactory.getEngine();
 
         // Creates a task that will be performed by the engine.
         ExampleClass example = new ExampleClass(engine);

@@ -34,19 +34,19 @@ public class WindowManager implements Runnable {
 
         System.err.println("WindowManager work submited!");
 
-        engine.addConfigSMQ(
+        engine.addConfig(
                 () -> {
                     // Obtaining the asset folder for the window.
                     Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
 
                     // Creating a task that will create the window.
-                    frame = new CFrame(engine, windowAsset, false, windowCreated, toDestroy);
+                    frame = new CFrame(windowAsset, false, windowCreated, toDestroy);
                 },
                 wait);
 
         System.err.println("CFrame work submited!");
 
-        engine.addConfigSMQ(
+        engine.addConfig(
                 () -> {
                     // Creating the rendering task.
                     InitializeRendering rendTask =

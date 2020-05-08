@@ -33,7 +33,7 @@ public class WindowManager implements Runnable {
         Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
 
         // Creating the frame(window without graphics in it).
-        CFrame frame = new CFrame(engine, windowAsset, false, windowCreated, toDestroy);
+        CFrame frame = new CFrame(windowAsset, false, windowCreated, toDestroy);
 
         try {
             // Waiting for the window to be created.

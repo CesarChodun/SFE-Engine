@@ -2,6 +2,7 @@ package demos.hellowindow;
 
 import com.sfengine.core.Application;
 import com.sfengine.core.Engine;
+import com.sfengine.core.EngineFactory;
 
 public class Main {
 
@@ -11,15 +12,14 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-
-        // Creates an engine object.
-        Engine engine = new Engine();
+        // Gets default synchronization engine
+        Engine engine = EngineFactory.getEngine();
 
         // Creates a task that will perform the game functionality.
         GameLogic logicTask = new GameLogic(engine);
 
         // Adds the game logic task to the configuration pool.
-        engine.getConfigPool().execute(logicTask);
+        engine.addConfig(logicTask);
 
         try {
             // Starts the engine(on this thread).
