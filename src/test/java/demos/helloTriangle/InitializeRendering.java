@@ -23,7 +23,7 @@ import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
 import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
-import com.sfengine.components.geometry.MeshU2D;
+import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
 import com.sfengine.components.pipeline.ImageViewCreateInfo;

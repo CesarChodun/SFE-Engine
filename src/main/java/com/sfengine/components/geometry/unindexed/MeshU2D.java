@@ -1,8 +1,10 @@
-package com.sfengine.components.geometry;
+package com.sfengine.components.geometry.unindexed;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.components.geometry.Util;
+import com.sfengine.components.geometry.unindexed.UnindexedMesh;
 import com.sfengine.core.result.VulkanException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -17,7 +19,7 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
  * @author Cezary Chodun
  * @since 28.11.2019
  */
-public class MeshU2D implements Mesh {
+public class MeshU2D implements UnindexedMesh {
 
     /** Length of a vertex description(in bytes). */
     private static int STRIDE = 2 * 4; // Two floats(4 bytes) per vertex.

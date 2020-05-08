@@ -1,8 +1,10 @@
-package com.sfengine.components.geometry;
+package com.sfengine.components.geometry.indexed;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.vkDestroyBuffer;
 
+import com.sfengine.components.geometry.Util;
+import com.sfengine.components.geometry.indexed.IndexedMesh;
 import com.sfengine.core.result.VulkanException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
