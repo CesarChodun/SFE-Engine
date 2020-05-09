@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class for managing assets.
@@ -15,6 +17,8 @@ import org.json.JSONTokener;
  * @since 25.09.2019
  */
 public class Asset {
+
+    private static final Logger logger = LoggerFactory.getLogger(Asset.class.getName());
 
     /** File location on the drive. */
     protected File location;
@@ -48,8 +52,13 @@ public class Asset {
         File out = new File(location.getAbsolutePath() + "/" + path);
 
         if (!out.exists()) {
-            throw new FileNotFoundException(
-                    "Failed to locate file: " + location.getAbsolutePath() + "/" + path);
+            if (out.isDirectory()) {
+                logger.debug("Failed to locate asset(directory too short). Creating new one.", out);
+                out.mkdirs();
+            }
+            else
+                throw new FileNotFoundException(
+                        "Failed to locate file: " + location.getAbsolutePath() + "/" + path);
         }
         return out;
     }
