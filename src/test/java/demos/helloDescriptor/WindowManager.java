@@ -31,8 +31,7 @@ public class WindowManager implements Runnable {
     public void run() {
         final MemoryBin toDestroy = new MemoryBin();
 
-        frame = new CFrame("MyWindow");
-        frame.setCloseCallback(toDestroy);
+        frame = new CFrame("MyFrame");
 
         System.err.println("CFrame work submited!");
 
@@ -43,6 +42,7 @@ public class WindowManager implements Runnable {
                             new InitializeRendering(engine, frame.getWindow());
                     engine.addTask(rendTask);
                     toDestroy.add((Destroyable) rendTask);
+                    frame.setCloseCallback(toDestroy);
                 },
                 frame.getDependency());
 

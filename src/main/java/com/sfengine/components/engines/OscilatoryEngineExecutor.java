@@ -23,7 +23,8 @@ public class OscilatoryEngineExecutor implements EngineExecutor {
 
     @Override
     public void execute(@NotNull Runnable command) {
-        tasks.add(command);
+        if (acceptNewTasks)
+            tasks.add(command);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class OscilatoryEngineExecutor implements EngineExecutor {
         running = true;
 
         try {
-            while (running) {
+            while (acceptNewTasks || tasks.size() > 0) {
                 // Performs simple tasks(one time tasks)
                 int taskToComplete =
                         (int) (tasks.size() * TASKS_PER_TICK_SCALING) + MINIMUM_TASKS_PER_TICK;
@@ -65,7 +66,7 @@ public class OscilatoryEngineExecutor implements EngineExecutor {
 
     @Override
     public void shutdown() {
-        acceptNewTasks = true;
+        acceptNewTasks = false;
     }
 
     /**
@@ -75,7 +76,8 @@ public class OscilatoryEngineExecutor implements EngineExecutor {
      */
     @Override
     public void addTickTask(EngineTask tickTask) {
-        tickTasks.add(tickTask);
+        if (acceptNewTasks)
+            tickTasks.add(tickTask);
     }
 
     /**

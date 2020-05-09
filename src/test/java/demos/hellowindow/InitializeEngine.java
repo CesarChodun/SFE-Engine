@@ -1,6 +1,7 @@
 package demos.hellowindow;
 
 import com.sfengine.core.Application;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.result.VulkanException;
@@ -33,6 +34,9 @@ public class InitializeEngine implements EngineTask {
         HardwareManager.init();
 
         // Initialization process has been finished so the semaphore is released
-        workDone.release();
+        EngineFactory.getEngine().addConfig(() -> {
+            workDone.release();
+        }, HardwareManager.getDependency());
+
     }
 }

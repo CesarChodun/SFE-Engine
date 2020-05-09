@@ -50,7 +50,8 @@ public class CFrame implements Dependable {
 
         @Override
         public void destroy() {
-            call.destroy();
+            if (call != null)
+                call.destroy();
         }
 
         public void setDestroyable(Destroyable dest) {

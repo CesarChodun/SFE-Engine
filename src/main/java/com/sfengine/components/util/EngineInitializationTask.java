@@ -1,6 +1,7 @@
 package com.sfengine.components.util;
 
 import com.sfengine.core.Application;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.result.VulkanException;
@@ -32,6 +33,8 @@ public class EngineInitializationTask implements EngineTask {
     public void run() {
         Application.init(configFile);
         HardwareManager.init();
-        workDone.release();
+        EngineFactory.getEngine().addConfig(() -> {
+            workDone.release();
+        }, HardwareManager.getDependency());
     }
 }

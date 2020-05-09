@@ -1,6 +1,7 @@
 package demos.hardwareinit;
 
 import com.sfengine.core.Application;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 
@@ -26,7 +27,8 @@ public class InitializeEngine implements EngineTask {
          */
         Application.init(CONFIG_FILE);
         HardwareManager.init();
-
-        workDone.release();
+        EngineFactory.getEngine().addConfig(() -> {
+            workDone.release();
+        }, HardwareManager.getDependency());
     }
 }
