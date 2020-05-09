@@ -2,6 +2,7 @@ package com.sfengine.core.synchronization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -10,21 +11,21 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author Cezary Chodun
  * @since 26.20.2020
  */
-public class ThreadPoolSyncTask implements SynchronizedTask {
+public class SyncTask implements SynchronizedTask {
 
     private List<Dependency> deps;
-    private ThreadPoolExecutor pool;
+    private Executor exec;
     private Runnable task;
 
     /**
      * Creates a synchronized task that will be invoked inside a specified thread pool.
      *
-     * @param pool the pool.
+     * @param executor the executor.
      * @param task the task.
      * @param dependencies task's dependencies(or null).
      */
-    public ThreadPoolSyncTask(ThreadPoolExecutor pool, Runnable task, Dependency... dependencies) {
-        this.pool = pool;
+    public SyncTask(Executor executor, Runnable task, Dependency... dependencies) {
+        this.exec = executor;
         this.task = task;
 
         deps = new ArrayList<>();
@@ -35,7 +36,7 @@ public class ThreadPoolSyncTask implements SynchronizedTask {
 
     @Override
     public void run() {
-        pool.execute(task);
+        exec.execute(task);
     }
 
     @Override

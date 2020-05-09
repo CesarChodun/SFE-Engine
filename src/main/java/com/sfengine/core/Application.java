@@ -3,12 +3,17 @@ package com.sfengine.core;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.resources.Asset;
 import com.sfengine.core.resources.ConfigFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import com.sfengine.core.synchronization.DependencyFence;
+import com.sfengine.core.synchronization.Dependency;
 import org.json.JSONException;
 import org.lwjgl.vulkan.VkApplicationInfo;
 
@@ -68,6 +73,8 @@ public class Application {
     private static Asset appAssets;
     /** File with application configuration assets. */
     private static Asset configAssets;
+    /** Dependency for monitoring VkApplicationInfo creation process. **/
+    private static DependencyFence appInfoCreated = new DependencyFence();
 
     /**
      * Initializes the application and pools data from the config files.
@@ -89,20 +96,16 @@ public class Application {
             throw new FileNotFoundException();
         }
 
-        try {
-            applicationInfo = createAppInfo(configAssets);
-        } catch (JSONException | IOException | AssertionError e) {
-            e.printStackTrace();
-        }
+
+        init(configAssets);
     }
 
     /**
      * Initializes the application and pools data from the config files.
      *
      * @param configName Name of the configuration folder.
-     * @throws FileNotFoundException When the asset wasn't found.
      */
-    public static void init(String configName) throws FileNotFoundException {
+    public static void init(String configName) {
         if (applicationInfo != null) {
             throw new AssertionError(
                     "Failed to initialize the application. As it was initialized earlier.");
@@ -115,14 +118,24 @@ public class Application {
                         new File(applicationLocation.getAbsolutePath() + "/" + CONFIG_FOLDER_NAME));
         configAssets = appAssets.getSubAsset(configName);
         if (configAssets == null) {
-            throw new FileNotFoundException();
+            throw new Error("Couldn't load configuration." , new FileNotFoundException());
         }
 
-        try {
-            applicationInfo = createAppInfo(configAssets);
-        } catch (JSONException | IOException | AssertionError e) {
-            e.printStackTrace();
-        }
+        init(configAssets);
+    }
+
+    private static void init(Asset asset) {
+
+        Engine engine = EngineFactory.getEngine();
+
+        engine.addConfig(() -> {
+            try {
+                applicationInfo = createAppInfo(configAssets);
+            } catch (JSONException | IOException | AssertionError e) {
+                throw new Error("Failed to create application info. Unable to proceed.", e);
+            }
+            appInfoCreated.release();
+        });
     }
 
     /** @return Location of the application. */
@@ -152,7 +165,6 @@ public class Application {
     /**
      * Creates a vulkan application info.
      *
-     * @param appInfoFile Configuration file.
      * @return The vulkan application info.
      * @throws JSONException If there is a syntax error in the source string or a duplicated key.
      * @throws AssertionError If failed to create JSON file.
@@ -196,5 +208,9 @@ public class Application {
             memFree(applicationInfo.pEngineName());
             applicationInfo.free();
         }
+    }
+
+    public static Dependency getDependency() {
+        return appInfoCreated;
     }
 }

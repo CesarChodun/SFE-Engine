@@ -1,4 +1,4 @@
-package com.sfengine.core;
+package com.sfengine.core.engine;
 
 /**
  * Interface for creating an engine tasks. Both per tick tasks and one time tasks can be created

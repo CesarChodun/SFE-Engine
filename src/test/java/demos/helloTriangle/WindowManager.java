@@ -3,7 +3,7 @@ package demos.helloTriangle;
 import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
+import com.sfengine.core.engine.Engine;
 import com.sfengine.core.resources.Asset;
 import java.util.concurrent.Semaphore;
 
@@ -33,7 +33,7 @@ public class WindowManager implements Runnable {
         Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
 
         // Creating the frame(window without graphics in it).
-        CFrame frame = new CFrame(windowAsset, false, windowCreated, toDestroy);
+        CFrame frame = new CFrame("MyFrame");
 
         try {
             // Waiting for the window to be created.

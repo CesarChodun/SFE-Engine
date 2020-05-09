@@ -1,8 +1,8 @@
 package demos.hardwareinit;
 
 import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineTask;
 import java.util.concurrent.Semaphore;
 
 public class GameLogic implements EngineTask {

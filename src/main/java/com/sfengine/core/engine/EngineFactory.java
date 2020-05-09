@@ -1,4 +1,7 @@
-package com.sfengine.core;
+package com.sfengine.core.engine;
+
+import com.sfengine.components.engines.DefaultEngine;
+import com.sfengine.core.engine.Engine;
 
 public class EngineFactory {
 

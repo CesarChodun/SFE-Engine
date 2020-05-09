@@ -1,7 +1,7 @@
 package com.sfengine.components.window;
 
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.Window;
 import com.sfengine.core.resources.Destroyable;
 

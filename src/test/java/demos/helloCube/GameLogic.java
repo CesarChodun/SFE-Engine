@@ -1,9 +1,9 @@
 package demos.helloCube;
 
-import com.sfengine.components.util.EngineInitializationTask;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineFactory;
-import com.sfengine.core.synchronization.DependencyFence;
+import com.sfengine.core.Application;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
+import com.sfengine.core.HardwareManager;
 import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +35,12 @@ public class GameLogic implements Runnable {
         DefaultResourceConverter converter = new DefaultResourceConverter();
         converter.runConversion();
 
-        // Semaphore indicating initialization state
-        DependencyFence initialized = new DependencyFence(0);
-
-        // Adding engine initialization task to the engine task queue
-        engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
-
-        // Awaits for conversion to complete
-        converter.await();
+        Application.init(CONFIG_FILE);
+        HardwareManager.init();
 
         // Creating a thread that will wait until the engine is initialized and then
         // it will create the window.
-        engine.addConfig(new WindowManager(initialized));
+        engine.addConfig(new WindowManager());
     }
 
     /**

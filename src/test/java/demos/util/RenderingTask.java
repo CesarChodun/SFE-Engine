@@ -1,6 +1,6 @@
 package demos.util;
 
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.Renderer;
 import com.sfengine.core.result.VulkanException;
 

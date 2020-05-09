@@ -1,8 +1,8 @@
 package demos.hardwareinit;
 
 import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineFactory;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
 
 public class Main {
 

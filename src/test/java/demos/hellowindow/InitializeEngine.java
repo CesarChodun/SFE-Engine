@@ -1,7 +1,7 @@
 package demos.hellowindow;
 
 import com.sfengine.core.Application;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.result.VulkanException;
 import java.io.FileNotFoundException;
@@ -29,31 +29,8 @@ public class InitializeEngine implements EngineTask {
          *
          */
 
-        try {
-            // Initializes the application with the configuration file(CONFIG_FILE)
-            Application.init(CONFIG_FILE);
-
-            System.out.println("Application data succesfully initialized!");
-
-        } catch (FileNotFoundException e) {
-
-            System.err.println("Failed to find the configuration file(\"" + CONFIG_FILE + "\")");
-            e.printStackTrace();
-        }
-
-        try {
-            // Initializes the hardware information.
-            HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());
-            System.out.println("Hardware succesfully initialized!");
-        } catch (VulkanException e) {
-
-            System.err.println("Failed to initialize hardware due to a vulkan problem.");
-            e.printStackTrace();
-        } catch (IOException e) {
-
-            System.err.println("Failed to initialize hardware due to an input(or output) error.");
-            e.printStackTrace();
-        }
+        Application.init(CONFIG_FILE);
+        HardwareManager.init();
 
         // Initialization process has been finished so the semaphore is released
         workDone.release();

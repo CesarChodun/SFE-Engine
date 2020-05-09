@@ -1,7 +1,7 @@
 package demos.helloDescriptor;
 
 import com.sfengine.components.util.EngineInitializationTask;
-import com.sfengine.core.Engine;
+import com.sfengine.core.engine.Engine;
 import com.sfengine.core.synchronization.DependencyFence;
 import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class GameLogic implements Runnable {
         converter.runConversion();
 
         // Semaphore indicating initialization state
-        DependencyFence initialized = new DependencyFence(0);
+        DependencyFence initialized = new DependencyFence();
 
         // Adding engine initialization task to the engine task queue
         engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));

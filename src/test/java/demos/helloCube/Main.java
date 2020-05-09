@@ -1,8 +1,7 @@
 package demos.helloCube;
 
 import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineFactory;
+import com.sfengine.core.engine.EngineFactory;
 
 /**
  * Main class of the hello cube demo.

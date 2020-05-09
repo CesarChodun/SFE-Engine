@@ -1,6 +1,6 @@
 package demos.hardwareinit;
 
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.result.VulkanException;
 import java.util.concurrent.Semaphore;

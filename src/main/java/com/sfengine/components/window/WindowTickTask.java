@@ -3,7 +3,7 @@ package com.sfengine.components.window;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.EngineTask;
 
 public class WindowTickTask implements EngineTask {
 

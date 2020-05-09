@@ -24,6 +24,9 @@ import com.sfengine.components.shaders.descriptor_sets.FileDescriptorSetBlueprin
 import com.sfengine.components.transform.CameraTransform;
 import com.sfengine.components.transform.ModelTransform3D;
 import com.sfengine.core.*;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
 import com.sfengine.core.rendering.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
@@ -66,7 +69,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private Window window;
 
     private MemoryBin destroy = new MemoryBin();
-    private List<EngineTask> tickTasks = new ArrayList<EngineTask>();
+    private List<EngineTask> tickTasks = new ArrayList<>();
 
     private VkViewport.Buffer viewport;
     private VkRect2D.Buffer scissor;
@@ -249,7 +252,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         queuePriorities.put(0.0f);
         queuePriorities.flip();
 
-        List<String> extensions = new ArrayList<String>();
+        List<String> extensions = new ArrayList<>();
         extensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         extensions.add(EXTDescriptorIndexing.VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 

@@ -25,11 +25,9 @@ public class DependencyFence extends Semaphore implements Dependency {
      * <p><b>Note:</b> the first 'release' operation will unlock the fence for every SMQ waiting on
      * it. More precisely it is guaranteed that SMQ will not consume any of the semaphore permits.
      * But rather it will wait for the first 'release' operation.
-     *
-     * @param permits the initial number of permits available.
      */
-    public DependencyFence(int permits) {
-        super(permits);
+    public DependencyFence() {
+        super(0);
         synchronized (this) {
             queues = new HashSet<>();
         }

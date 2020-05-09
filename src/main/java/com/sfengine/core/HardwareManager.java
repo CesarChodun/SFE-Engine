@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.result.GLFWError;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.hardware.Monitor;
@@ -18,9 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import com.sfengine.core.synchronization.DependencyFence;
+import com.sfengine.core.synchronization.Dependency;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.vulkan.VK10;
-import org.lwjgl.vulkan.VkApplicationInfo;
 import org.lwjgl.vulkan.VkInstance;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkQueueFamilyProperties;
@@ -56,6 +59,8 @@ public class HardwareManager {
     /** Hardware configuration file. */
     private static ConfigFile hardwareCFG;
 
+    private static DependencyFence hardwareInitialized = new DependencyFence();
+
     /**
      * Initializes the most basic engine libraries.
      *
@@ -63,14 +68,31 @@ public class HardwareManager {
      *     device enumeration process failed.
      * @throws IOException If failed to create JSON file, or if an I/O error occurred.
      */
-    public static void init(VkApplicationInfo appInfo, Asset config)
-            throws VulkanException, IOException {
+    public static void init() {
+        Engine engine = EngineFactory.getEngine();
 
-        initGLFW();
-        instance = createInstanceFromAsset(appInfo, config, requiredExtensions);
-        physicalDevices = enumeratePhysicalDevices(instance);
+        engine.addConfig(() -> {
+            Asset config = Application.getConfigAssets();
 
-        hardwareCFG = new ConfigFile(config.getSubAsset(HARDWARE_ASSET_FILE), HARDWARE_CFG);
+            initGLFW();
+            try {
+                instance = createInstanceFromAsset(Application.getApplicationInfo(), config, requiredExtensions);
+            } catch (VulkanException | IOException e) {
+                throw new Error("Failed to initialize hardware. Unable to proceed.", e);
+            }
+            try {
+                physicalDevices = enumeratePhysicalDevices(instance);
+            } catch (VulkanException e) {
+                throw new Error("Failed to initialize hardware. Unable to proceed.", e);
+            }
+
+            try {
+                hardwareCFG = new ConfigFile(config.getSubAsset(HARDWARE_ASSET_FILE), HARDWARE_CFG);
+            } catch (IOException e) {
+                throw new Error("Failed to initialize hardware. Unable to proceed.", e);
+            }
+            hardwareInitialized.release();
+        }, Application.getDependency());
     }
 
     /** Initializes the GLFW library. This method <b>MUST</b> be invoked in order to use GLFW. */
@@ -180,5 +202,9 @@ public class HardwareManager {
     /** Destroys the hardware manager data(invoke after shutting down the engine). */
     public static void destroy() {
         hardwareCFG.close();
+    }
+
+    public static Dependency getDependency() {
+        return hardwareInitialized;
     }
 }

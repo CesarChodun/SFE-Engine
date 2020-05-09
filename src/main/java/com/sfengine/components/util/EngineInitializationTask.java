@@ -1,7 +1,7 @@
 package com.sfengine.components.util;
 
 import com.sfengine.core.Application;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.result.VulkanException;
 import java.io.FileNotFoundException;
@@ -30,29 +30,8 @@ public class EngineInitializationTask implements EngineTask {
 
     @Override
     public void run() {
-        try {
-            // Initializing application
-            Application.init(configFile);
-            logger.log(Level.INFO, "Application data succesfully initialized!");
-
-        } catch (FileNotFoundException e) {
-            logger.log(Level.FINE, "Failed to find the configuration file(\"" + configFile + "\")");
-            e.printStackTrace();
-        }
-
-        try {
-            // Initializing hardware
-            HardwareManager.init(Application.getApplicationInfo(), Application.getConfigAssets());
-            logger.log(Level.INFO, "Hardware succesfully initialized!");
-        } catch (VulkanException e) {
-            logger.log(Level.FINE, "Failed to initialize hardware due to a vulkan problem.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            logger.log(
-                    Level.FINE, "Failed to initialize hardware due to an input(or output) error.");
-            e.printStackTrace();
-        }
-
+        Application.init(configFile);
+        HardwareManager.init();
         workDone.release();
     }
 }

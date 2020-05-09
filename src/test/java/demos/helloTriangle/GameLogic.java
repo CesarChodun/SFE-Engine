@@ -1,7 +1,7 @@
 package demos.helloTriangle;
 
 import com.sfengine.components.util.EngineInitializationTask;
-import com.sfengine.core.Engine;
+import com.sfengine.core.engine.Engine;
 import demos.util.DefaultResourceConverter;
 import java.util.concurrent.Semaphore;
 

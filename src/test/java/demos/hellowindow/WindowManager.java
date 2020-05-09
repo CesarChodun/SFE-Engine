@@ -3,8 +3,8 @@ package demos.hellowindow;
 import static org.lwjgl.glfw.GLFW.*;
 
 import com.sfengine.components.window.WindowFactory;
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.rendering.Window;
 import com.sfengine.core.resources.Asset;

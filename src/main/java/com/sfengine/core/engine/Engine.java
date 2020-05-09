@@ -1,4 +1,4 @@
-package com.sfengine.core;
+package com.sfengine.core.engine;
 
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.synchronization.Dependency;
@@ -15,9 +15,9 @@ public interface Engine extends Runnable, Destroyable {
      * Adds a task to the task queue. If the task is given to the engine it is ensured that it will
      * be performed within a few engine ticks.
      *
-     * @param task Task to be added.
+     * @param run Task to be added.
      */
-    void addTask(EngineTask task);
+    void addTask(Runnable run, Dependency... dependencies);
 
     void addConfig(Runnable run, Dependency... dependencies);
 

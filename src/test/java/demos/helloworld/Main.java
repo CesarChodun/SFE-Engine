@@ -1,8 +1,8 @@
 package demos.helloworld;
 
-import com.sfengine.core.Engine;
-import com.sfengine.core.EngineFactory;
-import com.sfengine.core.EngineTask;
+import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
+import com.sfengine.core.engine.EngineTask;
 
 public class Main {
 

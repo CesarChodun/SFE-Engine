@@ -3,7 +3,7 @@ package demos.helloDescriptor;
 import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
-import com.sfengine.core.Engine;
+import com.sfengine.core.engine.Engine;
 import com.sfengine.core.resources.Asset;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.synchronization.DependencyFence;
@@ -30,19 +30,9 @@ public class WindowManager implements Runnable {
     @Override
     public void run() {
         final MemoryBin toDestroy = new MemoryBin();
-        DependencyFence windowCreated = new DependencyFence(0);
 
-        System.err.println("WindowManager work submited!");
-
-        engine.addConfig(
-                () -> {
-                    // Obtaining the asset folder for the window.
-                    Asset windowAsset = Application.getConfigAssets().getSubAsset("window");
-
-                    // Creating a task that will create the window.
-                    frame = new CFrame(windowAsset, false, windowCreated, toDestroy);
-                },
-                wait);
+        frame = new CFrame("MyWindow");
+        frame.setCloseCallback(toDestroy);
 
         System.err.println("CFrame work submited!");
 
@@ -54,7 +44,7 @@ public class WindowManager implements Runnable {
                     engine.addTask(rendTask);
                     toDestroy.add((Destroyable) rendTask);
                 },
-                windowCreated);
+                frame.getDependency());
 
         System.err.println("Window manager done!");
     }
