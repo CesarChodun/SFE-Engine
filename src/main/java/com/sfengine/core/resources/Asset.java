@@ -98,7 +98,13 @@ public class Asset {
      * @return The child asset.
      */
     public Asset getSubAsset(String path) {
-        return new Asset(location.getAbsoluteFile() + "/" + path);
+        Asset out = new Asset(location.getAbsoluteFile() + "/" + path);
+        out.mkdirs();
+        return out;
+    }
+
+    private void mkdirs() {
+        location.mkdirs();
     }
 
     /**
