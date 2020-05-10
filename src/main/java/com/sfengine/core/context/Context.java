@@ -1,14 +1,16 @@
 package com.sfengine.core.context;
 
+import com.sfengine.core.synchronization.Dependable;
+import com.sfengine.core.synchronization.Dependency;
 import org.lwjgl.vulkan.VkInstance;
 
 import java.util.concurrent.locks.Lock;
 
-public interface Context {
+public interface Context extends Dependable {
 
     String getName();
 
-    VkInstance getInstance();
+    String getFactoryIdentifier();
 
     Lock getLock();
 }

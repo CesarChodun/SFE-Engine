@@ -1,17 +1,33 @@
 package com.sfengine.core.context;
 
+import com.sfengine.core.resources.Asset;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextFactory {
+public abstract class ContextFactory<T extends Context> {
 
-    private static final Map<String, Context> contexts = new HashMap<>();
+    protected final Map<String, T> contexts = new HashMap<>();
 
-    public static synchronized Context getContext(String name) {
-        return contexts.get(name);
+    public T getContext(String name) {
+        synchronized (contexts) {
+            return contexts.get(name);
+        }
     }
 
-    public static synchronized Context putContext(String name, Context context) {
-        return contexts.put(name, context);
+    public boolean containsContext(String name) {
+        synchronized (contexts) {
+            return contexts.containsKey(name);
+        }
     }
+
+    public synchronized T putContext(T context) {
+        synchronized (contexts) {
+            return contexts.put(context.getName(), context);
+        }
+    }
+
+    public abstract String getContextIdentifier();
+
+    public abstract Asset getSubasset(Asset asset);
 }

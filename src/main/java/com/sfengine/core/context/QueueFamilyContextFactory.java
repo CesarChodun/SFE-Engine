@@ -5,10 +5,9 @@ import com.sfengine.core.resources.Asset;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DeviceContextFactory extends ContextFactory<DeviceContext> {
-
-    public static final String CONTEXT_IDENTIFIER = DeviceContextFactory.class.getSimpleName();
-    public static final String SUBASSET_NAME = "DeviceContexts";
+public class QueueFamilyContextFactory extends ContextFactory<QueueFamilyContext>{
+    public static final String CONTEXT_IDENTIFIER = QueueFamilyContextFactory.class.getSimpleName();
+    public static final String SUBASSET_NAME = "QueueFamilyContexts";
 
     @Override
     public String getContextIdentifier() {
