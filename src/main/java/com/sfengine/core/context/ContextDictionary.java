@@ -1,5 +1,7 @@
 package com.sfengine.core.context;
 
+import com.sfengine.core.synchronization.Dependency;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

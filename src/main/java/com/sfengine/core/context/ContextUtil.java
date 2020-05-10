@@ -2,6 +2,12 @@ package com.sfengine.core.context;
 
 public class ContextUtil {
 
+    public static PhysicalDeviceContext getPhysicalDevice(ContextDictionary dict) {
+        return ContextFactoryProvider
+                .getFactory(PhysicalDeviceContextFactory.CONTEXT_IDENTIFIER, PhysicalDeviceContextFactory.class)
+                .getContext(dict.get(PhysicalDeviceContextFactory.CONTEXT_IDENTIFIER));
+    }
+
     public static DeviceContext getDevice(ContextDictionary dict) {
         return ContextFactoryProvider
                     .getFactory(DeviceContextFactory.CONTEXT_IDENTIFIER, DeviceContextFactory.class)
@@ -19,5 +25,7 @@ public class ContextUtil {
                 .getFactory(QueueFamilyContextFactory.CONTEXT_IDENTIFIER, QueueFamilyContextFactory.class)
                     .getContext(dict.get(QueueFamilyContextFactory.CONTEXT_IDENTIFIER));
     }
+
+
 
 }

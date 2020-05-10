@@ -14,6 +14,7 @@ public class ContextFactoryProvider {
     private static final Map<String, ContextFactory> factories = new HashMap<>();
 
     static {
+        setFactory(PhysicalDeviceContextFactory.class.getSimpleName(), new PhysicalDeviceContextFactory());
         setFactory(DeviceContextFactory.class.getSimpleName(), new DeviceContextFactory());
         setFactory(QueueContextFactory.class.getSimpleName(), new QueueContextFactory());
         setFactory(QueueFamilyContextFactory.class.getSimpleName(), new QueueFamilyContextFactory());
@@ -35,6 +36,10 @@ public class ContextFactoryProvider {
         synchronized (factories) {
             factories.put(name, contextFactory);
         }
+    }
+
+    public static Asset getSubasset(ContextFactory factory, Asset asset) {
+        return factory.getSubasset(asset.getSubAsset(SUBASSET_LOCATION));
     }
 
     public static void multiLock(boolean lock, Context... contexts) {

@@ -5,7 +5,5 @@ import org.lwjgl.vulkan.VkPhysicalDevice;
 
 public interface DeviceContext extends Context {
 
-    VkPhysicalDevice getPhysicalDevice();
-
     VkDevice getDevice();
 }
