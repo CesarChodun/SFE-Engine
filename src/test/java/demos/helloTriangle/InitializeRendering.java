@@ -23,6 +23,7 @@ import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
 import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
+import com.sfengine.components.contexts.DefaultContexts;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
@@ -30,7 +31,10 @@ import com.sfengine.components.pipeline.ImageViewCreateInfo;
 import com.sfengine.components.recording.RenderPass;
 import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.core.Application;
+import com.sfengine.core.context.ContextDictionary;
+import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.engine.Engine;
+import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.hardware.PhysicalDeviceJudge;
@@ -65,27 +69,35 @@ import org.lwjgl.vulkan.VkViewport;
 
 public class InitializeRendering implements EngineTask, Destroyable {
 
-    private Engine engine;
+    private final Engine engine = EngineFactory.getEngine();
     private Window window;
+    private ContextDictionary dict;
 
     private MemoryBin destroy = new MemoryBin();
-    private List<EngineTask> tickTasks = new ArrayList<EngineTask>();
+    private List<EngineTask> tickTasks = new ArrayList<>();
 
     private VkViewport.Buffer viewport;
     private VkRect2D.Buffer scissor;
 
-    public InitializeRendering(Engine engine, Window window) {
-        this.engine = engine;
+    private VkPhysicalDevice physicalDevice;
+    private int renderQueueFamilyIndex;
+    private VkDevice device;
+    private VkQueue renderQueue;
+
+    public InitializeRendering(Window window) {
         this.window = window;
+        this.dict = DefaultContexts.getDictionary();
     }
 
     @Override
     public void run() throws AssertionError {
+        physicalDevice = ContextUtil.getPhysicalDevice(dict).getPhysicalDevice();
+        renderQueueFamilyIndex = ContextUtil.getQueueFamily(dict).getQueueFamilyIndex();
+        device = ContextUtil.getDevice(dict).getDevice();
+        renderQueue = ContextUtil.getQueue(dict).getQueue();
+
         // Creating required vulkan objects.
-        VkPhysicalDevice physicalDevice = getPhysicalDevice();
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
-        int renderQueueFamilyIndex = getRenderQueueFamilyIndex(window, physicalDevice);
-        VkDevice device = getLogicalDevice(physicalDevice, renderQueueFamilyIndex);
         final VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
 
         // Checking the window support
@@ -142,41 +154,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
     }
 
     /**
-     * Chooses the most appropriate physical device(GPU). Discrete GPUs are preferred and if it is
-     * available it will be returned.
-     *
-     * @return the physical device.
-     */
-    private static VkPhysicalDevice getPhysicalDevice() {
-        VkPhysicalDevice physicalDevice =
-                HardwareManager.getBestPhysicalDevice(
-                        new PhysicalDeviceJudge() {
-
-                            @Override
-                            public int score(VkPhysicalDevice device) {
-
-                                VkPhysicalDeviceProperties props =
-                                        VkPhysicalDeviceProperties.calloc();
-                                vkGetPhysicalDeviceProperties(device, props);
-
-                                int out = 0;
-
-                                if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-                                    out = 1000;
-                                } else if (props.deviceType()
-                                        == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
-                                    out = 100;
-                                }
-
-                                props.free();
-                                return out;
-                            }
-                        });
-
-        return physicalDevice;
-    }
-
-    /**
      * Obtains suitable color format.
      *
      * @param window
@@ -200,66 +177,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
         }
 
         return colorFormat;
-    }
-
-    /**
-     * Returns an index to the most suitable queue family. According to the {@link
-     * HardwareManager.HARDWARE_CFG} file.
-     *
-     * @param window
-     * @param physicalDevice
-     * @return
-     */
-    private static int getRenderQueueFamilyIndex(Window window, VkPhysicalDevice physicalDevice) {
-        int renderQueueFamilyIndex = 0;
-
-        try {
-            renderQueueFamilyIndex = HardwareManager.getMostSuitableQueueFamily(physicalDevice);
-        } catch (NoSuchFieldException
-                | SecurityException
-                | IllegalArgumentException
-                | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to obtain render queue family index");
-        }
-
-        return renderQueueFamilyIndex;
-    }
-
-    /**
-     * Obtains a basic logical device.
-     *
-     * @param physicalDevice
-     * @param renderQueueFamilyIndex
-     * @return
-     */
-    private static VkDevice getLogicalDevice(
-            VkPhysicalDevice physicalDevice, int renderQueueFamilyIndex) {
-
-        FloatBuffer queuePriorities = memAllocFloat(1);
-        queuePriorities.put(0.0f);
-        queuePriorities.flip();
-
-        List<String> extensions = new ArrayList<String>();
-        extensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-
-        VkDevice device = null;
-
-        try {
-            device =
-                    createLogicalDevice(
-                            physicalDevice,
-                            renderQueueFamilyIndex,
-                            queuePriorities,
-                            0,
-                            null,
-                            extensions);
-        } catch (VulkanException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to create logical device.");
-        }
-
-        return device;
     }
 
     /**
