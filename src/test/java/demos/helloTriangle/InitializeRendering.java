@@ -98,7 +98,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         // Creating required vulkan objects.
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
-        final VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
 
         // Checking the window support
         checkSupport(window, physicalDevice, renderQueueFamilyIndex);
