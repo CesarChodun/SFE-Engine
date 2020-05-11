@@ -1,9 +1,7 @@
-package com.sfengine.core.context;
+package com.sfengine.core.context.device;
 
+import com.sfengine.core.context.ContextFactory;
 import com.sfengine.core.resources.Asset;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DeviceContextFactory extends ContextFactory<DeviceContext> {
 

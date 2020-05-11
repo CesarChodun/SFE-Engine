@@ -1,7 +1,7 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.physicaldevice;
 
 import com.sfengine.core.HardwareManager;
-import com.sfengine.core.context.PhysicalDeviceContext;
+import com.sfengine.core.context.physicaldevice.PhysicalDeviceContext;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.synchronization.Dependency;

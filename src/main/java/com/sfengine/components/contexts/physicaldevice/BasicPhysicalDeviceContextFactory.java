@@ -1,10 +1,8 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.physicaldevice;
 
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextFactoryProvider;
-import com.sfengine.core.context.PhysicalDeviceContextFactory;
-
-import java.util.Dictionary;
+import com.sfengine.core.context.physicaldevice.PhysicalDeviceContextFactory;
 
 public class BasicPhysicalDeviceContextFactory {
 

@@ -1,11 +1,13 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.queuefamily;
 
 import com.sfengine.core.Application;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.context.*;
+import com.sfengine.core.context.physicaldevice.PhysicalDeviceContext;
+import com.sfengine.core.context.queuefamily.QueueFamilyContext;
+import com.sfengine.core.context.queuefamily.QueueFamilyContextFactory;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
-import com.sfengine.core.resources.Asset;
 import com.sfengine.core.resources.ConfigFile;
 import com.sfengine.core.synchronization.Dependency;
 import com.sfengine.core.synchronization.DependencyFence;
@@ -14,8 +16,6 @@ import org.lwjgl.vulkan.VkQueueFamilyProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 import static com.sfengine.core.hardware.HardwareUtil.getNextQueueFamilyIndex;

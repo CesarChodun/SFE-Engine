@@ -1,5 +1,12 @@
 package com.sfengine.core.context;
 
+import com.sfengine.core.context.device.DeviceContext;
+import com.sfengine.core.context.device.DeviceContextFactory;
+import com.sfengine.core.context.physicaldevice.PhysicalDeviceContextFactory;
+import com.sfengine.core.context.queue.QueueContext;
+import com.sfengine.core.context.queue.QueueContextFactory;
+import com.sfengine.core.context.queuefamily.QueueFamilyContext;
+import com.sfengine.core.context.queuefamily.QueueFamilyContextFactory;
 import com.sfengine.core.resources.Asset;
 
 import java.util.Arrays;

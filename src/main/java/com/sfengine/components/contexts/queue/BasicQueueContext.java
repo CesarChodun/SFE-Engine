@@ -1,6 +1,9 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.queue;
 
 import com.sfengine.core.context.*;
+import com.sfengine.core.context.device.DeviceContext;
+import com.sfengine.core.context.queue.QueueContext;
+import com.sfengine.core.context.queuefamily.QueueFamilyContext;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.synchronization.Dependency;

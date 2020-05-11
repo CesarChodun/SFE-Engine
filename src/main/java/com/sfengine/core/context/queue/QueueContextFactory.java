@@ -1,9 +1,7 @@
-package com.sfengine.core.context;
+package com.sfengine.core.context.queue;
 
+import com.sfengine.core.context.ContextFactory;
 import com.sfengine.core.resources.Asset;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class QueueContextFactory extends ContextFactory<QueueContext> {
     public static final String CONTEXT_IDENTIFIER = QueueContextFactory.class.getSimpleName();

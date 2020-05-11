@@ -1,5 +1,6 @@
-package com.sfengine.core.context;
+package com.sfengine.core.context.device;
 
+import com.sfengine.core.context.Context;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 

@@ -1,9 +1,8 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.queuefamily;
 
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextFactoryProvider;
-import com.sfengine.core.context.QueueFamilyContext;
-import com.sfengine.core.context.QueueFamilyContextFactory;
+import com.sfengine.core.context.queuefamily.QueueFamilyContextFactory;
 
 public class BasicQueueFamilyContextFactory {
 

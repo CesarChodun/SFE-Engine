@@ -1,5 +1,6 @@
-package com.sfengine.core.context;
+package com.sfengine.core.context.physicaldevice;
 
+import com.sfengine.core.context.ContextFactory;
 import com.sfengine.core.resources.Asset;
 
 public class PhysicalDeviceContextFactory extends ContextFactory<PhysicalDeviceContext> {
