@@ -1,5 +1,9 @@
 package com.sfengine.components.contexts;
 
+import com.sfengine.components.contexts.device.BasicDeviceContextFactory;
+import com.sfengine.components.contexts.physicaldevice.BasicPhysicalDeviceContextFactory;
+import com.sfengine.components.contexts.queue.BasicQueueContextFactory;
+import com.sfengine.components.contexts.queuefamily.BasicQueueFamilyContextFactory;
 import com.sfengine.core.context.Context;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.synchronization.Dependency;
