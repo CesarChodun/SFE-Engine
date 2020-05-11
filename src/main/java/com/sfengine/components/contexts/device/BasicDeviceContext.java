@@ -1,10 +1,14 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.device;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
 import com.sfengine.core.Application;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.context.*;
+import com.sfengine.core.context.device.DeviceContext;
+import com.sfengine.core.context.device.DeviceContextFactory;
+import com.sfengine.core.context.physicaldevice.PhysicalDeviceContext;
+import com.sfengine.core.context.queuefamily.QueueFamilyContext;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.rendering.RenderUtil;
@@ -98,10 +102,8 @@ public class BasicDeviceContext implements DeviceContext {
                         queueFamilyContext.getQueueFamilyIndex(),
                         queuePrioritiesp, flags, layers, extensions);
             } catch (VulkanException e) {
+                e.printStackTrace();
                 throw new AssertionError("Failed to create vulkan device.", e);
-            }
-            finally {
-                memFree(queuePrioritiesp);
             }
 
             deviceCreated.release();

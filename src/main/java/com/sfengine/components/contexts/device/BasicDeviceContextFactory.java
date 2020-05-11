@@ -1,16 +1,7 @@
-package com.sfengine.components.contexts;
+package com.sfengine.components.contexts.device;
 
 import com.sfengine.core.context.*;
-import com.sfengine.core.engine.EngineFactory;
-import com.sfengine.core.resources.Asset;
-import com.sfengine.core.resources.ConfigFile;
-import org.lwjgl.vulkan.EXTDescriptorIndexing;
-import org.lwjgl.vulkan.VK10;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.sfengine.core.context.device.DeviceContextFactory;
 
 public class BasicDeviceContextFactory {
 
