@@ -24,6 +24,8 @@ import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
 import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
@@ -119,16 +121,18 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 new BasicFramebufferFactory(device, renderPass.handle());
         destroy.add(fbFactory);
 
+        BasicRenderJobContext renderJobContext =
+                BasicRenderJobContextFactory.createContext("triangle", basicCMD, dict);
+        dict.put(renderJobContext);
+
         ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
         Renderer winRenderer =
                 new Renderer(
                         window,
-                        device,
-                        renderQueue,
                         imageInfo.getInfo(),
-                        basicCMD,
                         swapchainFactory,
-                        fbFactory);
+                        fbFactory,
+                        dict);
 
         // Creating rendering task
         RenderingTask renderingTask = new RenderingTask(winRenderer);

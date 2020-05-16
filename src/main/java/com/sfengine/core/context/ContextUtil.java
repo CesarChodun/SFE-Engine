@@ -8,6 +8,8 @@ import com.sfengine.core.context.queue.QueueContext;
 import com.sfengine.core.context.queue.QueueContextFactory;
 import com.sfengine.core.context.queuefamily.QueueFamilyContext;
 import com.sfengine.core.context.queuefamily.QueueFamilyContextFactory;
+import com.sfengine.core.context.renderjob.RenderJobContext;
+import com.sfengine.core.context.renderjob.RenderJobContextFactory;
 
 public class ContextUtil {
 
@@ -35,6 +37,10 @@ public class ContextUtil {
                     .getContext(dict.get(QueueFamilyContextFactory.CONTEXT_IDENTIFIER));
     }
 
-
+    public static RenderJobContext getRenderJob(ContextDictionary dict) {
+        return ContextFactoryProvider
+                .getFactory(RenderJobContextFactory.CONTEXT_IDENTIFIER, RenderJobContextFactory.class)
+                .getContext(dict.get(RenderJobContextFactory.CONTEXT_IDENTIFIER));
+    }
 
 }

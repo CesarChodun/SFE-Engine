@@ -7,6 +7,7 @@ import com.sfengine.core.context.queue.QueueContext;
 import com.sfengine.core.context.queue.QueueContextFactory;
 import com.sfengine.core.context.queuefamily.QueueFamilyContext;
 import com.sfengine.core.context.queuefamily.QueueFamilyContextFactory;
+import com.sfengine.core.context.renderjob.RenderJobContextFactory;
 import com.sfengine.core.resources.Asset;
 
 import java.util.Arrays;
@@ -25,6 +26,7 @@ public class ContextFactoryProvider {
         setFactory(DeviceContextFactory.class.getSimpleName(), new DeviceContextFactory());
         setFactory(QueueContextFactory.class.getSimpleName(), new QueueContextFactory());
         setFactory(QueueFamilyContextFactory.class.getSimpleName(), new QueueFamilyContextFactory());
+        setFactory(RenderJobContextFactory.class.getSimpleName(), new RenderJobContextFactory());
     }
 
     public static <T extends ContextFactory> T getFactory(String identifier, Class<T> cls) {

@@ -5,9 +5,13 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.core.context.ContextDictionary;
+import com.sfengine.core.context.ContextUtil;
+import com.sfengine.core.context.renderjob.RenderJobContext;
 import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.rendering.factories.FrameBufferFactory;
 import com.sfengine.core.rendering.factories.SwapchainFactory;
+import com.sfengine.core.rendering.recording.RenderJob;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
@@ -53,7 +57,7 @@ public class Renderer implements Destroyable {
     private VkDevice device;
 
     /** Factory for creating command buffers. */
-    private CommandBufferFactory cmdFactory;
+    private RenderJobContext cmdJobs;
     /** Factory for (re)creating swapchain. */
     private SwapchainFactory swapFactory;
     /** Framebuffers factory. */
@@ -77,7 +81,7 @@ public class Renderer implements Destroyable {
     /** A list of frame buffers. */
     private long[] framebuffers;
     /** A list of created command buffers. */
-    private VkCommandBuffer[] commandBuffers;
+//    private VkCommandBuffer[] commandBuffers;
 
     /** Acquired images count. */
     private int acquiredImages = 0;
@@ -108,7 +112,7 @@ public class Renderer implements Destroyable {
     /** Buffer for obtaining next image index. */
     private IntBuffer pImageIndex;
     /** Current width and height of the surface images. */
-    private int width, height;
+    public static int width, height;
     /**
      * A pointer to an array of pipeline stages at which each corresponding semaphore wait will
      * occur.
@@ -121,32 +125,28 @@ public class Renderer implements Destroyable {
      * <p><b>Must</b> be invoked on the first thread!
      *
      * @param window Targeted window.
-     * @param device Device that will perform the rendering work.
-     * @param queue Queue for submitting the work.
      * @param imageViewCreateInfo Create info for image views.
-     * @param cmdFactory Command buffer factory.
      * @param swapchainFactory Swapchain factory.
-     * @param frameBufferFactory Frame buffers factory.
+     * @param dict
+     * @param frameBufferFactory
      */
     public Renderer(
             Window window,
-            VkDevice device,
-            VkQueue queue,
             VkImageViewCreateInfo imageViewCreateInfo,
-            CommandBufferFactory cmdFactory,
             SwapchainFactory swapchainFactory,
-            FrameBufferFactory frameBufferFactory) {
+            FrameBufferFactory frameBufferFactory,
+            ContextDictionary dict) {
 
         this.window = window;
-        this.device = device;
-        this.queue = queue;
+        this.device = ContextUtil.getDevice(dict).getDevice();
+        this.queue = ContextUtil.getQueue(dict).getQueue();
         this.imageViewCreateInfo = imageViewCreateInfo;
 
         if (device.getCapabilities().vkCreateSwapchainKHR == NULL) {
             throw new AssertionError("The device cannot create the swapchain.");
         }
 
-        this.cmdFactory = cmdFactory;
+        this.cmdJobs = ContextUtil.getRenderJob(dict);
         this.swapFactory = swapchainFactory;
         this.fbFactory = frameBufferFactory;
 
@@ -209,10 +209,12 @@ public class Renderer implements Destroyable {
     public void update() throws VulkanException {
         recreateSwapchain();
 
-        if (this.commandBuffers != null) {
-            destroyCmdBuffers();
-        }
-        this.commandBuffers = cmdFactory.createCmdBuffers(width, height, framebuffers);
+        cmdJobs.recreateJobs(framebuffers);
+
+//        if (this.commandBuffers != null) {
+//            destroyCmdBuffers();
+//        }
+//        this.commandBuffers = cmdFactory.createCmdBuffers(width, height, framebuffers);
 
         renderImageIndices = new ArrayList<Integer>(images.length);
         busyFrames = new ArrayList<Integer>(images.length);
@@ -239,12 +241,6 @@ public class Renderer implements Destroyable {
         for (int i = 0; i < images.length; i++) {
             workDoneFences[i] = createFence(device, workDoneFenceInfo, null);
         }
-    }
-
-    /** Helper function for destroying the created command buffers. */
-    private void destroyCmdBuffers() {
-        cmdFactory.destroyCmdBuffers(commandBuffers);
-        commandBuffers = null;
     }
 
     /**
@@ -358,6 +354,8 @@ public class Renderer implements Destroyable {
         }
 
         Integer imageIndex = renderImageIndices.remove(0);
+        RenderJob cmdJob = cmdJobs.getJob(framebuffers[imageIndex]);
+        cmdJob.performUpdate();
 
         if (renderCompleteSemaphores[imageIndex] != VK_NULL_HANDLE) {
             vkDestroySemaphore(device, renderCompleteSemaphores[imageIndex], null);
@@ -367,7 +365,7 @@ public class Renderer implements Destroyable {
 
         pWaitSemaphores.put(0, imageAcquireSemaphores[imageIndex]);
         pSignalSemaphores.put(0, renderCompleteSemaphores[imageIndex]);
-        pCommandBuffers.put(0, commandBuffers[imageIndex]);
+        pCommandBuffers.put(0, cmdJob.getCMD());
 
         submitInfo.waitSemaphoreCount(pWaitSemaphores.remaining());
         submitInfo.pWaitSemaphores(pWaitSemaphores);

@@ -125,25 +125,25 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 new BasicFramebufferFactory(device, renderPass.handle());
         destroy.add(fbFactory);
 
-        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-        Renderer winRenderer =
-                new Renderer(
-                        window,
-                        device,
-                        renderQueue,
-                        imageInfo.getInfo(),
-                        basicCMD,
-                        swapchainFactory,
-                        fbFactory);
-
-        // Creating rendering task
-        RenderingTask renderingTask = new RenderingTask(winRenderer);
-        engine.addTickTask(renderingTask);
-        tickTasks.add(renderingTask);
-
-        window.setVisible(true);
-
-        destroy.add(winRenderer);
+//        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
+//        Renderer winRenderer =
+//                new Renderer(
+//                        window,
+//                        device,
+//                        renderQueue,
+//                        imageInfo.getInfo(),
+//                        basicCMD,
+//                        swapchainFactory,
+//                        fbFactory);
+//
+//        // Creating rendering task
+//        RenderingTask renderingTask = new RenderingTask(winRenderer);
+//        engine.addTickTask(renderingTask);
+//        tickTasks.add(renderingTask);
+//
+//        window.setVisible(true);
+//
+//        destroy.add(winRenderer);
     }
 
     @Override
