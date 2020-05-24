@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class for managing assets.
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Asset {
 
-    private static final Logger logger = LoggerFactory.getLogger(Asset.class.getName());
+    private static final Logger logger = Logger.getLogger(Asset.class.getName());
 
     /** File location on the drive. */
     protected File location;
@@ -53,7 +54,7 @@ public class Asset {
 
         if (!out.exists()) {
             if (out.isDirectory()) {
-                logger.debug("Failed to locate asset(directory too short). Creating new one.", out);
+                logger.log(Level.INFO, "Failed to locate asset(directory too short). Creating new one.", out);
                 out.mkdirs();
             }
             else
