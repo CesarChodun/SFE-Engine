@@ -4,16 +4,16 @@ import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.result.VulkanException;
 import java.util.concurrent.Semaphore;
+
+import com.sfengine.core.synchronization.Dependable;
+import com.sfengine.core.synchronization.Dependency;
+import com.sfengine.core.synchronization.DependencyFence;
 import org.lwjgl.vulkan.VkExtensionProperties;
 import org.lwjgl.vulkan.VkLayerProperties;
 
-public class EngineReport implements EngineTask {
+public class EngineReport implements EngineTask, Dependable {
 
-    private Semaphore workDone;
-
-    public EngineReport(Semaphore workDone) {
-        this.workDone = workDone;
-    }
+    private final DependencyFence workDone = new DependencyFence();
 
     @Override
     public void run() throws AssertionError {
@@ -67,5 +67,10 @@ public class EngineReport implements EngineTask {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public Dependency getDependency() {
+        return workDone;
     }
 }

@@ -81,7 +81,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
     public InitializeRendering(Window window) {
         this.window = window;
-        this.dict = dict;
         this.dict = DefaultContexts.getDictionary();
     }
 

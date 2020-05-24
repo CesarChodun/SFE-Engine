@@ -22,11 +22,8 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Running \"Hello Descriptor\" demo.");
 
-        // Gets default synchronization engine
-        Engine engine = EngineFactory.getEngine();
-
         // Creates a task that will perform the game functionality.
-        GameLogic logicTask = new GameLogic(engine);
+        GameLogic logicTask = new GameLogic();
 
         // Creates a separate thread for the game logic.
         Thread logic = new Thread(logicTask);
@@ -34,13 +31,13 @@ public class Main {
 
         try {
             // Starts the engine(on this thread).
-            engine.run();
+            EngineFactory.runEngine();
         } catch (Exception e) {
             System.err.println("Engine was shut down due to a problem:");
             e.printStackTrace();
         } finally {
             // Frees the application data
-            engine.destroy();
+            EngineFactory.destroyEngine();
             Application.destroy();
             System.out.println("Engine successfully shut down.");
         }

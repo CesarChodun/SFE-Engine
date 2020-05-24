@@ -9,6 +9,9 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
 import com.sfengine.components.geometry.indexed.MeshI3D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
@@ -24,6 +27,8 @@ import com.sfengine.components.shaders.descriptor_sets.FileDescriptorSetBlueprin
 import com.sfengine.components.transform.CameraTransform;
 import com.sfengine.components.transform.ModelTransform3D;
 import com.sfengine.core.*;
+import com.sfengine.core.context.ContextDictionary;
+import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
@@ -79,18 +84,21 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private ModelTransform3D cubeTransform = new ModelTransform3D();
     private CameraTransform camera;
 
+    private ContextDictionary dict;
+
     public InitializeRendering(Window window) {
         this.window = window;
+        this.dict = DefaultContexts.getDictionary();
     }
 
     @Override
     public void run() throws AssertionError {
         // Creating required vulkan objects.
-        VkPhysicalDevice physicalDevice = getPhysicalDevice();
+        VkPhysicalDevice physicalDevice = ContextUtil.getPhysicalDevice(dict).getPhysicalDevice();
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
-        int renderQueueFamilyIndex = getRenderQueueFamilyIndex(window, physicalDevice);
-        VkDevice device = getLogicalDevice(physicalDevice, renderQueueFamilyIndex);
-        final VkQueue renderQueue = getDeviceQueue(device, renderQueueFamilyIndex, 0);
+        int renderQueueFamilyIndex = ContextUtil.getQueueFamily(dict).getQueueFamilyIndex();
+        VkDevice device = ContextUtil.getDevice(dict).getDevice();
+        final VkQueue renderQueue = ContextUtil.getQueue(dict).getQueue();
 
         // Checking the window support
         checkSupport(window, physicalDevice, renderQueueFamilyIndex);
@@ -125,25 +133,27 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 new BasicFramebufferFactory(device, renderPass.handle());
         destroy.add(fbFactory);
 
-//        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-//        Renderer winRenderer =
-//                new Renderer(
-//                        window,
-//                        device,
-//                        renderQueue,
-//                        imageInfo.getInfo(),
-//                        basicCMD,
-//                        swapchainFactory,
-//                        fbFactory);
-//
-//        // Creating rendering task
-//        RenderingTask renderingTask = new RenderingTask(winRenderer);
-//        engine.addTickTask(renderingTask);
-//        tickTasks.add(renderingTask);
-//
-//        window.setVisible(true);
-//
-//        destroy.add(winRenderer);
+        BasicRenderJobContext renderJobContext =
+                BasicRenderJobContextFactory.createContext("helloCube", basicCMD, dict);
+        dict.put(renderJobContext);
+
+        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
+        Renderer winRenderer =
+                new Renderer(
+                        window,
+                        imageInfo.getInfo(),
+                        swapchainFactory,
+                        fbFactory,
+                        dict);
+
+        // Creating rendering task
+        RenderingTask renderingTask = new RenderingTask(winRenderer);
+        engine.addTickTask(renderingTask);
+        tickTasks.add(renderingTask);
+
+        window.setVisible(true);
+
+        destroy.add(winRenderer);
     }
 
     @Override

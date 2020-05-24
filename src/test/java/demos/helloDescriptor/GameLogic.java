@@ -1,8 +1,15 @@
 package demos.helloDescriptor;
 
-import com.sfengine.components.util.EngineInitializationTask;
+import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.window.CFrame;
+import com.sfengine.core.Application;
+import com.sfengine.core.HardwareManager;
 import com.sfengine.core.engine.Engine;
-import com.sfengine.core.synchronization.DependencyFence;
+import com.sfengine.core.engine.EngineFactory;
+import com.sfengine.core.resources.Destroyable;
+import com.sfengine.core.synchronization.Dependency;
+import demos.helloDescriptor.rendering.InitializeRendering;
 import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +27,11 @@ import java.util.logging.Logger;
 public class GameLogic implements Runnable {
 
     private static final String CONFIG_FILE = "demos/hellodescriptor";
-    private Engine engine;
+    private Engine engine = EngineFactory.getEngine();
+    final MemoryBin toDestroy = new MemoryBin();
 
-    public GameLogic(Engine engine) {
-        this.engine = engine;
+    public GameLogic() {
+
     }
 
     @Override
@@ -34,23 +42,37 @@ public class GameLogic implements Runnable {
         DefaultResourceConverter converter = new DefaultResourceConverter();
         converter.runConversion();
 
-        // Semaphore indicating initialization state
-        DependencyFence initialized = new DependencyFence();
-
-        // Adding engine initialization task to the engine task queue
-        engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
-
         // Awaits for conversion to complete
         converter.await();
 
-        // Creating a thread that will wait until the engine is initialized and then
-        // it will create the window.
-        //        for (int i = 0; i < 100; i++) {
-        engine.addConfig(new WindowManager(engine, initialized));
-        //            engine.getConfigPool().execute(new WindowManager(engine, initialized));
-        //            Thread waitForConfig = new Thread(new WindowManager(engine, initialized));
-        //            waitForConfig.start();
-        //        }
+        // Application and hardware initialization.
+        Application.init(CONFIG_FILE);
+        HardwareManager.init();
+
+        CFrame frame = new CFrame("MyFrame");
+        frame.setCloseCallback(toDestroy);
+
+        System.err.println("CFrame work submited!");
+
+        List<Dependency> deps = DefaultContexts.getDependencies();
+        deps.add(frame.getDependency());
+
+        Dependency[] depsArr = new Dependency[deps.size()];
+        for (int i = 0; i < deps.size(); i++)
+            depsArr[i] = deps.get(i);
+
+        engine.addConfig(
+                () -> {
+                    // Creating the rendering task.
+                    InitializeRendering rendTask =
+                            new InitializeRendering(frame.getWindow());
+                    engine.addTask(rendTask);
+                    toDestroy.add((Destroyable) rendTask);
+                    frame.setCloseCallback(toDestroy);
+                },
+                depsArr);
+
+        System.err.println("Window manager done!");
     }
 
     /**
