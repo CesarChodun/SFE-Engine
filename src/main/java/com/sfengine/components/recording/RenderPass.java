@@ -5,7 +5,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 import com.sfengine.components.pipeline.Attachments;
-import com.sfengine.core.rendering.Recordable;
+import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.result.VulkanException;
 import java.nio.LongBuffer;

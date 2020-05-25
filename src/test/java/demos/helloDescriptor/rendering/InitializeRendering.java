@@ -1,7 +1,6 @@
 package demos.helloDescriptor.rendering;
 
 import static com.sfengine.core.rendering.RenderUtil.createLogicalDevice;
-import static com.sfengine.core.rendering.RenderUtil.getDeviceQueue;
 import static com.sfengine.core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
@@ -33,7 +32,7 @@ import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.HardwareManager;
 import com.sfengine.core.hardware.PhysicalDeviceJudge;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.Recordable;
+import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Renderer;
 import com.sfengine.core.rendering.Window;
