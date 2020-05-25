@@ -1,5 +1,6 @@
 package com.sfengine.components.window;
 
+import com.sfengine.components.window.input.CFrameInput;
 import com.sfengine.core.Application;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
@@ -11,7 +12,6 @@ import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.synchronization.DependencyFence;
 import com.sfengine.core.synchronization.Dependable;
 import com.sfengine.core.synchronization.Dependency;
-import com.sun.xml.internal.bind.v2.TODO;
 import org.lwjgl.vulkan.VK10;
 
 import java.io.IOException;
@@ -37,7 +37,9 @@ public class CFrame implements Dependable {
     private volatile WindowTickTask tickTask;
     private final CFrameDestroy destroyCallback = new CFrameDestroy();
     private volatile long handle = VK10.VK_NULL_HANDLE;
-    private DependencyFence windowCreated = new DependencyFence();
+    private final DependencyFence windowCreated = new DependencyFence();
+
+    private volatile CFrameInput input = new CFrameInput(this);
 
     @Override
     public Dependency getDependency() {
@@ -156,5 +158,9 @@ public class CFrame implements Dependable {
      */
     public Window getWindow() {
         return window;
+    }
+
+    public CFrameInput getInput() {
+        return input;
     }
 }
