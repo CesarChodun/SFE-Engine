@@ -1,4 +1,4 @@
-package demos.util;
+package com.sfengine.components.util;
 
 import com.sfengine.components.resources.ConversionEngine;
 import com.sfengine.components.resources.converters.SPIRVConverter;

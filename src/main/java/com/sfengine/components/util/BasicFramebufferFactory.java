@@ -1,4 +1,4 @@
-package demos.util;
+package com.sfengine.components.util;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAllocLong;

@@ -1,4 +1,4 @@
-package demos.util;
+package com.sfengine.components.util;
 
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.Renderer;

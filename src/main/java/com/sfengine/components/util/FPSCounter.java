@@ -1,4 +1,4 @@
-package demos.util;
+package com.sfengine.components.util;
 
 public class FPSCounter {
 

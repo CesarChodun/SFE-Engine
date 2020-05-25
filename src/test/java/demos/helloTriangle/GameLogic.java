@@ -8,7 +8,7 @@ import com.sfengine.core.HardwareManager;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.synchronization.Dependency;
-import demos.util.DefaultResourceConverter;
+import com.sfengine.components.util.DefaultResourceConverter;
 
 import java.util.List;
 

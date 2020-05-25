@@ -10,7 +10,7 @@ import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.synchronization.Dependency;
 import demos.helloDescriptor.rendering.InitializeRendering;
-import demos.util.DefaultResourceConverter;
+import com.sfengine.components.util.DefaultResourceConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
