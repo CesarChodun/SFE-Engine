@@ -9,11 +9,7 @@ public class Main {
     private static class ExampleClass implements Runnable, EngineTask {
 
         /** Our engine object. We need it to shut it down when we finish our work. */
-        private Engine engine;
-
-        public ExampleClass(Engine engine) {
-            this.engine = engine;
-        }
+        private Engine engine = EngineFactory.getEngine();
 
         @Override
         public void run() {
@@ -39,24 +35,23 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        // Gets default synchronization engine
-        Engine engine = EngineFactory.getEngine();
 
         // Creates a task that will be performed by the engine.
-        ExampleClass example = new ExampleClass(engine);
+        ExampleClass example = new ExampleClass();
 
-        // Adds the task to the engine queue.
-        // It will be invoked on the first thread.
-        engine.addTask(example);
+        // Creates a separate thread for the game logic.
+        Thread exampleThread = new Thread(example);
+        exampleThread.start();
 
         try {
             // Starts the engine(on this thread).
-            engine.run();
+            EngineFactory.runEngine();
         } catch (Exception e) {
             System.err.println("Engine is shut down due to a problem:");
             e.printStackTrace();
         } finally {
-            engine.destroy();
+            // Frees the application data
+            EngineFactory.destroyEngine();
             System.out.println("Engine successfully shut down.");
         }
     }

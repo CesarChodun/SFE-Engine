@@ -92,6 +92,7 @@ public class HardwareManager {
                 throw new Error("Failed to initialize hardware. Unable to proceed.", e);
             }
             hardwareInitialized.release();
+            System.out.println("HardwareManager data initialized!");
         }, Application.getDependency());
     }
 

@@ -1,23 +1,16 @@
 package demos.hardwareinit;
 
-import com.sfengine.components.util.EngineInitializationTask;
 import com.sfengine.core.Application;
+import com.sfengine.core.HardwareManager;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
-import com.sfengine.core.synchronization.DependencyFence;
-
-import java.util.concurrent.Semaphore;
 
 public class GameLogic implements EngineTask {
 
     static final String CONFIG_FILE = "demos/hardwareinit";
     /** Our engine object. We need it to shut it down when we finish our work. */
     private Engine engine = EngineFactory.getEngine();
-
-    public GameLogic(Engine engine) {
-        this.engine = engine;
-    }
 
     @Override
     public void run() throws AssertionError {
@@ -37,26 +30,18 @@ public class GameLogic implements EngineTask {
             System.out.print("OFF.\n");
         }
 
-        // Semaphores for monitoring the progress.
-        DependencyFence initialized = new DependencyFence();
-        Semaphore reported = new Semaphore(0);
+        // Application and hardware initialization.
+        Application.init(CONFIG_FILE);
+        HardwareManager.init();
 
-        engine.addTask(new EngineInitializationTask(initialized, CONFIG_FILE));
-
-        EngineReport report = new EngineReport(reported);
-
-        // A thread that will monitor if the engine should be shut down.
-        Thread shutDownMonitor = new Thread(new ShutDownEngine(engine, reported));
+        EngineReport report = new EngineReport();
 
         // Adding engine tasks to the engine.
         // They will be invoked on the main thread.
         // In the same order as here.
-//        engine.addTask(init);
-        engine.addTask(report, initialized);
+        engine.addTask(report, HardwareManager.getDependency());
 
-        // Starting a thread that will monitor if the engine should
-        // be shut down. In the real application this should be monitored
-        // by a separate logic thread.
-        shutDownMonitor.start();
+        // A task that will stop the engine.
+        engine.addConfig(() -> {engine.stop();}, report.getDependency());
     }
 }

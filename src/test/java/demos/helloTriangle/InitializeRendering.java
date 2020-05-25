@@ -1,17 +1,13 @@
 package demos.helloTriangle;
 
 import static com.sfengine.core.rendering.RenderUtil.createLogicalDevice;
-import static com.sfengine.core.rendering.RenderUtil.getDeviceQueue;
 import static com.sfengine.core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
-import static org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 import static org.lwjgl.vulkan.VK10.VK_FORMAT_B8G8R8A8_UNORM;
 import static org.lwjgl.vulkan.VK10.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 import static org.lwjgl.vulkan.VK10.VK_NULL_HANDLE;
-import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
-import static org.lwjgl.vulkan.VK10.VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU;
 import static org.lwjgl.vulkan.VK10.VK_PIPELINE_BIND_POINT_GRAPHICS;
 import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 import static org.lwjgl.vulkan.VK10.VK_TRUE;
@@ -21,9 +17,10 @@ import static org.lwjgl.vulkan.VK10.vkCmdDraw;
 import static org.lwjgl.vulkan.VK10.vkCmdSetScissor;
 import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
 import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
-import static org.lwjgl.vulkan.VK10.vkGetPhysicalDeviceProperties;
 
 import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
+import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
@@ -36,10 +33,8 @@ import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
-import com.sfengine.core.HardwareManager;
-import com.sfengine.core.hardware.PhysicalDeviceJudge;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.Recordable;
+import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Renderer;
 import com.sfengine.core.rendering.Window;
@@ -50,7 +45,6 @@ import demos.util.BasicFramebufferFactory;
 import demos.util.BasicSwapchainFactory;
 import demos.util.RenderingTask;
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
@@ -60,7 +54,6 @@ import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
-import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
 import org.lwjgl.vulkan.VkPipelineLayoutCreateInfo;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
@@ -119,16 +112,18 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 new BasicFramebufferFactory(device, renderPass.handle());
         destroy.add(fbFactory);
 
+        BasicRenderJobContext renderJobContext =
+                BasicRenderJobContextFactory.createContext("triangle", basicCMD, dict);
+        dict.put(renderJobContext);
+
         ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
         Renderer winRenderer =
                 new Renderer(
                         window,
-                        device,
-                        renderQueue,
                         imageInfo.getInfo(),
-                        basicCMD,
                         swapchainFactory,
-                        fbFactory);
+                        fbFactory,
+                        dict);
 
         // Creating rendering task
         RenderingTask renderingTask = new RenderingTask(winRenderer);

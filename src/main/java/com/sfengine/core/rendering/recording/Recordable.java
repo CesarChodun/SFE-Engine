@@ -1,4 +1,4 @@
-package com.sfengine.core.rendering;
+package com.sfengine.core.rendering.recording;
 
 import org.lwjgl.vulkan.VkCommandBuffer;
 

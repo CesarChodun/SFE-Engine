@@ -1,9 +1,14 @@
 package demos.helloCube;
 
+import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.HardwareManager;
+import com.sfengine.core.synchronization.Dependency;
+import demos.helloCube.rendering.InitializeRendering;
 import demos.util.DefaultResourceConverter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +27,7 @@ public class GameLogic implements Runnable {
 
     private static final String CONFIG_FILE = "demos/hellocube";
     private Engine engine = EngineFactory.getEngine();
-
-    public GameLogic() {
-
-    }
+    private final MemoryBin toDestroy = new MemoryBin();
 
     @Override
     public void run() throws AssertionError {
@@ -35,12 +37,31 @@ public class GameLogic implements Runnable {
         DefaultResourceConverter converter = new DefaultResourceConverter();
         converter.runConversion();
 
+        // Application and hardware initialization.
         Application.init(CONFIG_FILE);
         HardwareManager.init();
 
-        // Creating a thread that will wait until the engine is initialized and then
-        // it will create the window.
-        engine.addConfig(new WindowManager());
+        CFrame frame = new CFrame("MyFrame");
+        frame.setCloseCallback(toDestroy);
+
+        List<Dependency> deps = DefaultContexts.getDependencies();
+        deps.add(frame.getDependency());
+
+        Dependency[] depsArr = new Dependency[deps.size()];
+        for (int i = 0; i < deps.size(); i++)
+            depsArr[i] = deps.get(i);
+
+        // Submits rendering task to the engine configuration queue.
+        engine.addConfig(
+                () -> {
+                    // Creating the rendering task.
+                    InitializeRendering rendTask =
+                            new InitializeRendering(frame.getWindow());
+                    toDestroy.add(rendTask);
+                    engine.addTask(rendTask);
+                }, depsArr);
+
+        System.out.println("Window manager done!");
     }
 
     /**
