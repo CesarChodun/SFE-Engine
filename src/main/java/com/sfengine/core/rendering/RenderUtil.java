@@ -60,15 +60,15 @@ public class RenderUtil {
      * @param colorAttachmentView
      */
     public static long[] createImageViews(
-            VkDevice device, VkImageViewCreateInfo colorAttachmentView, long... images)
+            VkDevice device, VkImageViewCreateInfo imageViewCreateInfo, long... images)
             throws VulkanException {
 
         long[] imageViews = new long[images.length];
 
         LongBuffer pView = memAllocLong(1);
         for (int i = 0; i < images.length; i++) {
-            colorAttachmentView.image(images[i]);
-            int err = vkCreateImageView(device, colorAttachmentView, null, pView);
+            imageViewCreateInfo.image(images[i]);
+            int err = vkCreateImageView(device, imageViewCreateInfo, null, pView);
             VulkanResult.validate(err, "Failed to create image view.");
 
             imageViews[i] = pView.get(0);
