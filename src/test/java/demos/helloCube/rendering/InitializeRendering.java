@@ -17,7 +17,7 @@ import com.sfengine.components.pipeline.GraphicsPipeline;
 import com.sfengine.components.pipeline.ImageViewCreateInfo;
 import com.sfengine.components.pipeline.Pipeline;
 import com.sfengine.components.pipeline.PipelineLayout;
-import com.sfengine.components.recording.RenderPass;
+import com.sfengine.components.rendering.recording.RenderPass;
 import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
 import com.sfengine.components.shaders.descriptor_sets.DescriptorSetBlueprint;
@@ -32,9 +32,9 @@ import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
+import com.sfengine.core.rendering.DefaultRenderer;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
-import com.sfengine.core.rendering.Renderer;
 import com.sfengine.core.rendering.Window;
 import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.resources.Asset;
@@ -137,8 +137,8 @@ public class InitializeRendering implements EngineTask, Destroyable {
         dict.put(renderJobContext);
 
         ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-        Renderer winRenderer =
-                new Renderer(
+        DefaultRenderer winRenderer =
+                new DefaultRenderer(
                         window,
                         imageInfo.getInfo(),
                         swapchainFactory,

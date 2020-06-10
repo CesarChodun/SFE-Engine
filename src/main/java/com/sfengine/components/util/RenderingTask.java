@@ -1,15 +1,15 @@
 package com.sfengine.components.util;
 
 import com.sfengine.core.engine.EngineTask;
-import com.sfengine.core.rendering.Renderer;
+import com.sfengine.core.rendering.DefaultRenderer;
 import com.sfengine.core.result.VulkanException;
 
 public class RenderingTask implements EngineTask {
 
-    private Renderer ren;
+    private DefaultRenderer ren;
     private FPSCounter counter = new FPSCounter(10);
 
-    public RenderingTask(Renderer renderer) {
+    public RenderingTask(DefaultRenderer renderer) {
         this.ren = renderer;
     }
 

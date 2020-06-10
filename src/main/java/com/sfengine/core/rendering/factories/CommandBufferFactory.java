@@ -6,7 +6,7 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
-import com.sfengine.components.recording.RenderPass;
+import com.sfengine.components.rendering.recording.RenderPass;
 
 import java.util.HashMap;
 

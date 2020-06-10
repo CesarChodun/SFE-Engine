@@ -1,12 +1,11 @@
 package com.sfengine.components.contexts.renderjob;
 
 import com.sfengine.core.context.renderjob.RenderJobContext;
-import com.sfengine.core.rendering.Renderer;
+import com.sfengine.core.rendering.DefaultRenderer;
 import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.rendering.recording.RenderJob;
 import com.sfengine.core.synchronization.Dependency;
 import com.sfengine.core.synchronization.DependencyFence;
-import com.sun.tracing.dtrace.DependencyClass;
 import org.lwjgl.vulkan.VkCommandBuffer;
 
 import java.util.HashMap;
@@ -50,7 +49,7 @@ public class BasicRenderJobContext implements RenderJobContext {
 
     @Override
     public void recreateJobs(long... frameBuffers) {
-        VkCommandBuffer[] bufs = cmdFactory.createCmdBuffers(Renderer.width, Renderer.height, frameBuffers);
+        VkCommandBuffer[] bufs = cmdFactory.createCmdBuffers(DefaultRenderer.width, DefaultRenderer.height, frameBuffers);
 
         for (int i = 0; i < frameBuffers.length; i++)
             cmds.put(frameBuffers[i], new BasicRenderJob(bufs[i]));
