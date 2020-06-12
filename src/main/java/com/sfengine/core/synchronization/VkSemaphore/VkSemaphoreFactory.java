@@ -3,6 +3,7 @@ package com.sfengine.core.synchronization.VkSemaphore;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.result.VulkanResult;
+import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 
 import java.nio.LongBuffer;
@@ -24,14 +25,23 @@ public class VkSemaphoreFactory {
 
     private static LongBuffer handleBuffer = memAllocLong(1);
 
-    public static long createSemaphore(ContextDictionary dict) {
-        int err = vkCreateSemaphore(ContextUtil.getDevice(dict).getDevice(), basicCI, null, handleBuffer);
+    public static long createSemaphore(VkDevice device) {
+        int err = vkCreateSemaphore(device, basicCI, null, handleBuffer);
         VulkanResult.assertValidate(err, "Failed to acquire semaphore!");
 
         return handleBuffer.get(0);
     }
 
-    public static void destroySemaphore(ContextDictionary dict, long sem) {
-        vkDestroySemaphore(ContextUtil.getDevice(dict).getDevice(), sem, null);
+    public static long createSemaphore(ContextDictionary dict) {
+        return createSemaphore(ContextUtil.getDevice(dict).getDevice());
+    }
+
+    public static void destroySemaphore(VkDevice device, long... semaphores) {
+        for (long sem : semaphores)
+            vkDestroySemaphore(device, sem, null);
+    }
+    
+    public static void destroySemaphore(ContextDictionary dict, long... semaphores) {
+        destroySemaphore(ContextUtil.getDevice(dict).getDevice(), semaphores);
     }
 }
