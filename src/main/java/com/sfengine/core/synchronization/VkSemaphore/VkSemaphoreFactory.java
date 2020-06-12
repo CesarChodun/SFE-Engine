@@ -36,11 +36,24 @@ public class VkSemaphoreFactory {
         return createSemaphore(ContextUtil.getDevice(dict).getDevice());
     }
 
+    public static long[] createSemaphores(VkDevice device, int count) {
+        long[] out = new long[count];
+
+        for (int i = 0; i < count; i++)
+            out[i] = createSemaphore(device);
+
+        return out;
+    }
+
+    public static long[] createSemaphores(ContextDictionary dict, int count) {
+        return createSemaphores(ContextUtil.getDevice(dict).getDevice(), count);
+    }
+
     public static void destroySemaphore(VkDevice device, long... semaphores) {
         for (long sem : semaphores)
             vkDestroySemaphore(device, sem, null);
     }
-    
+
     public static void destroySemaphore(ContextDictionary dict, long... semaphores) {
         destroySemaphore(ContextUtil.getDevice(dict).getDevice(), semaphores);
     }
