@@ -15,6 +15,9 @@ public class VkFenceWrapper implements Dependable {
 
     protected VkFenceWrapper(VkDevice device, long vkFence) {
         this.device = device;
+
+        if (vkFence == VK_NULL_HANDLE)
+            throw new AssertionError("Wrong fence handle.");
         this.vkFence = vkFence;
     }
 
