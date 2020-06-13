@@ -5,34 +5,35 @@ import static com.sfengine.core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.KHRSurface.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
-import static org.lwjgl.vulkan.KHRSwapchain.*;
 import static org.lwjgl.vulkan.VK10.*;
 
 import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.contexts.framebufferfactory.BasicFrameBufferFactoryContextFactory;
 import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
 import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
+import com.sfengine.components.contexts.swapchain.BasicSwapchainContextFactory;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
 import com.sfengine.components.pipeline.ImageViewCreateInfo;
 import com.sfengine.components.pipeline.Pipeline;
 import com.sfengine.components.pipeline.PipelineLayout;
+import com.sfengine.components.rendering.frames.BasicFrameFactory;
 import com.sfengine.components.rendering.recording.RenderPass;
 import com.sfengine.components.resources.MemoryBin;
 import com.sfengine.components.shaders.descriptor_sets.DescriptorSet;
 import com.sfengine.components.shaders.descriptor_sets.DescriptorSetBlueprint;
 import com.sfengine.components.shaders.descriptor_sets.DescriptorSetFactory;
 import com.sfengine.components.shaders.descriptor_sets.FileDescriptorSetBlueprint;
+import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
-import com.sfengine.core.HardwareManager;
-import com.sfengine.core.hardware.PhysicalDeviceJudge;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.DefaultRenderer;
+import com.sfengine.core.rendering.presenting.Presenter;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Window;
@@ -40,24 +41,21 @@ import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.resources.Asset;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.result.VulkanException;
+import com.sfengine.core.synchronization.VkFence.VkFenceSupervisor;
+import com.sfengine.core.synchronization.VkFence.VkFenceSupervisorTask;
 import demos.helloDescriptor.rendering.environment.EnvironmentDescriptorSet;
-import com.sfengine.components.util.BasicFramebufferFactory;
-import com.sfengine.components.util.BasicSwapchainFactory;
-import com.sfengine.components.util.RenderingTask;
+
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import org.joml.Vector2f;
-import org.lwjgl.vulkan.EXTDescriptorIndexing;
 import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
-import org.lwjgl.vulkan.VkPhysicalDeviceProperties;
 import org.lwjgl.vulkan.VkQueue;
 import org.lwjgl.vulkan.VkRect2D;
 import org.lwjgl.vulkan.VkSubpassDescription;
@@ -66,7 +64,7 @@ import org.lwjgl.vulkan.VkViewport;
 public class InitializeRendering implements EngineTask, Destroyable {
 
     private final Engine engine = EngineFactory.getEngine();
-    private Window window;
+    private CFrame frame;
 
     private MemoryBin destroy = new MemoryBin();
     private List<EngineTask> tickTasks = new ArrayList<EngineTask>();
@@ -78,13 +76,15 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
     private ContextDictionary dict;
 
-    public InitializeRendering(Window window) {
-        this.window = window;
+    public InitializeRendering(CFrame frame) {
+        this.frame = frame;
         this.dict = DefaultContexts.getDictionary();
     }
 
     @Override
     public void run() throws AssertionError {
+        Window window = frame.getWindow();
+
         // Creating required vulkan objects.
         VkPhysicalDevice physicalDevice = ContextUtil.getPhysicalDevice(dict).getPhysicalDevice();
         ColorFormatAndSpace colorFormat = getColorFormat(window, physicalDevice);
@@ -117,33 +117,54 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         CommandBufferFactory basicCMD =
                 new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
-        BasicSwapchainFactory swapchainFactory =
-                new BasicSwapchainFactory(physicalDevice, colorFormat);
-        BasicFramebufferFactory fbFactory =
-                new BasicFramebufferFactory(device, renderPass.handle());
-        destroy.add(fbFactory);
+
+        dict.put(BasicFrameBufferFactoryContextFactory.createFrameBufferFactoryContext("BasicFBFactory", dict, renderPass.handle()));
+        dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, colorFormat));
 
         BasicRenderJobContext renderJobContext =
-                BasicRenderJobContextFactory.createContext("helloDescriptor", basicCMD, dict);
+                BasicRenderJobContextFactory.createContext("helloCube", basicCMD, dict);
         dict.put(renderJobContext);
 
-        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-        DefaultRenderer winRenderer =
-                new DefaultRenderer(
-                        window,
-                        imageInfo.getInfo(),
-                        swapchainFactory,
-                        fbFactory,
-                        dict);
+        VkFenceSupervisor vksupervisor = new VkFenceSupervisor();
+        VkFenceSupervisorTask supTask = new VkFenceSupervisorTask(vksupervisor);
+        engine.addTickTask(supTask);
+        tickTasks.add(supTask);
 
-        // Creating rendering task
-        RenderingTask renderingTask = new RenderingTask(winRenderer);
-        engine.addTickTask(renderingTask);
-        tickTasks.add(renderingTask);
+        engine.addTask(()-> {
+            Presenter presenter = new Presenter(dict, new BasicFrameFactory(dict, vksupervisor));
+            engine.addTickTask(presenter);
+            tickTasks.add(presenter);
+            destroy.add(presenter);
+        });
 
         window.setVisible(true);
-
-        destroy.add(winRenderer);
+//        BasicSwapchainFactory swapchainFactory =
+//                new BasicSwapchainFactory(physicalDevice, colorFormat);
+//        BasicFrameBufferFactory fbFactory =
+//                new BasicFrameBufferFactory(device, renderPass.handle());
+//        destroy.add(fbFactory);
+//
+//        BasicRenderJobContext renderJobContext =
+//                BasicRenderJobContextFactory.createContext("helloDescriptor", basicCMD, dict);
+//        dict.put(renderJobContext);
+//
+//        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
+//        DefaultRenderer winRenderer =
+//                new DefaultRenderer(
+//                        window,
+//                        imageInfo.getInfo(),
+//                        swapchainFactory,
+//                        fbFactory,
+//                        dict);
+//
+//        // Creating rendering task
+//        RenderingTask renderingTask = new RenderingTask(winRenderer);
+//        engine.addTickTask(renderingTask);
+//        tickTasks.add(renderingTask);
+//
+//        window.setVisible(true);
+//
+//        destroy.add(winRenderer);
     }
 
     @Override
@@ -159,41 +180,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
         memFree(pDesc);
 
         destroy.destroy();
-    }
-
-    /**
-     * Chooses the most appropriate physical device(GPU). Discrete GPUs are preferred and if it is
-     * available it will be returned.
-     *
-     * @return the physical device.
-     */
-    private static VkPhysicalDevice getPhysicalDevice() {
-        VkPhysicalDevice physicalDevice =
-                HardwareManager.getBestPhysicalDevice(
-                        new PhysicalDeviceJudge() {
-
-                            @Override
-                            public int score(VkPhysicalDevice device) {
-
-                                VkPhysicalDeviceProperties props =
-                                        VkPhysicalDeviceProperties.calloc();
-                                vkGetPhysicalDeviceProperties(device, props);
-
-                                int out = 0;
-
-                                if (props.deviceType() == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-                                    out = 1000;
-                                } else if (props.deviceType()
-                                        == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
-                                    out = 100;
-                                }
-
-                                props.free();
-                                return out;
-                            }
-                        });
-
-        return physicalDevice;
     }
 
     /**
@@ -220,66 +206,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
         }
 
         return colorFormat;
-    }
-
-    /**
-     * Returns an index to the most suitable queue family.
-     *
-     * @param window
-     * @param physicalDevice
-     * @return
-     */
-    private static int getRenderQueueFamilyIndex(Window window, VkPhysicalDevice physicalDevice) {
-        int renderQueueFamilyIndex = 0;
-
-        try {
-            renderQueueFamilyIndex = HardwareManager.getMostSuitableQueueFamily(physicalDevice);
-        } catch (NoSuchFieldException
-                | SecurityException
-                | IllegalArgumentException
-                | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to obtain render queue family index");
-        }
-
-        return renderQueueFamilyIndex;
-    }
-
-    /**
-     * Obtains a basic logical device.
-     *
-     * @param physicalDevice
-     * @param renderQueueFamilyIndex
-     * @return
-     */
-    private static VkDevice getLogicalDevice(
-            VkPhysicalDevice physicalDevice, int renderQueueFamilyIndex) {
-
-        FloatBuffer queuePriorities = memAllocFloat(1);
-        queuePriorities.put(0.0f);
-        queuePriorities.flip();
-
-        List<String> extensions = new ArrayList<String>();
-        extensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-        extensions.add(EXTDescriptorIndexing.VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-
-        VkDevice device = null;
-
-        try {
-            device =
-                    createLogicalDevice(
-                            physicalDevice,
-                            renderQueueFamilyIndex,
-                            queuePriorities,
-                            0,
-                            null,
-                            extensions);
-        } catch (VulkanException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to create logical device.");
-        }
-
-        return device;
     }
 
     /**
@@ -528,7 +454,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private static ImageViewCreateInfo getImageViewCreateInfo() {
         ImageViewCreateInfo info;
         try {
-            info = new ImageViewCreateInfo(Application.getConfigAssets(), "rendererImageVieCI.cfg");
+            info = new ImageViewCreateInfo(Application.getConfigAssets().getConfigFile("rendererImageVieCI.cfg"));
         } catch (IOException e) {
             e.printStackTrace();
             throw new AssertionError("Failed to create image view create info.");

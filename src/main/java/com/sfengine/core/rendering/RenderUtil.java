@@ -22,26 +22,7 @@ import java.util.logging.Logger;
 
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.vulkan.VkAllocationCallbacks;
-import org.lwjgl.vulkan.VkApplicationInfo;
-import org.lwjgl.vulkan.VkCommandPoolCreateInfo;
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkDeviceCreateInfo;
-import org.lwjgl.vulkan.VkDeviceQueueCreateInfo;
-import org.lwjgl.vulkan.VkExtensionProperties;
-import org.lwjgl.vulkan.VkFenceCreateInfo;
-import org.lwjgl.vulkan.VkFramebufferCreateInfo;
-import org.lwjgl.vulkan.VkImageViewCreateInfo;
-import org.lwjgl.vulkan.VkInstance;
-import org.lwjgl.vulkan.VkInstanceCreateInfo;
-import org.lwjgl.vulkan.VkLayerProperties;
-import org.lwjgl.vulkan.VkPhysicalDevice;
-import org.lwjgl.vulkan.VkPhysicalDeviceDescriptorIndexingFeaturesEXT;
-import org.lwjgl.vulkan.VkPhysicalDeviceMemoryProperties;
-import org.lwjgl.vulkan.VkQueue;
-import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
-import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
-import org.lwjgl.vulkan.VkSurfaceFormatKHR;
+import org.lwjgl.vulkan.*;
 
 /**
  * Class for utility methods for rendering tasks.
@@ -56,8 +37,6 @@ public class RenderUtil {
     /**
      * Creates image views(swapchain <b>must</b> be created before this call).
      *
-     * @param device
-     * @param colorAttachmentView
      */
     public static long[] createImageViews(
             VkDevice device, VkImageViewCreateInfo imageViewCreateInfo, long... images)
@@ -293,7 +272,7 @@ public class RenderUtil {
     }
 
     /**
-     * Creeates framebuffers. Has to be invoken on the main thread!
+     * Creeates frameBuffers. Has to be invoken on the main thread!
      *
      * @param device vulkan device
      * @param renderPass current render pass
@@ -304,7 +283,7 @@ public class RenderUtil {
      * @return a list of frame buffers binded to corresponding images
      * @throws VulkanException when there was a problem with frame buffers creation process
      */
-    public static long[] createFramebuffers(
+    public static long[] createFrameBuffers(
             VkDevice device,
             long renderPass,
             long[] imageViews,
@@ -332,17 +311,17 @@ public class RenderUtil {
                         .layers(1);
 
         frameBuffers = new long[imageViews.length];
-        LongBuffer pFramebuffer = memAllocLong(1);
+        LongBuffer pFrameBuffer = memAllocLong(1);
 
         for (int i = 0; i < imageViews.length; i++) {
-            pFramebuffer.put(0, imageViews[i]);
-            int err = vkCreateFramebuffer(device, frameBufferCreateInfo, null, pFramebuffer);
-            long framebuffer = pFramebuffer.get(0);
+            pFrameBuffer.put(0, imageViews[i]);
+            int err = vkCreateFramebuffer(device, frameBufferCreateInfo, null, pFrameBuffer);
+            long frameBuffer = pFrameBuffer.get(0);
             VulkanResult.validate(err, "Failed to create frame buffer!");
-            frameBuffers[i] = framebuffer;
+            frameBuffers[i] = frameBuffer;
         }
 
-        memFree(pFramebuffer);
+        memFree(pFrameBuffer);
         memFree(attachmentsBuffer);
         frameBufferCreateInfo.free();
 

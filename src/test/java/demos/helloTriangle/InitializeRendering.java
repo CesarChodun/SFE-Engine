@@ -19,14 +19,17 @@ import static org.lwjgl.vulkan.VK10.vkCmdSetViewport;
 import static org.lwjgl.vulkan.VK10.vkCreatePipelineLayout;
 
 import com.sfengine.components.contexts.DefaultContexts;
+import com.sfengine.components.contexts.framebufferfactory.BasicFrameBufferFactoryContextFactory;
 import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
 import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
+import com.sfengine.components.contexts.swapchain.BasicSwapchainContextFactory;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
 import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
-import com.sfengine.components.pipeline.ImageViewCreateInfo;
+import com.sfengine.components.rendering.frames.BasicFrameFactory;
 import com.sfengine.components.rendering.recording.RenderPass;
 import com.sfengine.components.resources.MemoryBin;
+import com.sfengine.components.window.CFrame;
 import com.sfengine.core.Application;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
@@ -34,21 +37,22 @@ import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.DefaultRenderer;
+import com.sfengine.core.rendering.presenting.Presenter;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Window;
 import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.result.VulkanException;
-import com.sfengine.components.util.BasicFramebufferFactory;
-import com.sfengine.components.util.BasicSwapchainFactory;
-import com.sfengine.components.util.RenderingTask;
+
 import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sfengine.core.synchronization.VkFence.VkFenceSupervisor;
+import com.sfengine.core.synchronization.VkFence.VkFenceSupervisorTask;
 import org.joml.Vector2f;
 import org.lwjgl.vulkan.VkAttachmentReference;
 import org.lwjgl.vulkan.VkCommandBuffer;
@@ -63,7 +67,7 @@ import org.lwjgl.vulkan.VkViewport;
 public class InitializeRendering implements EngineTask, Destroyable {
 
     private final Engine engine = EngineFactory.getEngine();
-    private Window window;
+    private CFrame frame;
     private ContextDictionary dict;
 
     private MemoryBin destroy = new MemoryBin();
@@ -77,13 +81,15 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private VkDevice device;
     private VkQueue renderQueue;
 
-    public InitializeRendering(Window window) {
-        this.window = window;
+    public InitializeRendering(CFrame frame) {
+        this.frame = frame;
         this.dict = DefaultContexts.getDictionary();
     }
 
     @Override
     public void run() throws AssertionError {
+        Window window = frame.getWindow();
+
         physicalDevice = ContextUtil.getPhysicalDevice(dict).getPhysicalDevice();
         renderQueueFamilyIndex = ContextUtil.getQueueFamily(dict).getQueueFamilyIndex();
         device = ContextUtil.getDevice(dict).getDevice();
@@ -106,33 +112,27 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         CommandBufferFactory basicCMD =
                 new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
-        BasicSwapchainFactory swapchainFactory =
-                new BasicSwapchainFactory(physicalDevice, colorFormat);
-        BasicFramebufferFactory fbFactory =
-                new BasicFramebufferFactory(device, renderPass.handle());
-        destroy.add(fbFactory);
+
+        dict.put(BasicFrameBufferFactoryContextFactory.createFrameBufferFactoryContext("BasicFBFactory", dict, renderPass.handle()));
+        dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, colorFormat));
 
         BasicRenderJobContext renderJobContext =
-                BasicRenderJobContextFactory.createContext("triangle", basicCMD, dict);
+                BasicRenderJobContextFactory.createContext("helloCube", basicCMD, dict);
         dict.put(renderJobContext);
 
-        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-        DefaultRenderer winRenderer =
-                new DefaultRenderer(
-                        window,
-                        imageInfo.getInfo(),
-                        swapchainFactory,
-                        fbFactory,
-                        dict);
+        VkFenceSupervisor vksupervisor = new VkFenceSupervisor();
+        VkFenceSupervisorTask supTask = new VkFenceSupervisorTask(vksupervisor);
+        engine.addTickTask(supTask);
+        tickTasks.add(supTask);
 
-        // Creating rendering task
-        RenderingTask renderingTask = new RenderingTask(winRenderer);
-        engine.addTickTask(renderingTask);
-        tickTasks.add(renderingTask);
+        engine.addTask(()-> {
+            Presenter presenter = new Presenter(dict, new BasicFrameFactory(dict, vksupervisor));
+            engine.addTickTask(presenter);
+            tickTasks.add(presenter);
+            destroy.add(presenter);
+        });
 
         window.setVisible(true);
-
-        destroy.add(winRenderer);
     }
 
     @Override
@@ -375,22 +375,5 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 };
 
         return recCmd;
-    }
-
-    /**
-     * Creates an ImageViewCreateInfo with it's basic configuration.
-     *
-     * @return
-     */
-    private static ImageViewCreateInfo getImageViewCreateInfo() {
-        ImageViewCreateInfo info;
-        try {
-            info = new ImageViewCreateInfo(Application.getConfigAssets(), "rendererImageVieCI.cfg");
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new AssertionError("Failed to create image view create info.");
-        }
-
-        return info;
     }
 }

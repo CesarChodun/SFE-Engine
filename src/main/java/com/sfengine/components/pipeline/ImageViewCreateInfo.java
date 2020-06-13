@@ -51,29 +51,22 @@ public class ImageViewCreateInfo implements Destroyable {
             DEFAULT_LAYER_COUNT = 1,
             DEFAULT_BASE_ARRAY_LAYER = 0;
 
-    /** Asset with the configuration file. */
-    private Asset asset;
-    /** Name of the configuration file. */
-    private String fileName;
+    private ConfigFile cfg;
 
     /** The image view create info(with loaded data). */
     protected VkImageViewCreateInfo info;
 
+
+
     /**
      * Loads an VkImageViewCreateInfo object from the configuration file.
      *
-     * @param assetPackage Asset package with the configuration file.
-     * @param configurationFileName Configuration file name.
      * @throws AssertionError When failed to load the data.
      * @throws IOException If an I/O error occurred.
      */
-    public ImageViewCreateInfo(Asset assetPackage, String configurationFileName)
-            throws AssertionError, IOException {
-        this.asset = assetPackage;
-        this.fileName = configurationFileName;
-
+    public ImageViewCreateInfo(ConfigFile cfg) {
+        this.cfg = cfg;
         info = VkImageViewCreateInfo.calloc();
-
         loadDataFromAsset();
     }
 
@@ -83,8 +76,7 @@ public class ImageViewCreateInfo implements Destroyable {
      * @throws AssertionError When failed to load the data.
      * @throws IOException If an I/O error occurred.
      */
-    private void loadDataFromAsset() throws AssertionError, IOException {
-        ConfigFile cfg = asset.getConfigFile(fileName);
+    private void loadDataFromAsset() {
 
         try {
             info.sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)

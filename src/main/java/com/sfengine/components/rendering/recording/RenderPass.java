@@ -38,7 +38,6 @@ public class RenderPass implements Destroyable {
     /** Rest of the work that needs to be performed in the render pass. */
     private Recordable work;
 
-    // TODO: Change the architecture to utilize secondary
     // command buffers
     private int contents = VK_SUBPASS_CONTENTS_INLINE;
 

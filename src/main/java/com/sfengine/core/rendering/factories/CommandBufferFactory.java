@@ -55,10 +55,10 @@ public class CommandBufferFactory {
      *
      * @param width Image width.
      * @param height Image height.
-     * @param framebuffers The frame buffers.
+     * @param frameBuffers The frame buffers.
      * @return The command buffers.
      */
-    public VkCommandBuffer[] createCmdBuffers(int width, int height, long... framebuffers) {
+    public VkCommandBuffer[] createCmdBuffers(int width, int height, long... frameBuffers) {
         long commandPool;
         try {
             commandPool = createCommandPool(device, queueFamilyIndex, flags);
@@ -75,14 +75,14 @@ public class CommandBufferFactory {
                         .pNext(NULL)
                         .commandPool(commandPool)
                         .level(VK_COMMAND_BUFFER_LEVEL_PRIMARY)
-                        .commandBufferCount(framebuffers.length);
+                        .commandBufferCount(frameBuffers.length);
 
         VkCommandBufferBeginInfo cbbi =
                 VkCommandBufferBeginInfo.calloc()
                         .sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)
                         .pNext(NULL);
 
-        PointerBuffer pCommandBuffer = memAllocPointer(framebuffers.length);
+        PointerBuffer pCommandBuffer = memAllocPointer(frameBuffers.length);
         int err = vkAllocateCommandBuffers(device, cbai, pCommandBuffer);
         try {
             VulkanResult.validate(err, "Failed to allocate command buffers!");
@@ -92,9 +92,9 @@ public class CommandBufferFactory {
         }
         cbai.free();
 
-        commandBuffers = new VkCommandBuffer[framebuffers.length];
+        commandBuffers = new VkCommandBuffer[frameBuffers.length];
 
-        for (int i = 0; i < framebuffers.length; i++) {
+        for (int i = 0; i < frameBuffers.length; i++) {
 
             commandBuffers[i] = new VkCommandBuffer(pCommandBuffer.get(i), device);
 
@@ -106,7 +106,7 @@ public class CommandBufferFactory {
                 throw new AssertionError(e.getMessage());
             }
 
-            renderPass.record(commandBuffers[i], framebuffers[i], 0, 0, width, height);
+            renderPass.record(commandBuffers[i], frameBuffers[i], 0, 0, width, height);
 
             err = vkEndCommandBuffer(commandBuffers[i]);
             try {

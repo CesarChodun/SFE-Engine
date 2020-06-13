@@ -65,7 +65,7 @@ public class GameLogic implements Runnable {
                 () -> {
                     // Creating the rendering task.
                     InitializeRendering rendTask =
-                            new InitializeRendering(frame.getWindow());
+                            new InitializeRendering(frame);
                     engine.addTask(rendTask);
                     toDestroy.add((Destroyable) rendTask);
                     frame.setCloseCallback(toDestroy);
