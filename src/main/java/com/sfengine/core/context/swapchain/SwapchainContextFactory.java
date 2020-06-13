@@ -7,6 +7,7 @@ import com.sfengine.core.resources.Asset;
 public class SwapchainContextFactory extends ContextFactory<SwapchainContext> {
 
     public static final String CONTEXT_IDENTIFIER = SwapchainContextFactory.class.getSimpleName();
+    public static final String SUBASSET = "swapchains";
 
     @Override
     public String getContextIdentifier() {
@@ -15,6 +16,6 @@ public class SwapchainContextFactory extends ContextFactory<SwapchainContext> {
 
     @Override
     public Asset getSubasset(Asset asset) {
-        return null;
+        return asset.getSubAsset(SUBASSET);
     }
 }
