@@ -4,9 +4,13 @@ import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.synchronization.VkFence.VkFenceWrapper;
+import org.lwjgl.vulkan.VK10;
+import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFenceCreateInfo;
 
-import static org.lwjgl.system.MemoryUtil.NULL;
+import java.nio.LongBuffer;
+
+import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 import static com.sfengine.core.result.VulkanResult.*;
 
@@ -29,13 +33,29 @@ public class VkFenceWrapperFactory {
     }
 
     private static void reset(ContextDictionary dict, long...fences) {
-        vkResetFences(ContextUtil.getDevice(dict).getDevice(), fences);
+        if (fences.length == 0)
+            throw new AssertionError("Trying to delete 0 fences.");
+        LongBuffer lbuf = memAllocLong(fences.length);
+        for (int i = 0; i < fences.length; i++)
+            lbuf.put(fences[i]);
+        lbuf.flip();
+        VK10.vkResetFences(ContextUtil.getDevice(dict).getDevice(), lbuf);
+        memFree(lbuf);
     }
 
     private static VkFenceWrapper[] createMany(ContextDictionary dict, VkFenceCreateInfo ci, int count) throws VulkanException {
         long[] fences = new long[count];
-        int err = vkCreateFence(ContextUtil.getDevice(dict).getDevice(), ci, null, fences);
-        validate(err, "Failed to create fences.");
+        LongBuffer lbuf = memAllocLong(1);
+
+        int err;
+
+        for (int i = 0; i < count; i++) {
+            err = vkCreateFence(ContextUtil.getDevice(dict).getDevice(), ci, null, lbuf);
+            validate(err, "Failed to create fences.");
+            fences[i] = lbuf.get(0);
+        }
+
+//        memFree(lbuf);
 
         return create(dict, fences);
     }
@@ -66,6 +86,11 @@ public class VkFenceWrapperFactory {
 
         reset(dict, handles);
         return create(dict, handles);
+    }
+
+    public static void destroy(VkDevice device, VkFenceWrapper... wrappers) {
+        for (VkFenceWrapper fence : wrappers)
+            vkDestroyFence(device, fence.getFence(), null);
     }
 
 }
