@@ -8,9 +8,6 @@
     <artifactId>SFE-Engine</artifactId>
     <packaging>pom</packaging>
     <version>0.2.1-SNAPSHOT</version>
-    <modules>
-        <module>../noentropy</module>
-    </modules>
 
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
