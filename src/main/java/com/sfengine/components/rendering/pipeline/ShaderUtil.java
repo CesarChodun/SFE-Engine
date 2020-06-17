@@ -1,4 +1,4 @@
-package com.sfengine.components.pipeline;
+package com.sfengine.components.rendering.pipeline;
 
 import static com.sfengine.core.result.VulkanResult.validate;
 import static org.lwjgl.system.MemoryUtil.NULL;

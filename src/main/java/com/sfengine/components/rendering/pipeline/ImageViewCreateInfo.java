@@ -1,4 +1,4 @@
-package com.sfengine.components.pipeline;
+package com.sfengine.components.rendering.pipeline;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.vulkan.VK10.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;

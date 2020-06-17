@@ -1,4 +1,4 @@
-package com.sfengine.components.pipeline;
+package com.sfengine.components.rendering.pipeline;
 
 import com.sfengine.core.resources.Destroyable;
 

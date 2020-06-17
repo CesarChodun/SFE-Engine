@@ -3,7 +3,7 @@ package com.sfengine.components.contexts.renderjob;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextFactoryProvider;
 import com.sfengine.core.context.renderjob.RenderJobContextFactory;
-import com.sfengine.core.rendering.factories.CommandBufferFactory;
+import com.sfengine.core.rendering.CommandBufferFactory;
 import org.jetbrains.annotations.Nullable;
 
 public class BasicRenderJobContextFactory {

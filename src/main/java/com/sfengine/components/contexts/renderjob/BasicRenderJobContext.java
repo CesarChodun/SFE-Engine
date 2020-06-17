@@ -4,7 +4,7 @@ import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.context.renderjob.RenderJobContext;
 import com.sfengine.core.context.swapchain.SwapchainContext;
-import com.sfengine.core.rendering.factories.CommandBufferFactory;
+import com.sfengine.core.rendering.CommandBufferFactory;
 import com.sfengine.core.rendering.recording.RenderJob;
 import com.sfengine.core.synchronization.Dependency;
 import com.sfengine.core.synchronization.DependencyFence;

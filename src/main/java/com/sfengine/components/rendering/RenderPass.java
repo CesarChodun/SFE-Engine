@@ -1,4 +1,4 @@
-package com.sfengine.components.rendering.recording;
+package com.sfengine.components.rendering;
 
 import static com.sfengine.core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;

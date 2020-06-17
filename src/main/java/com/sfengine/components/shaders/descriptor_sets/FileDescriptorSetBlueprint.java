@@ -1,6 +1,6 @@
 package com.sfengine.components.shaders.descriptor_sets;
 
-import com.sfengine.components.pipeline.PipelineUtil;
+import com.sfengine.components.rendering.pipeline.PipelineUtil;
 import com.sfengine.core.resources.ConfigAsset;
 import com.sfengine.core.resources.ConfigFile;
 import com.sfengine.core.resources.Destroyable;

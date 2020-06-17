@@ -1,4 +1,4 @@
-package com.sfengine.components.pipeline;
+package com.sfengine.components.rendering.pipeline;
 
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAllocLong;

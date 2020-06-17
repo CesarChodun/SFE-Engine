@@ -1,4 +1,4 @@
-package com.sfengine.core.rendering.factories;
+package com.sfengine.core.rendering;
 
 import static com.sfengine.core.rendering.RenderUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -6,7 +6,7 @@ import static org.lwjgl.vulkan.VK10.*;
 
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
-import com.sfengine.components.rendering.recording.RenderPass;
+import com.sfengine.components.rendering.RenderPass;
 
 import java.util.HashMap;
 

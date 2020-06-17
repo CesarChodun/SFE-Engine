@@ -1,5 +1,6 @@
-package com.sfengine.components.rendering.frames;
+package com.sfengine.components.rendering;
 
+import com.sfengine.components.rendering.BasicFrame;
 import com.sfengine.core.context.ContextDictionary;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.context.renderjob.RenderJobContext;
