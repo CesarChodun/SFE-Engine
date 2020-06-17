@@ -1,4 +1,4 @@
-package com.sfengine.core.rendering.presenting;
+package com.sfengine.core.rendering;
 
 import com.sfengine.core.rendering.frames.Frame;
 import com.sfengine.core.rendering.frames.FrameFactory;

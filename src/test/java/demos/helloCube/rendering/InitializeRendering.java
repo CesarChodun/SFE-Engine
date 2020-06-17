@@ -33,7 +33,7 @@ import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.presenting.Presenter;
+import com.sfengine.core.rendering.Presenter;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Window;
