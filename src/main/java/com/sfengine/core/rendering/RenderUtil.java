@@ -7,6 +7,7 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceFormatsKHR;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfacePresentModesKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.core.HardwareManager;
 import com.sfengine.core.Util;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
@@ -33,6 +34,55 @@ import org.lwjgl.vulkan.*;
 public class RenderUtil {
 
     public static Logger logger = Logger.getLogger(MethodHandles.lookup().lookupClass().getName());
+
+    private static int findMemoryType(VkPhysicalDevice physicalDevice, int typeFilter, int properties) {
+        VkPhysicalDeviceMemoryProperties memoryProperties =
+                VkPhysicalDeviceMemoryProperties.calloc();
+        vkGetPhysicalDeviceMemoryProperties(physicalDevice, memoryProperties);
+
+        for (int i = 0; i < memoryProperties.memoryTypeCount(); i++) {
+            if ((typeFilter & (1 << i)) != 0 && (memoryProperties.memoryTypes().get(i).propertyFlags() & properties) == properties) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static long[] createImages(VkPhysicalDevice physicalDevice, VkDevice device, VkImageCreateInfo info, int count) throws VulkanException {
+        LongBuffer buff = memAllocLong(1);
+        LongBuffer imageMemory = memAllocLong(1);
+        long[] out = new long[count];
+
+        int err;
+        for (int i = 0; i < count; i++) {
+            err = vkCreateImage(device, info, null, buff);
+            VulkanResult.validate(err, "Failed to create images.");
+            out[i] = buff.get(0);
+
+            VkMemoryRequirements memRequirements = VkMemoryRequirements.calloc();
+            vkGetImageMemoryRequirements(device, out[i], memRequirements);
+
+            VkMemoryAllocateInfo allocInfo = VkMemoryAllocateInfo.calloc();
+            allocInfo.sType(VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO);
+            allocInfo.allocationSize(memRequirements.size());
+            allocInfo.memoryTypeIndex(findMemoryType(physicalDevice, memRequirements.memoryTypeBits(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT));
+
+            err = vkAllocateMemory(device, allocInfo, null, imageMemory);
+            VulkanResult.assertValidate(err, "Failed to create image memory");
+
+            err = vkBindImageMemory(device, out[i], imageMemory.get(0), 0);
+            VulkanResult.assertValidate(err, "Failed to bind image memory");
+        }
+
+        return out;
+    }
+    public static void destroyImages(VkDevice device, long... images) {
+        for (int i = 0; i < images.length; i++) {
+            vkDestroyImage(device, images[i], null);
+        }
+    }
+
 
     /**
      * Creates image views(swapchain <b>must</b> be created before this call).
