@@ -15,10 +15,6 @@ public interface SwapchainContext extends Context, Destroyable {
 
     VkSwapchainCreateInfoKHR info();
 
-    long[] getImages();
-
-    long[] getImageViews();
-
     long[] getFrameBuffers();
 
     @Override

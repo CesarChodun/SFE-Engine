@@ -1,22 +1,16 @@
 package com.sfengine.components.rendering.recording;
 
-import static com.sfengine.core.result.VulkanResult.validate;
+import static com.sfengine.core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
-import com.sfengine.components.pipeline.Attachments;
+import com.sfengine.core.rendering.AttachmentBlueprint;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.resources.Destroyable;
 import com.sfengine.core.result.VulkanException;
 import java.nio.LongBuffer;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.vulkan.VkAttachmentDescription;
-import org.lwjgl.vulkan.VkCommandBuffer;
-import org.lwjgl.vulkan.VkDevice;
-import org.lwjgl.vulkan.VkRenderPassBeginInfo;
-import org.lwjgl.vulkan.VkRenderPassCreateInfo;
-import org.lwjgl.vulkan.VkSubpassDependency;
-import org.lwjgl.vulkan.VkSubpassDescription;
+import org.lwjgl.vulkan.*;
 
 /**
  * Structure storing information about the rendering work.
@@ -30,8 +24,6 @@ public class RenderPass implements Destroyable {
     private VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.calloc();
     /** Begin info for this render pass. */
     private VkRenderPassBeginInfo renderPassBeginInfo = VkRenderPassBeginInfo.calloc();
-    /** Render pass attachments. */
-    private Attachments attachments;
 
     /** The render pass preset(a great place to set viewport) */
     private Recordable preset;
@@ -44,22 +36,27 @@ public class RenderPass implements Destroyable {
     /** The render pass handle. */
     private long renderPass;
 
+    private AttachmentBlueprint[] attachmentBlueprints;
+
     /**
      * Creates a render pass.
      *
      * @param logicalDevice Valid logical device.
-     * @param attachments Must be freed after the render pass was destroyed.
+     * @param attachmentBlueprints Must be freed after the render pass was destroyed.
      * @param subpasses A buffer with subpasses(may be freed afterwards)
      * @param dependencies A buffer with subpass dependencies(may be freed afterwards)
      * @throws VulkanException When failed to create the render pass.
      */
     public RenderPass(
             VkDevice logicalDevice,
-            Attachments attachments,
             VkSubpassDescription.Buffer subpasses,
-            @Nullable VkSubpassDependency.Buffer dependencies)
-            throws VulkanException {
-        VkAttachmentDescription.Buffer buf = attachments.getBuffer();
+            @Nullable VkSubpassDependency.Buffer dependencies,
+            AttachmentBlueprint... attachmentBlueprints) {
+
+        this.attachmentBlueprints = attachmentBlueprints;
+        VkAttachmentDescription.Buffer buf = VkAttachmentDescription.calloc(attachmentBlueprints.length);
+        for (int i = 0; i < attachmentBlueprints.length; i++)
+            buf.put(i, attachmentBlueprints[i].getDescription());
 
         renderPassInfo
                 .sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
@@ -68,20 +65,22 @@ public class RenderPass implements Destroyable {
                 .pSubpasses(subpasses)
                 .pDependencies(dependencies);
 
-        this.attachments = attachments;
-
         LongBuffer pRenderPass = memAllocLong(1);
         int err = vkCreateRenderPass(logicalDevice, renderPassInfo, null, pRenderPass);
-        validate(err, "Failed to create render pass!");
+        assertValidate(err, "Failed to create render pass!");
 
         renderPass = pRenderPass.get(0);
         memFree(pRenderPass);
+
+        VkClearValue.Buffer clbuf = VkClearValue.calloc(attachmentBlueprints.length);
+        for (int i = 0; i < attachmentBlueprints.length; i++)
+            clbuf.put(i, attachmentBlueprints[i].getClearValue());
 
         renderPassBeginInfo
                 .sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)
                 .pNext(NULL)
                 .renderPass(renderPass)
-                .pClearValues(this.attachments.getClearValues());
+                .pClearValues(clbuf);
     }
 
     /**
@@ -125,7 +124,6 @@ public class RenderPass implements Destroyable {
     /** Frees the render pass data. <b>Note:</b> The attachments are not freed. */
     @Override
     public void destroy() {
-        attachments.destroy();
         memFree(renderPassInfo.pSubpasses().pColorAttachments());
         renderPassInfo.pSubpasses().free();
         renderPassInfo.free();

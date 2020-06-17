@@ -7,6 +7,7 @@ import com.sfengine.core.context.framebufferfactory.FrameBufferFactoryContext;
 import com.sfengine.core.context.swapchain.SwapchainContext;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
+import com.sfengine.core.rendering.recording.BasicAttachemntSet;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.synchronization.Dependency;
 import com.sfengine.core.synchronization.DependencyFence;
@@ -26,13 +27,11 @@ public class BasicFrameBufferFactoryContext implements FrameBufferFactoryContext
 
     private volatile String name;
 
-    private final LongBuffer attachments = memAllocLong(1);
     private final VkFramebufferCreateInfo frameBufferCreateInfo = VkFramebufferCreateInfo.calloc()
             .sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
             .pNext(NULL)
             .flags(0)
-            .layers(1)
-            .pAttachments(attachments);
+            .layers(1);
 
     private final DependencyFence created = new DependencyFence();
     private volatile ContextDictionary dict;
@@ -51,7 +50,7 @@ public class BasicFrameBufferFactoryContext implements FrameBufferFactoryContext
     }
 
     @Override
-    public long[] createFrameBuffers(long[] imageViews) {
+    public long[] createFrameBuffers(BasicAttachemntSet attachemntSet) {
         SwapchainContext swapchainContext = ContextUtil.getSwapchain(dict);
 
         int width = swapchainContext.info().imageExtent().width();
@@ -62,11 +61,19 @@ public class BasicFrameBufferFactoryContext implements FrameBufferFactoryContext
 
         VkDevice device = ContextUtil.getDevice(dict).getDevice();
 
-        long[] frameBuffers = new long[imageViews.length];
+        int frames = attachemntSet.framesCount();
+        long[] frameBuffers = new long[frames];
         LongBuffer pFrameBuffer = memAllocLong(1);
 
-        for (int i = 0; i < imageViews.length; i++) {
-            attachments.put(0, imageViews[i]);
+        int attsCount = attachemntSet.getViews(0).length;
+        LongBuffer attachments = memAllocLong(attsCount);
+        frameBufferCreateInfo.pAttachments(attachments);
+
+        for (int i = 0; i < frames; i++) {
+            long[] atts = attachemntSet.getViews(i);
+            for (int j = 0; j < atts.length; j++)
+                attachments.put(j, atts[j]);
+
             int err = vkCreateFramebuffer(device, frameBufferCreateInfo, null, pFrameBuffer);
             long frameBuffer = pFrameBuffer.get(0);
             try {
@@ -77,6 +84,7 @@ public class BasicFrameBufferFactoryContext implements FrameBufferFactoryContext
             frameBuffers[i] = frameBuffer;
         }
 
+        memFree(attachments);
         memFree(pFrameBuffer);
 
         return frameBuffers;

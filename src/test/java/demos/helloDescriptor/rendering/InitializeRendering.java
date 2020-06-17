@@ -13,7 +13,6 @@ import com.sfengine.components.contexts.renderjob.BasicRenderJobContext;
 import com.sfengine.components.contexts.renderjob.BasicRenderJobContextFactory;
 import com.sfengine.components.contexts.swapchain.BasicSwapchainContextFactory;
 import com.sfengine.components.geometry.unindexed.MeshU2D;
-import com.sfengine.components.pipeline.Attachments;
 import com.sfengine.components.pipeline.GraphicsPipeline;
 import com.sfengine.components.pipeline.ImageViewCreateInfo;
 import com.sfengine.components.pipeline.Pipeline;
@@ -32,11 +31,8 @@ import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.engine.EngineTask;
-import com.sfengine.core.rendering.ColorFormatAndSpace;
-import com.sfengine.core.rendering.Presenter;
+import com.sfengine.core.rendering.*;
 import com.sfengine.core.rendering.recording.Recordable;
-import com.sfengine.core.rendering.RenderUtil;
-import com.sfengine.core.rendering.Window;
 import com.sfengine.core.rendering.factories.CommandBufferFactory;
 import com.sfengine.core.resources.Asset;
 import com.sfengine.core.resources.Destroyable;
@@ -73,6 +69,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
     private VkRect2D.Buffer scissor;
     LongBuffer pDesc;
     Timer timer;
+    private AttachmentBlueprint[] atts;
 
     private ContextDictionary dict;
 
@@ -95,7 +92,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         // Checking the window support
         checkSupport(window, physicalDevice, renderQueueFamilyIndex);
 
-        RenderPass renderPass = createRenderPass(device, colorFormat.colorFormat);
+        RenderPass renderPass = createRenderPass(dict, device, colorFormat.colorFormat);
         destroy.add(renderPass);
         DescriptorSetBlueprint[] dscBlueprint =
                 createDscBlueprints(
@@ -119,7 +116,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
                 new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
 
         dict.put(BasicFrameBufferFactoryContextFactory.createFrameBufferFactoryContext("BasicFBFactory", dict, renderPass.handle()));
-        dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, colorFormat));
+        dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, atts, colorFormat));
 
         BasicRenderJobContext renderJobContext =
                 BasicRenderJobContextFactory.createContext("helloCube", basicCMD, dict);
@@ -138,33 +135,6 @@ public class InitializeRendering implements EngineTask, Destroyable {
         });
 
         window.setVisible(true);
-//        BasicSwapchainFactory swapchainFactory =
-//                new BasicSwapchainFactory(physicalDevice, colorFormat);
-//        BasicFrameBufferFactory fbFactory =
-//                new BasicFrameBufferFactory(device, renderPass.handle());
-//        destroy.add(fbFactory);
-//
-//        BasicRenderJobContext renderJobContext =
-//                BasicRenderJobContextFactory.createContext("helloDescriptor", basicCMD, dict);
-//        dict.put(renderJobContext);
-//
-//        ImageViewCreateInfo imageInfo = getImageViewCreateInfo();
-//        DefaultRenderer winRenderer =
-//                new DefaultRenderer(
-//                        window,
-//                        imageInfo.getInfo(),
-//                        swapchainFactory,
-//                        fbFactory,
-//                        dict);
-//
-//        // Creating rendering task
-//        RenderingTask renderingTask = new RenderingTask(winRenderer);
-//        engine.addTickTask(renderingTask);
-//        tickTasks.add(renderingTask);
-//
-//        window.setVisible(true);
-//
-//        destroy.add(winRenderer);
     }
 
     @Override
@@ -242,7 +212,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
      * @param colorFormat
      * @return
      */
-    private static RenderPass createRenderPass(VkDevice logicalDevice, int colorFormat) {
+    private RenderPass createRenderPass(ContextDictionary dict, VkDevice logicalDevice, int colorFormat) {
         VkAttachmentReference.Buffer colorReference =
                 VkAttachmentReference.calloc(1)
                         .attachment(0)
@@ -259,18 +229,14 @@ public class InitializeRendering implements EngineTask, Destroyable {
                         .pDepthStencilAttachment(null)
                         .pPreserveAttachments(null);
 
-        Attachments attachments;
-        RenderPass renderPass;
+        atts = new AttachmentBlueprint[1];
         try {
-            attachments =
-                    new Attachments(
-                            Application.getConfigAssets().getSubAsset("RenderPass1"),
-                            "attachment01.cfg");
-            renderPass = new RenderPass(logicalDevice, attachments, subpass, null);
-        } catch (AssertionError | IOException | VulkanException e) {
+            atts[0] = new FileAttachmentBlueprint(dict, Application.getConfigAssets().getSubAsset("RenderPass1").getConfigFile("attachment01.cfg"));
+        } catch (IOException e) {
             e.printStackTrace();
-            throw new AssertionError("Failed to create render pass.");
         }
+
+        final RenderPass renderPass = new RenderPass(logicalDevice, subpass, null, atts);
 
         return renderPass;
     }

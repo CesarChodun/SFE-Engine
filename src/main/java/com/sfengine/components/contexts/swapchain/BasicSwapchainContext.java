@@ -1,19 +1,18 @@
 package com.sfengine.components.contexts.swapchain;
 
-import com.sfengine.components.pipeline.ImageViewCreateInfo;
 import com.sfengine.components.window.CFrame;
-import com.sfengine.core.Application;
 import com.sfengine.core.context.ContextDictionary;
-import com.sfengine.core.context.ContextFactoryProvider;
 import com.sfengine.core.context.ContextUtil;
 import com.sfengine.core.context.framebufferfactory.FrameBufferFactoryContext;
 import com.sfengine.core.context.swapchain.SwapchainContext;
 import com.sfengine.core.engine.Engine;
 import com.sfengine.core.engine.EngineFactory;
 import com.sfengine.core.properties.PropertyDictionary;
+import com.sfengine.core.rendering.AttachmentBlueprint;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.rendering.Window;
+import com.sfengine.core.rendering.recording.BasicAttachemntSet;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
 import com.sfengine.core.synchronization.Dependency;
@@ -22,9 +21,7 @@ import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
 import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.concurrent.locks.Lock;
@@ -65,11 +62,14 @@ public class BasicSwapchainContext implements SwapchainContext {
 
     private final DependencyFence created = new DependencyFence();
 
+    private final AttachmentBlueprint[] attachmentBlueprints;
+
     protected BasicSwapchainContext(String name, ContextDictionary dict, PropertyDictionary pdict, CFrame frame) {
         this.name = name;
         this.dict = dict;
         this.pdict = pdict;
         this.frame = frame;
+        this.attachmentBlueprints = pdict.get("attachments", AttachmentBlueprint[].class);
 
 
         engine.addTask(() -> {
@@ -172,7 +172,7 @@ public class BasicSwapchainContext implements SwapchainContext {
             throw new AssertionError("Failed to locate any suitable mode!");
         }
 
-        // Triple buffering:
+        // Double buffering:
         int imageCount = 2;
         imageCount = Math.min(imageCount, caps.maxImageCount());
         imageCount = Math.max(imageCount, caps.minImageCount());
@@ -184,8 +184,6 @@ public class BasicSwapchainContext implements SwapchainContext {
         if ((caps.supportedTransforms() & transform) == 0) {
             transform = caps.currentTransform();
         }
-
-//        getColorAndSpace(device, physicalDevice, pdict);
 
         // Create info for new swapchain
         info
@@ -251,28 +249,16 @@ public class BasicSwapchainContext implements SwapchainContext {
         err = vkGetSwapchainImagesKHR(device, swapchainContext.getHandle(), pSwapchainImageCount, pSwapchainImages);
         VulkanResult.assertValidate(err, "Failed to obtain swapchain images!");
 
+        int allImages = swapchainImageCount * attachmentBlueprints.length;
+
         images = new long[swapchainImageCount];
         for (int i = 0; i < swapchainImageCount; i++) {
             images[i] = pSwapchainImages.get(i);
         }
 
-        ImageViewCreateInfo ci = null;
+        BasicAttachemntSet bas = new BasicAttachemntSet(dict, images, attachmentBlueprints);
 
-        try {
-            ci = new ImageViewCreateInfo(ContextFactoryProvider.getConfig(this, Application.getConfigAssets()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        ci.getInfo().format(pdict.get("colorFormat", Integer.class));
-
-        try {
-            imageViews = RenderUtil.createImageViews(device, ci.getInfo(), images);
-        } catch (VulkanException e) {
-            throw new AssertionError("Failed to create image view create info.", e);
-        }
-
-        frameBuffers = fbFactoryContext.createFrameBuffers(imageViews);
+        frameBuffers = fbFactoryContext.createFrameBuffers(bas);
     }
 
     @Override
@@ -283,16 +269,6 @@ public class BasicSwapchainContext implements SwapchainContext {
     @Override
     public VkSwapchainCreateInfoKHR info() {
         return info;
-    }
-
-    @Override
-    public long[] getImages() {
-        return images;
-    }
-
-    @Override
-    public long[] getImageViews() {
-        return imageViews;
     }
 
     @Override

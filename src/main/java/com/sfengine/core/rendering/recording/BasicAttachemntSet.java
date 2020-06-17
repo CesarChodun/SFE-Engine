@@ -65,7 +65,7 @@ public class BasicAttachemntSet implements AttachmentSet {
 
     @Override
     public long[] getViews(int frame) {
-        int len = images.get(0).length;
+        int len = imageViews.size();
         long[] out = new long[len];
 
         for (int i = 0; i < len; i++)

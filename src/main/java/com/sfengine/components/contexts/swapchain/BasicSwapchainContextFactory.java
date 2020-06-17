@@ -7,6 +7,7 @@ import com.sfengine.core.context.ContextFactoryProvider;
 import com.sfengine.core.context.physicaldevice.PhysicalDeviceContextFactory;
 import com.sfengine.core.context.swapchain.SwapchainContextFactory;
 import com.sfengine.core.properties.PropertyDictionary;
+import com.sfengine.core.rendering.AttachmentBlueprint;
 import com.sfengine.core.rendering.ColorFormatAndSpace;
 import com.sfengine.core.rendering.RenderUtil;
 import com.sfengine.core.result.VulkanException;
@@ -19,7 +20,13 @@ import static org.lwjgl.vulkan.VK10.VK_FORMAT_B8G8R8A8_UNORM;
 
 public class BasicSwapchainContextFactory {
 
-    public static BasicSwapchainContext createSwapchainContext(String name, ContextDictionary dict, CFrame frame, ColorFormatAndSpace cfs) {
+    public static BasicSwapchainContext createSwapchainContext(
+            String name,
+            ContextDictionary dict,
+            CFrame frame,
+            AttachmentBlueprint[] blueprints,
+            ColorFormatAndSpace cfs) {
+
         SwapchainContextFactory factory =
                 ContextFactoryProvider.getFactory(
                         SwapchainContextFactory.CONTEXT_IDENTIFIER,
@@ -30,6 +37,7 @@ public class BasicSwapchainContextFactory {
         pdict.put("oldSwapchain", VK10.VK_NULL_HANDLE);
         pdict.put("colorFormat", cfs.colorFormat);
         pdict.put("colorSpace", cfs.colorSpace);
+        pdict.put("attachments", blueprints);
 
         BasicSwapchainContext context =
                 new BasicSwapchainContext(name, dict, pdict, frame);
