@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-public class OscilatoryEngineExecutor implements EngineExecutor {
+public class OscillatoryEngineExecutor implements EngineExecutor {
     /** A minimal amount of tasks to be performed per tick. */
     private static final int MINIMUM_TASKS_PER_TICK = 5;
     /** A percentage of tasks that will be executed per tick(from queue). */
