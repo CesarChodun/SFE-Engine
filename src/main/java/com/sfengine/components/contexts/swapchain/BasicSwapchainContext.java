@@ -281,10 +281,7 @@ public class BasicSwapchainContext implements SwapchainContext {
         return name;
     }
 
-    @Override
-    public Lock getLock() {
-        return null;
-    }
+
 
     @Override
     public Dependency getDependency() {

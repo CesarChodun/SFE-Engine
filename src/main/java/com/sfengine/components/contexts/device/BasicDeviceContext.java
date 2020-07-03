@@ -126,10 +126,7 @@ public class BasicDeviceContext implements DeviceContext {
         return factoryIdentifier;
     }
 
-    @Override
-    public Lock getLock() {
-        return null;
-    }
+
 
     @Override
     public Dependency getDependency() {

@@ -72,11 +72,6 @@ public class BasicPhysicalDeviceContext implements PhysicalDeviceContext {
     }
 
     @Override
-    public Lock getLock() {
-        return null;
-    }
-
-    @Override
     public Dependency getDependency() {
         return deviceCreated;
     }

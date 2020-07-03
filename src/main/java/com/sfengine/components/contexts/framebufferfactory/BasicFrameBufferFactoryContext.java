@@ -104,10 +104,7 @@ public class BasicFrameBufferFactoryContext implements FrameBufferFactoryContext
         return name;
     }
 
-    @Override
-    public Lock getLock() {
-        return null;
-    }
+
 
 
     @Override

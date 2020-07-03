@@ -63,11 +63,6 @@ public class BasicQueueContext implements QueueContext {
     }
 
     @Override
-    public Lock getLock() {
-        return lock;
-    }
-
-    @Override
     public Dependency getDependency() {
         return queueCreated;
     }
