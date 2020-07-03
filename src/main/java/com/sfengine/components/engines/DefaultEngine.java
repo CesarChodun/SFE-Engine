@@ -6,7 +6,6 @@ import com.sfengine.core.synchronization.Dependency;
 import com.sfengine.core.synchronization.SmartWaitQueue;
 import com.sfengine.core.synchronization.SyncTask;
 
-import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -17,29 +16,45 @@ import java.util.concurrent.*;
  */
 public class DefaultEngine implements Engine {
 
-    private ThreadPoolExecutor configPool, fastPool, slowPool;
+    private static final int
+            CONFIG_POOL_MAX_THREADS = 64,
+            FAST_POOL_MAX_THREADS = 64,
+            SLOW_POOL_MAX_THREADS = 64;
 
-    private final EngineExecutor mainThread = new OscilatoryEngineExecutor();
+    private volatile ThreadPoolExecutor configPool, fastPool, slowPool;
 
-    private SmartWaitQueue smartQueue;
+    private final EngineExecutor mainThread = new OscillatoryEngineExecutor();
+
+    private final SmartWaitQueue smartQueue = new SmartWaitQueue();
 
     public DefaultEngine() {
         configPool =
                 new ThreadPoolExecutor(
-                        1, 4, 5, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(128));
+                        1,
+                        4,
+                        5,
+                        TimeUnit.MILLISECONDS,
+                        new ArrayBlockingQueue<Runnable>(CONFIG_POOL_MAX_THREADS));
         fastPool =
                 new ThreadPoolExecutor(
-                        2, 4, 30, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(64));
+                        2,
+                        4,
+                        30,
+                        TimeUnit.MILLISECONDS,
+                        new ArrayBlockingQueue<Runnable>(FAST_POOL_MAX_THREADS));
         slowPool =
                 new ThreadPoolExecutor(
-                        1, 16, 20, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(32));
+                        1,
+                        16,
+                        20,
+                        TimeUnit.MILLISECONDS,
+                        new ArrayBlockingQueue<Runnable>(SLOW_POOL_MAX_THREADS));
 
-        smartQueue = new SmartWaitQueue();
     }
 
     /** Starts the engine. */
     @Override
-    public void run() {
+    public synchronized void run() {
         mainThread.run();
     }
 
@@ -47,7 +62,7 @@ public class DefaultEngine implements Engine {
 
     /** Stops the engine(or rather informs the engine thread to stop). */
     @Override
-    public void stop() {
+    public synchronized void stop() {
         mainThread.shutdown();
     }
 
@@ -57,7 +72,7 @@ public class DefaultEngine implements Engine {
      * @return True if the engine is running and false if it is not.
      */
     @Override
-    public boolean isRunning() {
+    public synchronized boolean isRunning() {
         return mainThread.isRunning();
     }
 
@@ -92,7 +107,7 @@ public class DefaultEngine implements Engine {
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         configPool.shutdown();
         fastPool.shutdown();
         slowPool.shutdown();
