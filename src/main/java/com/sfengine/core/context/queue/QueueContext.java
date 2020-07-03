@@ -7,4 +7,9 @@ public interface QueueContext extends Context {
 
     VkQueue getQueue();
 
+    @Override
+    default String getFactoryIdentifier() {
+        return QueueContextFactory.CONTEXT_IDENTIFIER;
+    }
+
 }

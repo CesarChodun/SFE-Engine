@@ -9,4 +9,8 @@ public interface RenderJobContext extends Context {
 
     RenderJob getJob(long frameBuffer);
 
+    @Override
+    default String getFactoryIdentifier() {
+        return RenderJobContextFactory.CONTEXT_IDENTIFIER;
+    }
 }
