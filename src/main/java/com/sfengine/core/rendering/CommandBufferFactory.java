@@ -4,6 +4,9 @@ import static com.sfengine.core.rendering.RenderUtil.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.core.context.ContextDictionary;
+import com.sfengine.core.context.ContextUtil;
+import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.result.VulkanException;
 import com.sfengine.core.result.VulkanResult;
 import com.sfengine.components.rendering.RenderPass;
@@ -20,45 +23,43 @@ import org.lwjgl.vulkan.VkDevice;
  * Class for command buffer creation.
  *
  * @author Cezary Chodun
- * @since 10.19.2019
+ * @since 19.10.2019
  */
 public class CommandBufferFactory {
 
-    /** The render pass for command buffers to use. */
-    private RenderPass renderPass;
-    /** The Vulkan logical device. */
-    private VkDevice device;
-    /** */
-    private int queueFamilyIndex, flags;
+
 
     /** A map of command buffers pools. */
     private HashMap<VkCommandBuffer, Long> cmdPools = new HashMap<VkCommandBuffer, Long>();
 
+    /** */
+    private int queueFamilyIndex, flags;
+    private Recordable rec;
+
+    private ContextDictionary dict;
+
     /**
      * Creates a new Command Buffer factory.
      *
-     * @param device Vulkan device.
-     * @param renderPass The current render pass.
      * @param queueFamilyIndex Index of the render queue family.
      * @param flags Command buffer flags(for command pool creation).
      */
-    public CommandBufferFactory(
-            VkDevice device, RenderPass renderPass, int queueFamilyIndex, int flags) {
-        this.device = device;
-        this.renderPass = renderPass;
+    public CommandBufferFactory(ContextDictionary dict, Recordable rec, int queueFamilyIndex, int flags) {
         this.queueFamilyIndex = queueFamilyIndex;
         this.flags = flags;
+        this.dict = dict;
+        this.rec = rec;
     }
 
     /**
      * Creates command buffers(one for each frame buffer).
      *
-     * @param width Image width.
-     * @param height Image height.
      * @param frameBuffers The frame buffers.
      * @return The command buffers.
      */
-    public VkCommandBuffer[] createCmdBuffers(int width, int height, long... frameBuffers) {
+    public VkCommandBuffer[] createCmdBuffers(long... frameBuffers) {
+        final VkDevice device = ContextUtil.getDevice(dict).getDevice();
+
         long commandPool;
         try {
             commandPool = createCommandPool(device, queueFamilyIndex, flags);
@@ -106,7 +107,7 @@ public class CommandBufferFactory {
                 throw new AssertionError(e.getMessage());
             }
 
-            renderPass.record(commandBuffers[i], frameBuffers[i], 0, 0, width, height);
+            rec.record(commandBuffers[i], frameBuffers[i]);
 
             err = vkEndCommandBuffer(commandBuffers[i]);
             try {
@@ -134,6 +135,7 @@ public class CommandBufferFactory {
      * @param buffers The list of buffers returned by createCmdBuffers().
      */
     public void destroyCmdBuffers(VkCommandBuffer[] buffers) {
+        final VkDevice device = ContextUtil.getDevice(dict).getDevice();
 
         for (VkCommandBuffer cmd : buffers) {
             if (cmdPools.containsKey(cmd)) {

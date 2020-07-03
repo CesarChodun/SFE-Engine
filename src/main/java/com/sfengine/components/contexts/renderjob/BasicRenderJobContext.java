@@ -60,8 +60,7 @@ public class BasicRenderJobContext implements RenderJobContext {
 
     @Override
     public void recreateJobs(long... frameBuffers) {
-        SwapchainContext swContext = ContextUtil.getSwapchain(dict);
-        VkCommandBuffer[] bufs = cmdFactory.createCmdBuffers(swContext.info().imageExtent().width(), swContext.info().imageExtent().height(), frameBuffers);
+        VkCommandBuffer[] bufs = cmdFactory.createCmdBuffers(frameBuffers);
 
         for (int i = 0; i < frameBuffers.length; i++)
             cmds.put(frameBuffers[i], new BasicRenderJob(bufs[i], update));
@@ -82,10 +81,7 @@ public class BasicRenderJobContext implements RenderJobContext {
         return factoryIdentifier;
     }
 
-    @Override
-    public Lock getLock() {
-        return null;
-    }
+
 
     @Override
     public Dependency getDependency() {

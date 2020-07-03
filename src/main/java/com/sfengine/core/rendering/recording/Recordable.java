@@ -15,5 +15,5 @@ public interface Recordable {
      *
      * @param buffer
      */
-    public void record(VkCommandBuffer buffer);
+    void record(VkCommandBuffer buffer, long framebuffer);
 }

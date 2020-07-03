@@ -113,7 +113,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         renderPass.setWork(cmdWork);
 
         CommandBufferFactory basicCMD =
-                new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
+                new CommandBufferFactory(dict, renderPass, renderQueueFamilyIndex, 0);
 
         dict.put(BasicFrameBufferFactoryContextFactory.createFrameBufferFactoryContext("BasicFBFactory", dict, renderPass.handle()));
         dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, atts, colorFormat));
@@ -236,7 +236,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
             e.printStackTrace();
         }
 
-        final RenderPass renderPass = new RenderPass(logicalDevice, subpass, null, atts);
+        final RenderPass renderPass = new RenderPass(dict, subpass, null, atts);
 
         return renderPass;
     }
@@ -339,14 +339,10 @@ public class InitializeRendering implements EngineTask, Destroyable {
         scissor.offset().set(0, 0);
 
         Recordable out =
-                new Recordable() {
+                (buffer, framebuffer) -> {
 
-                    @Override
-                    public void record(VkCommandBuffer buffer) {
-
-                        vkCmdSetScissor(buffer, 0, scissor);
-                        vkCmdSetViewport(buffer, 0, viewport);
-                    }
+                    vkCmdSetScissor(buffer, 0, scissor);
+                    vkCmdSetViewport(buffer, 0, viewport);
                 };
 
         return out;
@@ -377,36 +373,32 @@ public class InitializeRendering implements EngineTask, Destroyable {
         }
 
         Recordable recCmd =
-                new Recordable() {
+                (buffer, framebuffer) -> {
 
-                    @Override
-                    public void record(VkCommandBuffer buffer) {
+                    // Bind the rendering pipeline (including the shaders)
+                    vkCmdBindPipeline(
+                            buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle());
 
-                        // Bind the rendering pipeline (including the shaders)
-                        vkCmdBindPipeline(
-                                buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.handle());
+                    // Bind descriptor sets
+                    vkCmdBindDescriptorSets(
+                            buffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            pipeline.layout(),
+                            0,
+                            pDesc,
+                            null);
 
-                        // Bind descriptor sets
-                        vkCmdBindDescriptorSets(
-                                buffer,
-                                VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                pipeline.layout(),
-                                0,
-                                pDesc,
-                                null);
+                    // Bind triangle vertices
+                    LongBuffer offsets = memAllocLong(1);
+                    offsets.put(0, 0L);
+                    LongBuffer pBuffers = memAllocLong(1);
+                    pBuffers.put(0, mesh2.getVerticesHandle());
+                    vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
 
-                        // Bind triangle vertices
-                        LongBuffer offsets = memAllocLong(1);
-                        offsets.put(0, 0L);
-                        LongBuffer pBuffers = memAllocLong(1);
-                        pBuffers.put(0, mesh2.getVerticesHandle());
-                        vkCmdBindVertexBuffers(buffer, 0, pBuffers, offsets);
+                    memFree(pBuffers);
+                    memFree(offsets);
 
-                        memFree(pBuffers);
-                        memFree(offsets);
-
-                        vkCmdDraw(buffer, mesh2.verticesCount(), 1, 0, 0);
-                    }
+                    vkCmdDraw(buffer, mesh2.verticesCount(), 1, 0, 0);
                 };
 
         return recCmd;

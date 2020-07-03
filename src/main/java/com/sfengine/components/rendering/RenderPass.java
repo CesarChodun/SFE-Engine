@@ -4,6 +4,9 @@ import static com.sfengine.core.result.VulkanResult.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.vulkan.VK10.*;
 
+import com.sfengine.core.context.ContextDictionary;
+import com.sfengine.core.context.ContextUtil;
+import com.sfengine.core.context.swapchain.SwapchainContext;
 import com.sfengine.core.rendering.AttachmentBlueprint;
 import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.resources.Destroyable;
@@ -18,7 +21,7 @@ import org.lwjgl.vulkan.*;
  * @author Cezary Chodun
  * @since 19.10.2019
  */
-public class RenderPass implements Destroyable {
+public class RenderPass implements Recordable, Destroyable {
 
     /** Create info for this render pass. */
     private VkRenderPassCreateInfo renderPassInfo = VkRenderPassCreateInfo.calloc();
@@ -38,25 +41,28 @@ public class RenderPass implements Destroyable {
 
     private AttachmentBlueprint[] attachmentBlueprints;
 
+    private ContextDictionary dict;
+
     /**
      * Creates a render pass.
      *
-     * @param logicalDevice Valid logical device.
      * @param attachmentBlueprints Must be freed after the render pass was destroyed.
      * @param subpasses A buffer with subpasses(may be freed afterwards)
      * @param dependencies A buffer with subpass dependencies(may be freed afterwards)
      * @throws VulkanException When failed to create the render pass.
      */
     public RenderPass(
-            VkDevice logicalDevice,
+            ContextDictionary dict,
             VkSubpassDescription.Buffer subpasses,
             @Nullable VkSubpassDependency.Buffer dependencies,
             AttachmentBlueprint... attachmentBlueprints) {
-
+        this.dict = dict;
         this.attachmentBlueprints = attachmentBlueprints;
         VkAttachmentDescription.Buffer buf = VkAttachmentDescription.calloc(attachmentBlueprints.length);
         for (int i = 0; i < attachmentBlueprints.length; i++)
             buf.put(i, attachmentBlueprints[i].getDescription());
+
+        VkDevice logicalDevice = ContextUtil.getDevice(dict).getDevice();
 
         renderPassInfo
                 .sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
@@ -81,39 +87,6 @@ public class RenderPass implements Destroyable {
                 .pNext(NULL)
                 .renderPass(renderPass)
                 .pClearValues(clbuf);
-    }
-
-    /**
-     * Records the data to the command buffer.
-     *
-     * @param cmd Target command buffer.
-     * @param frameBuffer Frame buffer handle.
-     * @param offsetX X offset for the render area.
-     * @param offsetY Y offset for the render area.
-     * @param width Width of the render area.
-     * @param height Height of the render area.
-     */
-    public void record(
-            VkCommandBuffer cmd,
-            long frameBuffer,
-            int offsetX,
-            int offsetY,
-            int width,
-            int height) {
-        renderPassBeginInfo.renderArea().offset().set(offsetX, offsetY);
-        renderPassBeginInfo.renderArea().extent().set(width, height);
-        renderPassBeginInfo.framebuffer(frameBuffer);
-
-        vkCmdBeginRenderPass(cmd, renderPassBeginInfo, contents);
-
-        if (preset != null) {
-            preset.record(cmd);
-        }
-        if (work != null) {
-            work.record(cmd);
-        }
-
-        vkCmdEndRenderPass(cmd);
     }
 
     /** @return the render pass handle. */
@@ -144,5 +117,29 @@ public class RenderPass implements Destroyable {
 
     public void setPreset(Recordable preset) {
         this.preset = preset;
+    }
+
+    @Override
+    public void record(VkCommandBuffer buffer, long frameBuffer) {
+
+        SwapchainContext swc = ContextUtil.getSwapchain(dict);
+
+        int width = swc.info().imageExtent().width();
+        int height = swc.info().imageExtent().height();
+
+        renderPassBeginInfo.renderArea().offset().set(0, 0);
+        renderPassBeginInfo.renderArea().extent().set(width, height);
+        renderPassBeginInfo.framebuffer(frameBuffer);
+
+        vkCmdBeginRenderPass(buffer, renderPassBeginInfo, contents);
+
+        if (preset != null) {
+            preset.record(buffer, frameBuffer);
+        }
+        if (work != null) {
+            work.record(buffer, frameBuffer);
+        }
+
+        vkCmdEndRenderPass(buffer);
     }
 }

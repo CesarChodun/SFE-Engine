@@ -122,7 +122,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         renderPass.setWork(cmdWork);
 
         CommandBufferFactory basicCMD =
-                new CommandBufferFactory(device, renderPass, renderQueueFamilyIndex, 0);
+                new CommandBufferFactory(dict, renderPass, renderQueueFamilyIndex, 0);
         dict.put(BasicFrameBufferFactoryContextFactory.createFrameBufferFactoryContext("BasicFBFactory", dict, renderPass.handle()));
         dict.put(BasicSwapchainContextFactory.createSwapchainContext("BasicSwapchain", dict, frame, atts, colorFormat));
 
@@ -245,7 +245,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
             e.printStackTrace();
         }
 
-        final RenderPass renderPass = new RenderPass(logicalDevice, subpass, null, atts);
+        final RenderPass renderPass = new RenderPass(dict, subpass, null, atts);
 
         return renderPass;
     }
@@ -352,7 +352,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
         scissor.offset().set(0, 0);
 
         Recordable out =
-                buffer -> {
+                (buffer, framebuffer) -> {
 
                     vkCmdSetScissor(buffer, 0, scissor);
                     vkCmdSetViewport(buffer, 0, viewport);
@@ -421,7 +421,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         // Making the recordable object for command buffer creation
         Recordable recCmd =
-                buffer -> {
+                (buffer, framebuffer) -> {
 
                     // Bind the rendering pipeline (including the shaders)
                     vkCmdBindPipeline(
