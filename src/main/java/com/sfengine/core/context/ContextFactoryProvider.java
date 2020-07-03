@@ -65,33 +65,4 @@ public class ContextFactoryProvider {
         return factory.getSubasset(asset.getSubAsset(SUBASSET_LOCATION));
     }
 
-    public static void multiLock(boolean lock, Context... contexts) {
-        if (contexts.length > MAX_CONTEXT_LOCKS)
-            throw new AssertionError("Too many contexts to lock(max 1*10^6)");
-
-        int[] priority = new int[contexts.length];
-
-        for (int i = 0; i < contexts.length; i++) {
-            if (contexts[i] instanceof DeviceContext)
-                priority[i] = 1;
-            else if (contexts[i] instanceof QueueFamilyContext)
-                priority[i] = 2;
-            else if (contexts[i] instanceof QueueContext)
-                priority[i] = 3;
-            else
-                priority[i] = 10;
-
-            priority[i] *= MAX_CONTEXT_LOCKS + i;
-        }
-
-        Arrays.sort(priority);
-
-        for (int i = 0; i < contexts.length; i++) {
-            if (lock)
-                contexts[priority[i] % MAX_CONTEXT_LOCKS].getLock().lock();
-            else
-                contexts[priority[i] % MAX_CONTEXT_LOCKS].getLock().unlock();
-        }
-    }
-
 }
