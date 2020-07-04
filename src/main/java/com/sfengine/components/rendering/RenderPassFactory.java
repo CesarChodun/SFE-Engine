@@ -53,8 +53,7 @@ public class RenderPassFactory {
 
         VkAttachmentReference.Buffer colorReference = VkAttachmentReference.calloc(colorAttachmentCount);
 
-        VkAttachmentReference depthReference = VkAttachmentReference.calloc()
-                .layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+        VkAttachmentReference depthReference = null;
 
         int nx_color = 0;
 
@@ -65,9 +64,14 @@ public class RenderPassFactory {
                         .layout(VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL);
             }
             else if (blueprints[i].getImageInfo().usage() == VK10.VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT) {
-                depthReference.attachment(i);
+                if (depthReference != null)
+                    throw new AssertionError("Multiple depth attachments are prohibited.");
+                depthReference = VkAttachmentReference.calloc()
+                        .layout(VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL)
+                        .attachment(i);
             }
         }
+
 
         return VkSubpassDescription.calloc(1)
                         .pipelineBindPoint(VK_PIPELINE_BIND_POINT_GRAPHICS)
