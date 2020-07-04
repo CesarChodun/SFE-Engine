@@ -94,6 +94,7 @@ public class InitializeRendering implements EngineTask, Destroyable {
 
         RenderPass renderPass = RenderPassFactory.createRenderPass(dict, "RenderPass1");
         destroy.add(renderPass);
+
         DescriptorSetBlueprint[] dscBlueprint =
                 createDscBlueprints(
                         device, Application.getConfigAssets().getSubAsset("descriptors"), destroy);

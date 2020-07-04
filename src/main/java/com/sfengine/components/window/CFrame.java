@@ -118,7 +118,7 @@ public class CFrame implements Dependable {
                     windowCreated.release();
 
                     //TODO: remove if possible
-                    window.setVisible(true);
+//                    window.setVisible(true);
                 },
                 loaded);
     }

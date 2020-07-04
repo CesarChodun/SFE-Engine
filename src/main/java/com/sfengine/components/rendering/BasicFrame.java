@@ -53,8 +53,6 @@ public class BasicFrame implements Frame {
         this.submitInfo = submitInfo;
         this.pSignalSemaphores = pSignalSemaphores;
         this.pCommandBuffers = pCommandBuffers;
-
-
     }
 
     private void submitToQueue(ContextDictionary dict, VkDevice device, VkQueue queue, LongBuffer pImageAcquireSemaphores) {
