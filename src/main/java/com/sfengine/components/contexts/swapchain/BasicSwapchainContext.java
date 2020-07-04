@@ -78,7 +78,8 @@ public class BasicSwapchainContext implements SwapchainContext {
                 frame.getDependency(),
                 ContextUtil.getDevice(dict).getDependency(),
                 ContextUtil.getPhysicalDevice(dict).getDependency(),
-                ContextUtil.getFrameBufferFactory(dict).getDependency());
+                ContextUtil.getFrameBufferFactory(dict).getDependency()
+        );
     }
 
     /**
