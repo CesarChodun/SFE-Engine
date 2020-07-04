@@ -119,6 +119,10 @@ public class RenderPass implements Recordable, Destroyable {
         this.preset = preset;
     }
 
+    public AttachmentBlueprint[] getAttachmentBlueprints() {
+        return attachmentBlueprints;
+    }
+
     @Override
     public void record(VkCommandBuffer buffer, long frameBuffer) {
 
