@@ -64,11 +64,11 @@ public class Presenter implements EngineTask, Destroyable {
 
     @Override
     public void run() throws AssertionError {
-        SwapchainContext swapchainContrext = ContextUtil.getSwapchain(dict);
-        long newSwapchain = swapchainContrext.getHandle();
+        SwapchainContext swapchainContext = ContextUtil.getSwapchain(dict);
+        long newSwapchain = swapchainContext.getHandle();
 
         if (lastSwapchain != newSwapchain) {
-            frames.update(swapchainContrext);
+            frames.update(swapchainContext);
             lastSwapchain = newSwapchain;
         }
 
@@ -83,7 +83,7 @@ public class Presenter implements EngineTask, Destroyable {
         int[] pImageIndex = new int[1];
         int err = vkAcquireNextImageKHR(
                         device,
-                        swapchainContrext.getHandle(),
+                        swapchainContext.getHandle(),
                         0xFFFFFFFFFFFFFFFFL,
                         semaphore,
                         VK_NULL_HANDLE,
@@ -112,7 +112,7 @@ public class Presenter implements EngineTask, Destroyable {
 
                 presentInfo.pImageIndices().put(0, nextImage);
 
-                presentInfo.pSwapchains().put(0, swapchainContrext.getHandle());
+                presentInfo.pSwapchains().put(0, swapchainContext.getHandle());
 
                 subErr = vkQueuePresentKHR(presentQueue, presentInfo);
 
