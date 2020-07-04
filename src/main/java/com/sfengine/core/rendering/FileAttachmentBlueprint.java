@@ -102,10 +102,12 @@ public class FileAttachmentBlueprint implements AttachmentBlueprint {
     private final DependencyFence created = new DependencyFence();
 
     public FileAttachmentBlueprint(ContextDictionary dict, ConfigFile cfg) {
-        engine.addConfig(() -> {
-            loadAll(cfg);
-            created.release();
-        }, Application.getDependency());
+        //TODO: lambda version
+//        engine.addConfig(() -> {
+//            loadAll(cfg);
+//            created.release();
+//        }, Application.getDependency());
+        loadAll(cfg);
     }
 
     private void loadAll(ConfigFile cfg) {
