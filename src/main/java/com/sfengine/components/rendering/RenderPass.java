@@ -142,8 +142,7 @@ public class RenderPass implements Recordable, Destroyable {
         }
         if (work != null) {
             work.record(buffer, frameBuffer);
+            vkCmdEndRenderPass(buffer);
         }
-
-        vkCmdEndRenderPass(buffer);
     }
 }

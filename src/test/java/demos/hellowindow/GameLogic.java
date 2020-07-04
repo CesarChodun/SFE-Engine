@@ -22,5 +22,9 @@ public class GameLogic implements EngineTask {
         HardwareManager.init();
 
         CFrame frame = new CFrame("MyFrame");
+
+        engine.addConfig(() -> {
+            frame.getWindow().setVisible(true);
+        }, frame.getDependency());
     }
 }

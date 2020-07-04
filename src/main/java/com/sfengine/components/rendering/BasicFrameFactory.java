@@ -83,6 +83,20 @@ public class BasicFrameFactory implements FrameFactory {
             for (int i = 0; i < requiredImages; i++)
                 frames.add(create(wrappers[i], jobContext.getJob(frameBuffers[i])));
         }
+        else {
+            long[] frameBuffers = swapchainContext.getFrameBuffers();
+            RenderJobContext jobContext = ContextUtil.getRenderJob(dict);
+            jobContext.recreateJobs(frameBuffers);
+
+            VkFenceWrapper[] wrappers = VkFenceWrapperFactory.createWrapper(dict, requiredImages);
+
+            for (int i = 0; i < frames.size(); i++) {
+                forgetFrame(i);
+            }
+
+            for (int i = 0; i < requiredImages; i++)
+                frames.set(i, create(wrappers[i], jobContext.getJob(frameBuffers[i])));
+        }
 
 
     }
