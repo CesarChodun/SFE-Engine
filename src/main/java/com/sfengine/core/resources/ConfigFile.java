@@ -19,6 +19,8 @@ public class ConfigFile extends ConfigAsset implements Closeable {
     /** Default logger for the class. */
     private static final Logger cfgLogging = Logger.getLogger(ConfigFile.class.getName());
 
+    public static final String EXT = "cfg";
+
     /** Tells whether the JSON object was created. */
     boolean created = false;
     /** Parental asset folder. */

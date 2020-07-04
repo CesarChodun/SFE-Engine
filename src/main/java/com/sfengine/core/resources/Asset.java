@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -99,8 +101,25 @@ public class Asset {
      * @return The child asset.
      */
     public Asset getSubAsset(String path) {
-        Asset out = new Asset(location.getAbsoluteFile() + "/" + path);
+        Asset out = new Asset(location.getAbsoluteFile() + File.separator + path);
         out.mkdirs();
+        return out;
+    }
+
+    /**
+     * Obtains all defined configuration assets in the given location.
+     *
+     * @return a list of configs
+     */
+    public List<ConfigFile> getAllConfigs() throws IOException {
+        List<ConfigFile> out = new ArrayList<>();
+
+        for (File f : location.listFiles()) {
+            if (f.isFile() && f.getName().endsWith(ConfigFile.EXT)) {
+                out.add(getConfigFile(f.getAbsolutePath().substring(location.getAbsolutePath().length() + File.separator.length())));
+            }
+        }
+
         return out;
     }
 
