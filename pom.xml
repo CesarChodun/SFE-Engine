@@ -18,8 +18,8 @@
 
     <repositories>
         <repository>
-            <id>SFE-Engine-mvn-repo</id>
-            <url>https://raw.github.com/CesarChodun/SFE-Engine/mvn-repo/</url>
+            <id>SFE-Engine-master</id>
+            <url>https://raw.github.com/CesarChodun/SFE-Engine/master/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
