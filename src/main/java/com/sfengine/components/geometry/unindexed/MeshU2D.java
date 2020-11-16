@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.List;
 import org.joml.Vector2f;
+import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 
@@ -90,5 +91,11 @@ public class MeshU2D implements UnindexedMesh {
     @Override
     public int verticesCount() {
         return verticesCount;
+    }
+
+    @Override
+    public void record(VkCommandBuffer buffer, long framebuffer) {
+        vkCmdBindVertexBuffers(buffer, 0, new long[] {verticesBuffer}, new long[]{});
+        vkCmdDraw(buffer, verticesCount, 1, 0, 0);
     }
 }

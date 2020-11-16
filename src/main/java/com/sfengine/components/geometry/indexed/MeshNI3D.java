@@ -2,7 +2,7 @@ package com.sfengine.components.geometry.indexed;
 
 import static org.lwjgl.system.MemoryUtil.memAlloc;
 import static org.lwjgl.system.MemoryUtil.memFree;
-import static org.lwjgl.vulkan.VK10.vkDestroyBuffer;
+import static org.lwjgl.vulkan.VK10.*;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -12,6 +12,7 @@ import java.util.List;
 import com.sfengine.components.geometry.Util;
 import com.sfengine.core.result.VulkanException;
 import org.joml.Vector3f;
+import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkPhysicalDevice;
 
@@ -135,4 +136,10 @@ public class MeshNI3D implements IndexedMesh{
         return indicesCount;
     }
 
+    @Override
+    public void record(VkCommandBuffer buffer, long framebuffer) {
+        vkCmdBindVertexBuffers(buffer, 0, new long[] {verticesBuffer}, new long[]{});
+        vkCmdBindIndexBuffer(buffer,indicesBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdDraw(buffer, verticesCount, 1, 0, 0);
+    }
 }

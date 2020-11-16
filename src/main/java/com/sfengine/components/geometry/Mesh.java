@@ -1,5 +1,6 @@
 package com.sfengine.components.geometry;
 
+import com.sfengine.core.rendering.recording.Recordable;
 import com.sfengine.core.resources.Destroyable;
 
 /**
@@ -8,14 +9,14 @@ import com.sfengine.core.resources.Destroyable;
  * @author Cezary Chodun
  * @since 28.10.2019
  */
-public interface Mesh extends Destroyable {
+public interface Mesh extends Recordable, Destroyable {
 
     /** @return Vulkan handle for the vertices buffer. */
-    public long getVerticesHandle();
+    long getVerticesHandle();
 
     /** @return Stride for the vertices buffer. */
-    public int getStride();
+    int getStride();
 
     /** @return Number of the vertices in the mesh. */
-    public int verticesCount();
+    int verticesCount();
 }
