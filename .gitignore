@@ -10,3 +10,4 @@ glslangValidator.exe
 /release/
 google-java-format*
 target
+**/noentropy/**/*
