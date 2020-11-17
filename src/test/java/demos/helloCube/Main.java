@@ -2,6 +2,11 @@ package demos.helloCube;
 
 import com.sfengine.core.Application;
 import com.sfengine.core.engine.EngineFactory;
+import org.springframework.boot.Banner;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Main class of the hello cube demo.
@@ -9,16 +14,17 @@ import com.sfengine.core.engine.EngineFactory;
  * @author Cezary Chodun
  * @since 10.01.2020
  */
-public class Main {
+@SpringBootApplication
+public class Main implements CommandLineRunner {
 
     public static final String DEMO_NAME = "hellocube";
 
-    /**
-     * An example main method that starts the engine, initializes it, and makes a simple report.
-     *
-     * @param args
-     */
     public static void main(String[] args) {
+        ApplicationContext context = SpringApplication.run(Main.class, args);
+    }
+
+    @Override
+    public void run(String... args) {
         System.out.println("Running \"Hello Cube\" demo.");
 
         // Creates a task that will perform the game functionality.
